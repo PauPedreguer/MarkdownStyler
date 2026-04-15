@@ -1,0 +1,153 @@
+/* =========================
+   GNOME Markdown Template
+   ========================= */
+
+:root {
+    --color-primari: #3584e4;
+    --color-fons: #fafafa;
+    --color-superficie: #ffffff;
+    --color-text: #2e2e2e;
+    --color-secundari: #5e5e5e;
+    --color-bord: #d0d0d0;
+
+    --font-principal: 'Cantarell', -apple-system, sans-serif;
+    --font-mono: 'Source Code Pro', monospace;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-principal);
+    background: var(--color-fons);
+    color: var(--color-text);
+    line-height: 1.6;
+
+    max-width: 900px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+/* Títulos */
+h1 {
+    font-size: 2rem;
+    color: var(--color-primari);
+    border-bottom: 2px solid var(--color-primari);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    color: var(--color-primari);
+}
+
+h3 {
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+/* Texto */
+p {
+    margin-bottom: 12px;
+}
+
+a {
+    color: var(--color-primari);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Código */
+pre {
+    background: #241f31;
+    color: #f6f5f4;
+    padding: 16px;
+    border-radius: 12px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    margin: 16px 0;
+}
+
+code {
+    background: #deddda;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+}
+
+/* Listas */
+ul, ol {
+    margin: 12px 0 12px 24px;
+}
+
+/* Blockquote */
+blockquote {
+    border-left: 4px solid var(--color-primari);
+    background: #e6f0fc;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 0 12px 12px 0;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: var(--color-superficie);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+th {
+    background: var(--color-primari);
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--color-bord);
+}
+
+tr:nth-child(even) {
+    background: #f6f5f4;
+}
+
+/* Imágenes */
+img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 16px 0;
+}
+
+/* Separadores */
+hr {
+    border: none;
+    border-top: 1px solid var(--color-bord);
+    margin: 32px 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    body {
+        padding: 20px 12px;
+    }
+}
