@@ -152,6 +152,14 @@ hr {
     }
 }
 
+
+
+
+
+
+
+
+/* Layout base */
 body {
     margin: 0;
     display: flex;
@@ -162,55 +170,46 @@ body {
 /* Sidebar */
 .sidebar {
     width: 260px;
+    min-width: 260px;
     background: white;
     border-right: 1px solid #ddd;
     padding: 20px;
-    position: fixed;
     height: 100vh;
     overflow-y: auto;
-}
-
-.logo {
-    width: 64px;
-    height: 64px;
-    background: #3584e4;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    margin: auto;
-    margin-bottom: 10px;
-}
-
-.logo-container {
-    text-align: center;
-}
-
-.logo-container h1 {
-    font-size: 0.9rem;
-    color: #3584e4;
-}
-
-.info h2 {
-    color: #3584e4;
-    font-size: 1rem;
-}
-
-.nav a {
-    display: block;
-    padding: 8px;
-    border-radius: 8px;
-    text-decoration: none;
-    color: #2e2e2e;
-}
-
-.nav a:hover {
-    background: #e6f0fc;
+    position: sticky;
+    top: 0;
 }
 
 /* Contenido */
 .content {
-    margin-left: 260px;
+    flex: 1;
     padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.nav li {
+    margin-bottom: 4px;
+}
+
+.nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #2e2e2e;
+    font-size: 0.9rem;
+}
+
+.nav a:hover {
+    background: #e6f0fc;
+    color: #3584e4;
+}
+html {
+    scroll-behavior: smooth;
 }

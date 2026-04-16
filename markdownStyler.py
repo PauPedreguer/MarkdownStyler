@@ -99,9 +99,9 @@ class MarkdownStylerApp:
             result = subprocess.run([
                 'pandoc', md,
                 '-t', 'html5',
-                '--standalone',
                 '--toc',
                 '--highlight-style=zenburn'
+                '--section-divs',
             ], capture_output=True, text=True, check=True)
 
             body_html = result.stdout
