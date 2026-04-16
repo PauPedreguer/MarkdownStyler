@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <title>Práctica 1</title>
+
+        <link rel="stylesheet" href="styles/prova.css">
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <img src="assets/logoIESPereMariaOrtsiBosch.png" class="logo-img">
+        <div>
+            <div class="institut">IES Pere Maria Orts i Bosch</div>
+            <div class="assignatura">Sistemes Informàtics · 1r DAM</div>
+        </div>
+    </div>
+
+    <div class="header-right">
+        Pau Palacios Server · 2026-04-16
+    </div>
+</div>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="doc-info">
+            <p><b></b></p>
+        </div>
+
+        <div class="toc">
+            <ul>
+            <li><a href="#examen-linux" id="toc-examen-linux">Examen
+            Linux</a>
+            <ul>
+            <li><a href="#directorios-y-ficheros"
+            id="toc-directorios-y-ficheros">Directorios y
+            ficheros</a></li>
+            <li><a href="#usuarios-grupos-y-permisos"
+            id="toc-usuarios-grupos-y-permisos">Usuarios, grupos y
+            permisos</a></li>
+            </ul></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <div class="content">
+            <p><strong>Nombre:</strong>                                    <strong>Apellidos:</strong></p>
+            <h1 id="examen-linux">Examen Linux</h1>
+            <p>Una clínica dental se encuentra en Benidorm, Villajoyosa
+            y Altea. Cada una de las ubicaciones tiene sus propios
+            trabajadores, citas, salas y material.</p>
+            <p>En el directorio /home del ordenador ExamenSI se ha
+            creado una carpeta que organizará todo el sistema y que
+            tiene los siguientes ficheros y directorios:</p>
+            <div class="sourceCode" id="cb1"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExameSI:/home/clinica$</span> tree</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Altea</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   ├── citas</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   ├── listaClientes.csv</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   ├── listaTarifas.csv</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   └── presupuesto.sh</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   ├── material</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   └── herramientas</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   └── salas</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>       └── sala1</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Benidorm</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   ├── citas</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   ├── listaClientes.csv</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   ├── listaTarifas.csv</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   └── presupuesto.sh</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   ├── material</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   ├── herramientas</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │   └── maquinaRadiografias</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │       ├── radiografiasRealizadas</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   │       └── usarMaquina.sh</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   └── salas</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>       ├── recepcion</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>       └── sala2</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> Villajoyosa</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a> <span class="ex">├──</span> citas</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a> <span class="ex">│</span>   ├── listaClientes.csv</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a> <span class="ex">│</span>   ├── listaTarifas.csv</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a> <span class="ex">│</span>   └── presupuesto.sh</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a> <span class="ex">├──</span> material</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a> <span class="ex">│</span>   └── herramientas</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a> <span class="ex">└──</span> salas</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>     <span class="ex">└──</span> recepcion</span></code></pre></div>
+            <h2 id="directorios-y-ficheros">Directorios y ficheros</h2>
+            <p><strong>1. Crea el directorio <em>sala1</em> dentro de la
+            carpeta salas de Villajoyosa/salas y de
+            Benidorm/Salas.</strong> (0.25p)</p>
+            <div class="sourceCode" id="cb2"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>2. Crea el directorio <em>recepción</em> dentro
+            de la carpeta salas de Altea.</strong> (0.25p)</p>
+            <div class="sourceCode" id="cb3"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>3. Usa la ruta relativa para situarte en la
+            carpeta <em>radiografiasRealizadas</em></strong> (0.5p)</p>
+            <div class="sourceCode" id="cb4"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Villajoyosa/material/herramientas$</span></span></code></pre></div>
+            <p><strong>4. Usa la ruta absoluta para situarte en la
+            carpeta herramientas de Altea.</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb5"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Altea$</span></span></code></pre></div>
+            <p><strong>5. Intercambia el contenido de las carpetas Altea
+            y Villajoyosa. Crea un archivo nuevo dentro de las 2 para
+            poder diferenciarlas.</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb6"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>6. Finalmente la clínica ha perdido la mayoría de
+            sus clientes y tiene que cerrar. Elimina todo el contenido
+            de la carpeta Villajoyosa</strong> (0.25p)</p>
+            <div class="sourceCode" id="cb7"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>7. La clínica de Benidorm necesita tener los
+            archivos <em>listaClientes.csv</em> y
+            <em>listaTarifas.csv</em> de Altea. Copialos a la carpeta
+            citas de Benidorm con los nombres
+            <em>listaClientesAltea.csv</em> y
+            <em>listaTarifasAltea.csv</em></strong> (0.5p)</p>
+            <div class="sourceCode" id="cb8"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Altea/citas$</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Altea/citas$</span></span></code></pre></div>
+            <p><strong>8. Escribe en el fichero
+            <em>listaTarifas.csv</em>: limpieza 50€, ortodoncia 1000€.
+            La coma indica un salto de línea. No puedes usar ningún
+            programa externo(incluidos vim y nano)</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb9"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>9. Muestra el contenido del fichero
+            <em>listaTarifas.csv</em></strong> (0.25p)</p>
+            <div class="sourceCode" id="cb10"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>10. Cuál seria el resultado de ejecutar este
+            comando? Que indica el símbolo “~”</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb11"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:~$</span> pwd</span></code></pre></div>
+            <h2 id="usuarios-grupos-y-permisos">Usuarios, grupos y
+            permisos</h2>
+            <p>En el ordenador ExamenSI, a parte de los usuarios creados
+            por el sistema, solo tenemos el usuario mint en el grupo
+            sudo. Puedes crear más usuarios o grupos si lo consideras
+            necesario o conveniente.</p>
+            <p><strong>11. En está clínica habrá 3 dentistas:
+            <em>dentAltea</em>, <em>dentBenidorm1</em> y
+            <em>dentBenidorm2</em>. Además necesitaremos 2 auxiliares:
+            <em>auxAltea</em> y <em>auxBenidorm</em>. También habrá 2
+            recepcionistas: <em>recepAltea</em> y
+            <em>recepBenidorm</em>. Crea todos estos usuarios, de manera
+            que todos tengan directorio personal, contraseña y aparezca
+            el prompt al usarlos</strong>(0.5p)</p>
+            <div class="sourceCode" id="cb12"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>12. En la clínica se asignarán distintos grupos a
+            los usuarios, de manera que debes crear los grupos:
+            <em>dentistas</em>, <em>auxiliares</em>,
+            <em>recepcionistas</em>, <em>benidorm</em> y <em>altea</em>.
+            No uses ningún script interactivo para crear los
+            usuarios</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb13"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>13. El grupo primario de <em>dentAltea, auxAltea
+            y recepAltea</em> debe ser <em>altea</em>. El grupo primario
+            de <em>dentBenidorm, dentBenidorm2, auxBenidorm y
+            recepBendorm</em> debe ser benidorm. Además
+            <em>dentAltea</em>, <em>dentBenidorm1</em>,
+            <em>dentBenidorm2</em> deben estar en el grupo dentistas,
+            <em>auxAltea y auxBenidorm</em> en el grupo auxiliares y
+            <em>recepBenidorm y recepAltea</em> en el grupo
+            recepcionistas</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb14"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>14. Las carpetas <em>Benidorm/citas</em> y
+            <em>Altea/citas</em> y los ficheros y carpetas que haya en
+            su interior deben ser propiedad de los recepcionistas de
+            cada pueblo. Los directorios <em>Benidorm/salas,
+            Benidorm/material</em> y los directorios y ficheros de su
+            interior serán propiedad de los dentBendorm1. Los
+            directorios <em>Altea/salas, Altea/material</em> y los
+            directorios y ficheros de su interior serán propiedad de los
+            dentAltea.</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb15"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <div class="sourceCode" id="cb16"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span></code></pre></div>
+            <p><strong>15. Todos los dentistas deben poder leer y
+            acceder al contenido de todas las salas (Benidorm y Altea).
+            Los demás usuarios no tendrán permisos</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb17"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span></code></pre></div>
+            <p><strong>16. Solo el recepcionista que sea dueño de la
+            carpeta puede crear, modificar y ejecutar ficheros en citas.
+            Los dentistas del pueblo, auxiliares del pueblo y los otros
+            recepcionistas podrán leerlos. Si se crearán más usuarios no
+            podrían ni tan solo acceder a la carpeta ni archivos del
+            interior</strong> (1p)</p>
+            <div class="sourceCode" id="cb18"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> </span></code></pre></div>
+            <p><strong>17. Los dentistas y auxiliares de cada pueblo
+            pueden acceder a la carpeta material y herramientas de ese
+            pueblo. Solo ellos podrán añadir, modificar, ejecutar o leer
+            los ficheros. Los demás no pueden ver el contenido ni
+            acceder a ellas</strong> (1p)</p>
+            <div class="sourceCode" id="cb19"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span></code></pre></div>
+            <p><strong>18. Todos los dentistas deben poder acceder a la
+            carpeta <em>maquinaRadiografias</em> y a los archivos y
+            carpetas de su interior. Todos los dentistas podrán crear
+            nuevos ficheros o carpetas, ver los que ya hay y ejecutar el
+            script <em>usarMaquina.sh</em></strong> (1p)</p>
+            <div class="sourceCode" id="cb20"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span> </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica/Benidorm/Material$</span></span></code></pre></div>
+            <p><strong>19. Cuál seria el resultado del siguiente comando
+            después de realizar los ejercicios anteriores. Usa el
+            formato de la terminal especificando al menos: permisos,
+            owner, grupo y nombreDelFichero</strong> (0.5p)</p>
+            <div class="sourceCode" id="cb21"><pre
+            class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mint@ExamenSI:/home/clinica$</span> sudo ls <span class="at">-l</span> Altea/salas</span></code></pre></div>
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

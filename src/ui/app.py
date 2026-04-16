@@ -1,19 +1,17 @@
+import os
+import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from datetime import datetime
-import threading
-from core.processor import process
-import json
 from pathlib import Path
 
-
-def load_institut():
-    return json.loads(Path("config/institut.json").read_text(encoding="utf-8"))
+from src.core.models import ExportOptions
+from src.use_cases.generate_html import execute_export
 
 class App:
     def __init__(self, root):
         self.root = root
-        self.root.title("Markdown Styler")
+        self.root.title("Markdown Styler (Clean)")
 
         self.md_path = tk.StringVar()
         self.style = tk.StringVar()
@@ -33,7 +31,12 @@ class App:
         tk.Button(frame, text="Seleccionar", command=self.select_md).pack()
 
         tk.Label(frame, text="Estil").pack(anchor="w")
-        tk.OptionMenu(frame, self.style, *self.get_styles()).pack(fill="x")
+        styles = self.get_styles()
+        if styles:
+            self.style.set(styles[0])
+            tk.OptionMenu(frame, self.style, *styles).pack(fill="x")
+        else:
+            tk.Label(frame, text="(Cap estil trobat a styles/)").pack(anchor="w")
 
         tk.Label(frame, text="Assignatura").pack(anchor="w")
         tk.Entry(frame, textvariable=self.assignatura).pack(fill="x")
@@ -49,17 +52,16 @@ class App:
 
         tk.Button(frame, text="Exportar", command=self.export).pack(pady=10)
 
-
     def select_md(self):
         file = filedialog.askopenfilename(filetypes=[("Markdown", "*.md")])
         if file:
             self.md_path.set(file)
     
     def get_styles(self):
-        from pathlib import Path
         styles_dir = Path("styles")
+        if not styles_dir.exists():
+            return []
         return [f.name for f in styles_dir.glob("*.css")]
-        
 
     def export(self):
         if not self.md_path.get():
@@ -70,35 +72,32 @@ class App:
         if not output_dir:
             return
 
-        threading.Thread(target=self._export_thread, args=(output_dir,)).start()
+        threading.Thread(target=self._export_thread, args=(output_dir,), daemon=True).start()
 
     def _export_thread(self, output_dir):
-        import os
-        from pathlib import Path
-
         md = self.md_path.get()
         base = Path(md).stem
         output = os.path.join(output_dir, f"{base}.html")
-
+        
+        css_path = ""
+        if self.style.get():
+            css_path = f"styles/{self.style.get()}"
 
         try:
-            config = load_institut()
-            
-            process(
+            options = ExportOptions(
                 md_path=md,
-                css_path = f"styles/{self.style.get()}",
                 output_path=output,
-                metadata={
-                    **config,
-                    "title": self.title.get(),
-                    "assignatura": self.assignatura.get(),
-                    "professor": self.professor.get(),
-                    "data": self.data.get()
-                }
+                css_path=css_path,
+                title=self.title.get(),
+                assignatura=self.assignatura.get(),
+                professor=self.professor.get(),
+                data=self.data.get()
             )
+            
+            execute_export(options)
 
             self.root.after(0, lambda: messagebox.showinfo(
-                "OK", f"HTML generat:\n{output}"
+                "OK", f"HTML generat correctament:\n{output}"
             ))
 
         except Exception as e:

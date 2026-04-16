@@ -1,7 +1,7 @@
 import subprocess
-from pathlib import Path
+from typing import Dict, Any
 
-def convert_markdown(md_path: str, output_path: str, css_path: str, metadata: dict):
+def convert_markdown(md_path: str, output_path: str, css_path: str, metadata: Dict[str, Any]):
     cmd = [
         "pandoc",
         md_path,
@@ -11,15 +11,14 @@ def convert_markdown(md_path: str, output_path: str, css_path: str, metadata: di
         "--toc",                   # Taula de continguts
         "--toc-depth=3",
         "--highlight-style=zenburn",
-        f"--template=templates/base.html"
+        "--template=templates/base.html"
     ]
 
-    # Afegir CSS
     if css_path:
         cmd.append(f"--css={css_path}")
 
-    # Afegir metadata
     for key, value in metadata.items():
-        cmd.append(f"--metadata={key}:{value}")
+        if value:
+            cmd.append(f"--metadata={key}:{value}")
 
     subprocess.run(cmd, check=True)

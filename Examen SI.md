@@ -1,14 +1,12 @@
-# Trabajo 2a Evaluación
+# Examen máquinas virtuales, instalación de sistemas operativos y gestión de discos y procesos.
+
+Una vez descargado este documento se debe desconectar la conexión a la Red hasta finalizar el examen. Tampoco se podrán conectar USBs o medios extraibles una vez copiados los archivos ISO necesarios.
+
+Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtual Box ni acceder a ningún documento de memoria o documentación de las prácticas.
 
 ---
 
-Esta práctica consistirá en la captura de pantalla de las siguientes actividades. Se grabará la ejecución de la actividad y las comprobaciones exigidas en la práctica.
-
-Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la grabación o aumentando la velocidad en los procesos más lentos. La duración máxima será por tanto de 10 minutos.
-
----
-
-## Crea una máquina virtual con las siguientes características: (1p)
+## 1. Crea una máquina virtual con las siguientes características: (1p)
 
 - 2 cores
 
@@ -18,31 +16,31 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 
 - No se usará la instalación desatendida
 
-- La máquina se debe encontrar en una carpeta llamada ExamenSI ubicada en el escritorio y debe llamarse Windows10
+- La máquina se debe encontrar en una carpeta llamada ExamenSI ubicada en el escritorio.
 
-- Se recomienda apagar la tarjeta de red para evitar usar el correo electrónico
+- Iso de windows 10 insertada
 
 > **Comprobación:** Mostrar las características de la máquina virtual una vez creada.
 
-<br>
+## 
 
-## Instala windows (1p)
+## 2. Instala windows (1p)
 
 - Instalar windows 10 en el disco de 20GB
 
 - Realizar el proceso de instalación local (sin cuenta microsoft) con los siguientes parámetros:
   
-  - **Nombre de usuario:** Trabajo(Nombre)SI
+  - **Nombre de usuario:** Examen(Nombre)SI
   
   - **Contraseña:** windows10
+    
+        
 
-> **Comprobación:** Mostrar el acceso al sistema operativo con las credenciales anteriores
+> **Comprobación:** Mostrar el acceso al sistema operativo  con las credenciales anteriores
 
-<br>
+## 3. Instalar las guest additions (1p)
 
-## Instalar las guest additions (1p)
-
-- Instala las guest additions
+- Instala las guest additions 
 
 - Activa el portapapeles bidireccional
 
@@ -50,7 +48,7 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 
 - Crea una carpeta compartida ubicada en el escritorio del ordenador anfitrión
 
-> **Comprobaciones:**
+> **Comprobaciones:** 
 > 
 > - Copiar y pegar un texto
 > 
@@ -58,11 +56,11 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 > 
 > - Compartir un archivo mediante la carpeta compartida
 
-<br>
+## 
 
-## Clona la máquina virtual creada (0.5p)
+## 4. Clona la máquina virtual creada (0.5p)
 
-- Clona la máquina virtual que acabas de crear
+- Clona la máquina virtual que acabas de crear 
 
 - Usa los siguientes parámetros
   
@@ -72,23 +70,21 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 
 - Genera una nueva dirección MAC
 
+- 
+
 > **Comprobación:** Hay una máquina con windows en la ruta indicada
 
-<br>
+## 
 
-## Instala linux mint en la misma máquina virtual (2p)
+## 5. Instala linux mint en la misma máquina virtual (2p)
 
 - Instala linux mint en el mismo disco con arranque dual
 
-- **Nombre de usuario:** Examen(Nombre)SI
+> **Comprobación:** Puede arrancar desde los 2 sistemas operativos 
 
-- **Contraseña:** mint
+## 
 
-> **Comprobación:** Puede arrancar desde los 2 sistemas operativos
-
-<br>
-
-## Instala las guest additions en linux mint (1p)
+## 6. Instala las guest additions en linux mint (1p)
 
 - Instala las guest additions
 
@@ -102,9 +98,9 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 > 
 > - Cambiar a modo pantalla completa
 
-<br>
+## 
 
-## Crea una instantánea en Linux mint (0.5p)
+## 7. Crea una instantánea en Linux mint (0.5p)
 
 - Crea una instantánea sin archivos en el escritorio
 
@@ -114,17 +110,17 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 
 > **Comprobación:** Se restaura la instantánea y vuelve al fondo original sin el archivo
 
-<br>
+## 
 
-## Revisa el activity (0.5p)
+## 8. Revisa el activity (0.5p)
 
 - Revisar la actividad y consumo de las máquinas virtuales
 
-> **Comprobación:** Captura con RAM y CPU consumida por la máquina virtual arrancando en windows y en linux
+> Comprobación: Captura con RAM y CPU consumida por la máquina virtual arrancando en windows y en linux
 
-<br>
+## 
 
-## Añadir discos y crear particiones (2p)
+## 9. Añadir discos y crear particiones (2p)
 
 - Añade 2 discos de 5GB a la máquina virtual
 
@@ -134,20 +130,22 @@ Para que el vídeo sea más dinámico se debe editar, introduciendo cortes en la
 
 - El segundo disco tendrá una partición de 3GB y una de 2GB y solo será accesible desde Linux Mint
 
-```bash
-sudo apt install gparted
-```
+- 
 
 > **Comprobación:** Guardar archivos txt desde distintos sistemas operativos y muestra los formatos de los discos
 
-<br>
+## 
 
-## Cierre forzoso de tareas en linux mint (0.5p)
+## 10. Cierre forzoso de tareas en linux mint (0.5p)
 
-- Abre una aplicación en linux
+- Abre una aplicación en linux 
 
 - Muestra los procesos abiertos en la terminal
 
 - Cierra de forma forzosa el proceso de la aplicación que has abierto desde la terminal
+
+```bash
+sudo apt install gparted
+```
 
 > **Comprobación:** Se cierra la aplicación abierta desde la consola
