@@ -15,3 +15,8 @@ def load_institut_config() -> Dict[str, Any]:
         return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
+
+def save_institut_config(config: Dict[str, Any]) -> None:
+    if not CONFIG_PATH.parent.exists():
+        CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CONFIG_PATH.write_text(json.dumps(config, indent=2, ensure_ascii=False), encoding="utf-8")

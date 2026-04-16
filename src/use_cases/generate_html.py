@@ -8,8 +8,6 @@ def execute_export(options: ExportOptions) -> None:
     metadata = {
         **config,
         "title": options.title,
-        "assignatura": options.assignatura,
-        "professor": options.professor,
         "data": options.data
     }
     

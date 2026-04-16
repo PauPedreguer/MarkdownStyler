@@ -84,3 +84,36 @@ nav {
 nav a {
     color: #374151;
 }
+
+/* HEADER SUPERIOR */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 20px;
+}
+.header-left, .header-center, .header-right {
+    flex: 1;
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.header-center {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #2563eb;
+}
+.header-right {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+.logo-img { height: 40px; }
+.institut-info .institut { font-weight: bold; font-size: 1rem; }
+.institut-info .assignatura { font-size: 0.85rem; color: #4b5563; }

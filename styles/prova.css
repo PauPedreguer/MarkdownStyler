@@ -59,6 +59,14 @@ body {
     color: var(--color-primari);
 }
 
+.header-center {
+    flex: 1;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--color-primari);
+}
+
 .header-title {
     font-size: 1rem;
     font-weight: 600;

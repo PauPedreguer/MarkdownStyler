@@ -6,6 +6,4 @@ class ExportOptions:
     output_path: str
     css_path: str
     title: str
-    assignatura: str
-    professor: str
     data: str

@@ -213,3 +213,37 @@ body {
 html {
     scroll-behavior: smooth;
 }
+
+/* HEADER SUPERIOR */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid var(--color-bord);
+    margin-bottom: 20px;
+}
+.header-left, .header-center, .header-right {
+    flex: 1;
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.header-center {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--color-primari);
+}
+.header-right {
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--color-secundari);
+}
+.logo-img { height: 40px; }
+.institut-info .institut { font-weight: bold; }
+.institut-info .assignatura { font-size: 0.85rem; color: var(--color-secundari); }
+
