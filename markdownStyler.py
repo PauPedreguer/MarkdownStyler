@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import filedialog, messagebox
 import subprocess
 import os
 import re
@@ -14,42 +14,17 @@ class MarkdownStylerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Markdown Styler")
-        self.root.geometry("1400x900")
+        self.root.geometry("800x500")
 
         self.colors = {
             'fons': '#fafafa',
             'superficie': '#ffffff',
             'text': '#2e2e2e',
-            'text_secundari': '#5e5e5e',
             'accent': '#3584e4'
         }
 
-        self.font_normal = ('Arial', 11)
-        self.font_titol = ('Arial', 13, 'bold')
-
+        self.font = ('Arial', 11)
         self.crear_widgets()
-
-    # ----------------------
-    # HELPERS
-    # ----------------------
-    def crear_boton(self, parent, text, command, primario=False):
-        return tk.Button(
-            parent,
-            text=text,
-            command=command,
-            font=self.font_normal,
-            bg=self.colors['accent'] if primario else self.colors['superficie'],
-            fg='white' if primario else self.colors['text'],
-            relief='flat' if primario else 'solid',
-            cursor='hand2'
-        )
-
-    def comprobar_pandoc(self):
-        try:
-            subprocess.run(['pandoc', '--version'], capture_output=True)
-            return True
-        except:
-            return False
 
     # ----------------------
     # UI
@@ -58,30 +33,33 @@ class MarkdownStylerApp:
         main = tk.Frame(self.root, bg=self.colors['fons'])
         main.pack(fill='both', expand=True, padx=20, pady=20)
 
-        tk.Label(main, text="Archivo Markdown", font=self.font_titol, bg=self.colors['fons']).pack(anchor='w')
+        # Markdown
+        tk.Label(main, text="Archivo Markdown", bg=self.colors['fons']).pack(anchor='w')
         self.arxiu_md = tk.StringVar()
-        tk.Entry(main, textvariable=self.arxiu_md).pack(fill='x', pady=5)
-        self.crear_boton(main, "Seleccionar", self.seleccionar_arxiu).pack(pady=5)
+        tk.Entry(main, textvariable=self.arxiu_md).pack(fill='x')
+        tk.Button(main, text="Seleccionar", command=self.seleccionar_arxiu).pack(pady=5)
 
         # CSS
-        tk.Label(main, text="Estilo (CSS)", bg=self.colors['fons']).pack(anchor='w')
+        tk.Label(main, text="CSS", bg=self.colors['fons']).pack(anchor='w')
         self.css_path = tk.StringVar()
-        tk.Entry(main, textvariable=self.css_path).pack(fill='x', pady=2)
-        self.crear_boton(main, "Seleccionar CSS", self.seleccionar_css).pack(pady=5)
+        tk.Entry(main, textvariable=self.css_path).pack(fill='x')
+        tk.Button(main, text="Seleccionar CSS", command=self.seleccionar_css).pack(pady=5)
 
+        # Metadata
         tk.Label(main, text="Asignatura", bg=self.colors['fons']).pack(anchor='w')
         self.assignatura = tk.StringVar()
-        tk.Entry(main, textvariable=self.assignatura).pack(fill='x', pady=2)
+        tk.Entry(main, textvariable=self.assignatura).pack(fill='x')
 
         tk.Label(main, text="Profesor", bg=self.colors['fons']).pack(anchor='w')
         self.professor = tk.StringVar()
-        tk.Entry(main, textvariable=self.professor).pack(fill='x', pady=2)
+        tk.Entry(main, textvariable=self.professor).pack(fill='x')
 
         tk.Label(main, text="Fecha", bg=self.colors['fons']).pack(anchor='w')
         self.data = tk.StringVar(value=datetime.now().strftime("%Y-%m-%d"))
-        tk.Entry(main, textvariable=self.data).pack(fill='x', pady=2)
+        tk.Entry(main, textvariable=self.data).pack(fill='x')
 
-        self.crear_boton(main, "Exportar", self.exportar, primario=True).pack(pady=10)
+        tk.Button(main, text="Exportar HTML", bg=self.colors['accent'], fg='white',
+                  command=self.exportar).pack(pady=15)
 
     # ----------------------
     # FILES
@@ -89,11 +67,8 @@ class MarkdownStylerApp:
     def seleccionar_arxiu(self):
         file = filedialog.askopenfilename(filetypes=[("Markdown", "*.md")])
         if file:
-            name = Path(file).name
-            if name.startswith('.') or name in ['.DS_Store', 'Thumbs.db']:
-                messagebox.showwarning("Archivo no válido", "Archivo oculto o basura")
-                return
             self.arxiu_md.set(file)
+
     def seleccionar_css(self):
         file = filedialog.askopenfilename(filetypes=[("CSS", "*.css")])
         if file:
@@ -107,85 +82,89 @@ class MarkdownStylerApp:
             messagebox.showerror("Error", "Selecciona un archivo")
             return
 
-        if not self.comprobar_pandoc():
-            messagebox.showerror("Error", "Pandoc no está instalado")
-            return
-
-        threading.Thread(target=self._exportar_thread).start()
-
-    def _exportar_thread(self):
-        md = self.arxiu_md.get()
-
-        # selector carpeta (en hilo principal para evitar problemas)
-        output_dir = self.root.after(0, lambda: None)
+        # 🔥 IMPORTANT: fora del thread
         output_dir = filedialog.askdirectory()
         if not output_dir:
             return
 
+        threading.Thread(target=self._exportar_thread, args=(output_dir,)).start()
+
+    def _exportar_thread(self, output_dir):
+        md = self.arxiu_md.get()
         base = Path(md).stem
         output_html = Path(output_dir) / f"{base}.html"
-        output_pdf = Path(output_dir) / f"{base}.pdf"
 
         try:
-            # HTML
+            # 1. Convertir markdown → HTML
             result = subprocess.run([
                 'pandoc', md,
                 '-t', 'html5',
                 '--standalone',
                 '--toc',
-                '--highlight-style=zenburn',
-                f'--metadata=title:{self.assignatura.get()}',
-                f'--metadata=author:{self.professor.get()}',
-                f'--metadata=date:{self.data.get()}'
+                '--highlight-style=zenburn'
             ], capture_output=True, text=True, check=True)
 
-            html = result.stdout
+            body_html = result.stdout
 
-            css_content = ""
-
-            if self.css_path.get() and os.path.exists(self.css_path.get()):
-                try:
-                    with open(self.css_path.get(), 'r', encoding='utf-8') as f:
-                        css_content = f.read()
-                except:
-                    css_content = ""
-
-            # Inyectar CSS en el HTML
-            if css_content:
-                html = html.replace(
-                    "</head>",
-                    f"<style>\n{css_content}\n</style>\n</head>"
-                )
-
-            headers = re.findall(r'<h2>(.*?)</h2>', html)
+            # 2. IDs únics
+            headers = re.findall(r'<h2>(.*?)</h2>', body_html)
             for i, h in enumerate(headers):
                 slug = re.sub(r'[^a-z0-9]+', '-', h.lower()).strip('-')
-                html = html.replace(f"<h2>{h}</h2>", f'<h2 id="{i}-{slug}">{h}</h2>')
+                body_html = body_html.replace(
+                    f"<h2>{h}</h2>",
+                    f'<h2 id="{i}-{slug}">{h}</h2>'
+                )
 
+            # 3. Navegació
+            nav = "<ul>"
+            for i, h in enumerate(headers):
+                slug = re.sub(r'[^a-z0-9]+', '-', h.lower()).strip('-')
+                nav += f'<li><a href="#{i}-{slug}">{h}</a></li>'
+            nav += "</ul>"
+
+            # 4. CSS
+            css_content = ""
+            if self.css_path.get() and os.path.exists(self.css_path.get()):
+                with open(self.css_path.get(), 'r', encoding='utf-8') as f:
+                    css_content = f.read()
+
+            # 5. Logo
+            logo_html = '<div class="logo">IES</div>'
+
+            # 6. Plantilla
+            template_path = Path("templates/base.html")
+
+            if not template_path.exists():
+                raise Exception(f"No s'ha trobat la plantilla: {template_path}")
+
+            with open(template_path, 'r', encoding='utf-8') as f:
+                template = f.read()
+
+            # 7. Reemplaçar variables
+            html = template \
+                .replace("{{title}}", self.assignatura.get()) \
+                .replace("{{css}}", css_content) \
+                .replace("{{assignatura}}", self.assignatura.get()) \
+                .replace("{{professor}}", self.professor.get()) \
+                .replace("{{data}}", self.data.get()) \
+                .replace("{{nav}}", nav) \
+                .replace("{{content}}", body_html) \
+                .replace("{{logo}}", logo_html)
+
+            # DEBUG
+            print("Guardant en:", output_html)
+
+            # 8. Guardar
             with open(output_html, 'w', encoding='utf-8') as f:
                 f.write(html)
 
-            # PDF
-            try:
-                subprocess.run([
-                    'pandoc', md,
-                    '-o', str(output_pdf),
-                    '--pdf-engine=xelatex',
-                    f'--metadata=title:{self.assignatura.get()}',
-                    f'--metadata=author:{self.professor.get()}',
-                    f'--metadata=date:{self.data.get()}'
-                ], check=True)
-                pdf_msg = f"\nPDF: {output_pdf}"
-            except:
-                pdf_msg = "\n⚠️ PDF no generado (falta xelatex)"
-
             self.root.after(0, lambda: messagebox.showinfo(
                 "OK",
-                f"HTML: {output_html}{pdf_msg}"
+                f"HTML generat en:\n{output_html}"
             ))
 
         except Exception as e:
-            self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
+            self.root.after(0, lambda e=e: messagebox.showerror("Error", str(e)))
 
 
 if __name__ == "__main__":
