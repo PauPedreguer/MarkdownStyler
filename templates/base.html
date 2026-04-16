@@ -1,38 +1,52 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-<meta charset="UTF-8">
-<title>{{title}}</title>
+    <meta charset="utf-8">
+    <title>$title$</title>
 
-<style>
-{{css}}
-</style>
+    $if(css)$
+    <link rel="stylesheet" href="$css$">
 
+    $endif$
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
 
-<nav class="sidebar">
-    <div class="logo-container">
-        {{logo}}
-        <h1>Pere Maria Orts i Bosch</h1>
+<div class="header">
+    <div class="header-left">
+        <img src="$institut_logo$" class="logo-img">
+        <div>
+            <div class="institut">$institut_nom$</div>
+            <div class="assignatura">$assignatura$ · $curs$</div>
+        </div>
     </div>
 
-    <div class="info">
-        <h2>{{assignatura}}</h2>
-        <p>👤 {{professor}}</p>
-        <p>📅 {{data}}</p>
+    <div class="header-right">
+        $professor$ · $data$
     </div>
+</div>
 
-    <div class="nav">
-        <h3>Contingut</h3>
-        {{nav}}
-    </div>
-</nav>
+<div class="layout">
 
-<main class="content">
-{{content}}
-</main>
+    <aside class="sidebar">
+        <div class="doc-info">
+            <p><b>$tema$</b></p>
+        </div>
+
+        <div class="toc">
+            $toc$
+        </div>
+    </aside>
+
+    <main>
+        <div class="content">
+            $body$
+        </div>
+    </main>
+
+</div>
 
 </body>
 </html>

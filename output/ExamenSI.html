@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <title>Práctica 1</title>
+
+        <link rel="stylesheet" href="styles/prova.css">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <img src="assets/logoIESPereMariaOrtsiBosch.png" class="logo-img">
+        <div>
+            <div class="institut">IES Pere Maria Orts i Bosch</div>
+            <div class="assignatura">Sistemes Infomátics · 1r DAM</div>
+        </div>
+    </div>
+
+    <div class="header-right">
+        Pau Palacios Server · 2026-04-16
+    </div>
+</div>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="doc-info">
+            <p><b></b></p>
+        </div>
+
+        <div class="toc">
+            <ul>
+            <li><a href="#trabajo-2a-evaluación"
+            id="toc-trabajo-2a-evaluación">Trabajo 2a Evaluación</a>
+            <ul>
+            <li><a
+            href="#crea-una-máquina-virtual-con-las-siguientes-características-1p"
+            id="toc-crea-una-máquina-virtual-con-las-siguientes-características-1p">Crea
+            una máquina virtual con las siguientes características:
+            (1p)</a></li>
+            <li><a href="#instala-windows-1p"
+            id="toc-instala-windows-1p">Instala windows (1p)</a></li>
+            <li><a href="#instalar-las-guest-additions-1p"
+            id="toc-instalar-las-guest-additions-1p">Instalar las guest
+            additions (1p)</a></li>
+            <li><a href="#clona-la-máquina-virtual-creada-0.5p"
+            id="toc-clona-la-máquina-virtual-creada-0.5p">Clona la
+            máquina virtual creada (0.5p)</a></li>
+            <li><a
+            href="#instala-linux-mint-en-la-misma-máquina-virtual-2p"
+            id="toc-instala-linux-mint-en-la-misma-máquina-virtual-2p">Instala
+            linux mint en la misma máquina virtual (2p)</a></li>
+            <li><a href="#instala-las-guest-additions-en-linux-mint-1p"
+            id="toc-instala-las-guest-additions-en-linux-mint-1p">Instala
+            las guest additions en linux mint (1p)</a></li>
+            <li><a href="#crea-una-instantánea-en-linux-mint-0.5p"
+            id="toc-crea-una-instantánea-en-linux-mint-0.5p">Crea una
+            instantánea en Linux mint (0.5p)</a></li>
+            <li><a href="#revisa-el-activity-0.5p"
+            id="toc-revisa-el-activity-0.5p">Revisa el activity
+            (0.5p)</a></li>
+            <li><a href="#añadir-discos-y-crear-particiones-2p"
+            id="toc-añadir-discos-y-crear-particiones-2p">Añadir discos
+            y crear particiones (2p)</a></li>
+            <li><a href="#cierre-forzoso-de-tareas-en-linux-mint-0.5p"
+            id="toc-cierre-forzoso-de-tareas-en-linux-mint-0.5p">Cierre
+            forzoso de tareas en linux mint (0.5p)</a></li>
+            </ul></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <h1 id="trabajo-2a-evaluación">Trabajo 2a Evaluación</h1>
+        <hr />
+        <p>Esta práctica consistirá en la captura de pantalla de las
+        siguientes actividades. Se grabará la ejecución de la actividad
+        y las comprobaciones exigidas en la práctica.</p>
+        <p>Para que el vídeo sea más dinámico se debe editar,
+        introduciendo cortes en la grabación o aumentando la velocidad
+        en los procesos más lentos. La duración máxima será por tanto de
+        10 minutos.</p>
+        <hr />
+        <h2
+        id="crea-una-máquina-virtual-con-las-siguientes-características-1p">Crea
+        una máquina virtual con las siguientes características:
+        (1p)</h2>
+        <ul>
+        <li><p>2 cores</p></li>
+        <li><p>2 GB de RAM</p></li>
+        <li><p>40 GB de almacenamiento</p></li>
+        <li><p>No se usará la instalación desatendida</p></li>
+        <li><p>La máquina se debe encontrar en una carpeta llamada
+        ExamenSI ubicada en el escritorio y debe llamarse
+        Windows10</p></li>
+        <li><p>Se recomienda apagar la tarjeta de red para evitar usar
+        el correo electrónico</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Mostrar las características de
+        la máquina virtual una vez creada.</p>
+        </blockquote>
+        <p><br></p>
+        <h2 id="instala-windows-1p">Instala windows (1p)</h2>
+        <ul>
+        <li><p>Instalar windows 10 en el disco de 20GB</p></li>
+        <li><p>Realizar el proceso de instalación local (sin cuenta
+        microsoft) con los siguientes parámetros:</p>
+        <ul>
+        <li><p><strong>Nombre de usuario:</strong>
+        Trabajo(Nombre)SI</p></li>
+        <li><p><strong>Contraseña:</strong> windows10</p></li>
+        </ul></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Mostrar el acceso al sistema
+        operativo con las credenciales anteriores</p>
+        </blockquote>
+        <p><br></p>
+        <h2 id="instalar-las-guest-additions-1p">Instalar las guest
+        additions (1p)</h2>
+        <ul>
+        <li><p>Instala las guest additions</p></li>
+        <li><p>Activa el portapapeles bidireccional</p></li>
+        <li><p>Activa el cambio de resolución</p></li>
+        <li><p>Crea una carpeta compartida ubicada en el escritorio del
+        ordenador anfitrión</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobaciones:</strong></p>
+        <ul>
+        <li><p>Copiar y pegar un texto</p></li>
+        <li><p>Cambiar a modo pantalla completa</p></li>
+        <li><p>Compartir un archivo mediante la carpeta
+        compartida</p></li>
+        </ul>
+        </blockquote>
+        <p><br></p>
+        <h2 id="clona-la-máquina-virtual-creada-0.5p">Clona la máquina
+        virtual creada (0.5p)</h2>
+        <ul>
+        <li><p>Clona la máquina virtual que acabas de crear</p></li>
+        <li><p>Usa los siguientes parámetros</p>
+        <ul>
+        <li><p><strong>Nombre:</strong> DualBoot(Nombre)</p></li>
+        <li><p><strong>Ruta:</strong> Escritorio/ExamenSI</p></li>
+        </ul></li>
+        <li><p>Genera una nueva dirección MAC</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Hay una máquina con windows en
+        la ruta indicada</p>
+        </blockquote>
+        <p><br></p>
+        <h2
+        id="instala-linux-mint-en-la-misma-máquina-virtual-2p">Instala
+        linux mint en la misma máquina virtual (2p)</h2>
+        <ul>
+        <li><p>Instala linux mint en el mismo disco con arranque
+        dual</p></li>
+        <li><p><strong>Nombre de usuario:</strong>
+        Examen(Nombre)SI</p></li>
+        <li><p><strong>Contraseña:</strong> mint</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Puede arrancar desde los 2
+        sistemas operativos</p>
+        </blockquote>
+        <p><br></p>
+        <h2 id="instala-las-guest-additions-en-linux-mint-1p">Instala
+        las guest additions en linux mint (1p)</h2>
+        <ul>
+        <li><p>Instala las guest additions</p></li>
+        <li><p>Activa el portapapeles bidireccional</p></li>
+        <li><p>Activa el cambio de resolución</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobaciones:</strong></p>
+        <ul>
+        <li><p>Copiar y pegar un texto</p></li>
+        <li><p>Cambiar a modo pantalla completa</p></li>
+        </ul>
+        </blockquote>
+        <p><br></p>
+        <h2 id="crea-una-instantánea-en-linux-mint-0.5p">Crea una
+        instantánea en Linux mint (0.5p)</h2>
+        <ul>
+        <li><p>Crea una instantánea sin archivos en el
+        escritorio</p></li>
+        <li><p>Cambia el fondo de pantalla y añade un archivo.txt en el
+        escritorio con una frase</p></li>
+        <li><p>Restaura la instantánea anterior</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Se restaura la instantánea y
+        vuelve al fondo original sin el archivo</p>
+        </blockquote>
+        <p><br></p>
+        <h2 id="revisa-el-activity-0.5p">Revisa el activity (0.5p)</h2>
+        <ul>
+        <li>Revisar la actividad y consumo de las máquinas
+        virtuales</li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Captura con RAM y CPU
+        consumida por la máquina virtual arrancando en windows y en
+        linux</p>
+        </blockquote>
+        <p><br></p>
+        <h2 id="añadir-discos-y-crear-particiones-2p">Añadir discos y
+        crear particiones (2p)</h2>
+        <ul>
+        <li><p>Añade 2 discos de 5GB a la máquina virtual</p></li>
+        <li><p>Crea una tabla de particiones en el formato más moderno
+        en cada disco</p></li>
+        <li><p>El primer disco tendrá una partición que ocupará todo el
+        disco y se podrá acceder a él desde Linux Mint y Windows
+        10</p></li>
+        <li><p>El segundo disco tendrá una partición de 3GB y una de 2GB
+        y solo será accesible desde Linux Mint</p></li>
+        </ul>
+        <div class="sourceCode" id="cb1"><pre
+        class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install gparted</span></code></pre></div>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Guardar archivos txt desde
+        distintos sistemas operativos y muestra los formatos de los
+        discos</p>
+        </blockquote>
+        <p><br></p>
+        <h2 id="cierre-forzoso-de-tareas-en-linux-mint-0.5p">Cierre
+        forzoso de tareas en linux mint (0.5p)</h2>
+        <ul>
+        <li><p>Abre una aplicación en linux</p></li>
+        <li><p>Muestra los procesos abiertos en la terminal</p></li>
+        <li><p>Cierra de forma forzosa el proceso de la aplicación que
+        has abierto desde la terminal</p></li>
+        </ul>
+        <blockquote>
+        <p><strong>Comprobación:</strong> Se cierra la aplicación
+        abierta desde la consola</p>
+        </blockquote>
+    </main>
+
+</div>
+
+</body>
+</html>

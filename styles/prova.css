@@ -1,0 +1,275 @@
+/* =========================
+   EDU DOCS STYLE (PRO)
+   ========================= */
+
+:root {
+    --color-primari: #2563eb;
+    --color-fons: #f9fafb;
+    --color-superficie: #ffffff;
+    --color-text: #1f2937;
+    --color-secundari: #6b7280;
+    --color-bord: #e5e7eb;
+
+    --font-principal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "Source Code Pro", monospace;
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* =========================
+   LAYOUT
+   ========================= */
+
+body {
+    font-family: var(--font-principal);
+    background: var(--color-fons);
+    color: var(--color-text);
+}
+
+/* HEADER SUPERIOR */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid var(--color-bord);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    font-weight: bold;
+    color: var(--color-primari);
+}
+
+.header-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.header-meta {
+    font-size: 0.85rem;
+    color: var(--color-secundari);
+}
+
+/* CONTENEDOR PRINCIPAL */
+.layout {
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: calc(100vh - 60px);
+
+    overflow-y: auto;
+    position: sticky;
+    top: 60px;
+
+    background: var(--color-superficie);
+    border-right: 1px solid var(--color-bord);
+
+    padding: 20px;
+}
+
+/* TOC */
+#TOC ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#TOC li {
+    margin-bottom: 4px;
+}
+
+#TOC a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--color-secundari);
+    font-size: 0.9rem;
+}
+
+#TOC a:hover {
+    background: #eef2ff;
+    color: var(--color-primari);
+}
+
+/* CONTINGUT */
+main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    width: 100%;
+    max-width: 850px;
+    padding: 40px 30px;
+}
+
+/* =========================
+   TIPOGRAFIA
+   ========================= */
+
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-bord);
+    padding-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin-top: 40px;
+    margin-bottom: 12px;
+    color: var(--color-primari);
+}
+
+h3 {
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+p {
+    margin: 12px 0;
+}
+
+/* LINKS */
+a {
+    color: var(--color-primari);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   CODI (IMPORTANT)
+   ========================= */
+
+pre {
+    background: #0f172a;
+    color: #e5e7eb;
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+code {
+    background: #e5e7eb;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+}
+
+/* =========================
+   BLOCKQUOTE (molt important)
+   ========================= */
+
+blockquote {
+    border-left: 4px solid var(--color-primari);
+    background: #eff6ff;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 0 10px 10px 0;
+}
+
+/* =========================
+   TAULES
+   ========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th {
+    background: #f3f4f6;
+    text-align: left;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    border-top: 1px solid var(--color-bord);
+}
+
+/* =========================
+   IMATGES
+   ========================= */
+
+img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 900px) {
+    nav {
+        display: none;
+    }
+
+    .content {
+        padding: 20px;
+    }
+}
+
+
+.logo-img {
+    height: 40px;
+}
+
+/* SIDEBAR SECCIONS */
+.doc-info {
+    font-size: 0.85rem;
+    color: #374151;
+}
+
+.actions button {
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background: #1d4ed8;
+}
