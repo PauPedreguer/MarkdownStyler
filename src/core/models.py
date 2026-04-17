@@ -7,3 +7,4 @@ class ExportOptions:
     css_path: str
     title: str
     data: str
+    primary_color: str = "#2563eb"

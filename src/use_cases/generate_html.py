@@ -8,7 +8,8 @@ def execute_export(options: ExportOptions) -> None:
     metadata = {
         **config,
         "title": options.title,
-        "data": options.data
+        "data": options.data,
+        "primary_color": options.primary_color
     }
     
     convert_markdown(

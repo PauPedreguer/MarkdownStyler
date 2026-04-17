@@ -32,6 +32,10 @@ class App(QMainWindow):
         self.layout.setSpacing(18)
         self.layout.setContentsMargins(40, 40, 40, 40)
         
+        # Estat de color
+        self.selected_color = "#1d4ed8" # Blau Professional per defecte
+        self.color_buttons = []
+        
         tools_layout = QHBoxLayout()
         tools_layout.addStretch()
         settings_btn = QPushButton("⚙️ Ajustos")
@@ -66,6 +70,37 @@ class App(QMainWindow):
         self.layout.addWidget(QLabel("Data:"))
         self.data_input = QLineEdit(datetime.now().strftime("%d-%m-%Y"))
         self.layout.addWidget(self.data_input)
+        
+        # Presets de color
+        self.layout.addWidget(QLabel("Color d'identitat:"))
+        colors_layout = QHBoxLayout()
+        colors_layout.setSpacing(10)
+        
+        presets = [
+            ("#1d4ed8", "Blau"),
+            ("#047857", "Verd"),
+            ("#b91c1c", "Vermell"),
+            ("#b45309", "Taronja"),
+            ("#6d28d9", "Violeta")
+        ]
+        
+        for hex_color, name in presets:
+            btn = QPushButton()
+            btn.setFixedSize(32, 32)
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn.setToolTip(name)
+            btn.setProperty("hex", hex_color)
+            
+            # Estat inicial
+            border = "3px solid #111827" if hex_color == self.selected_color else "none"
+            btn.setStyleSheet(f"background-color: {hex_color}; border-radius: 16px; border: {border};")
+            
+            btn.clicked.connect(lambda checked, c=hex_color, b=btn: self.select_color(c, b))
+            colors_layout.addWidget(btn)
+            self.color_buttons.append(btn)
+            
+        colors_layout.addStretch()
+        self.layout.addLayout(colors_layout)
         
         self.layout.addStretch()
         
@@ -115,6 +150,14 @@ class App(QMainWindow):
         if not self.title_input.text():
             self.title_input.setText(Path(file_path).stem)
 
+    def select_color(self, hex_color, button):
+        self.selected_color = hex_color
+        # Actualitzar estils visuals dels botons
+        for btn in self.color_buttons:
+            c = btn.property("hex")
+            border = "3px solid #111827" if c == self.selected_color else "none"
+            btn.setStyleSheet(f"background-color: {c}; border-radius: 16px; border: {border};")
+
     def open_settings(self):
         dialog = SettingsDialog(self)
         dialog.exec()
@@ -148,7 +191,8 @@ class App(QMainWindow):
                 output_path=output,
                 css_path=css_path,
                 title=self.title_input.text(),
-                data=self.data_input.text()
+                data=self.data_input.text(),
+                primary_color=self.selected_color
             )
             execute_export(options)
             self.signals.finished.emit(output)

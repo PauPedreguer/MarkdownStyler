@@ -200,8 +200,8 @@ body {
     overflow-x: hidden;
     position: sticky;
     top: 70px;
-    background: #f8fbff; /* Blau molt tènue per integrar amb l'estil */
-    border-right: 1px solid rgba(37, 99, 235, 0.1); /* To suau basat en el primari */
+    background: color-mix(in srgb, var(--color-primari), white 97%); /* Tint suau dinàmic */
+    border-right: 1px solid color-mix(in srgb, var(--color-primari), transparent 90%);
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -221,7 +221,7 @@ body.sidebar-collapsed {
 
 .sidebar-section {
     padding: 25px 20px;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.05);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primari), transparent 95%);
 }
 
 .section-title {
@@ -284,7 +284,7 @@ body.sidebar-collapsed {
 }
 
 .toc a:hover {
-    background: #eff6ff;
+    background: color-mix(in srgb, var(--color-primari), white 90%);
     color: var(--color-primari);
     padding-left: 16px;
 }
@@ -294,7 +294,7 @@ body.sidebar-collapsed {
     padding-left: 15px;
     margin-top: 2px;
     border-left: 2px solid var(--color-primari);
-    border-left-color: rgba(37, 99, 235, 0.15); /* Guies integrades amb el color primari */
+    border-left-color: color-mix(in srgb, var(--color-primari), transparent 85%); /* Guia dinàmica */
     margin-left: 10px;
 }
 
@@ -403,6 +403,9 @@ p {
     margin: 1.2rem 0;
     line-height: 1.7;
     color: #374151;
+    text-align: justify;
+    hyphens: auto;
+    text-justify: inter-word;
 }
 
 .content ul, .content ol {
@@ -414,6 +417,8 @@ p {
     margin-bottom: 0.6rem;
     line-height: 1.7;
     color: #374151;
+    text-align: justify;
+    hyphens: auto;
 }
 
 .content li > p {
@@ -503,7 +508,7 @@ pre code {
 
 blockquote {
     border-left: 4px solid var(--color-primari);
-    background: #eff6ff;
+    background: color-mix(in srgb, var(--color-primari), white 96%);
     padding: 16px;
     margin: 20px 0;
     border-radius: 0 10px 10px 0;
@@ -557,7 +562,7 @@ td {
 }
 
 tr:nth-child(even) {
-    background: #f8fbff; /* Zebra suavitzat amb el blau estil */
+    background: color-mix(in srgb, var(--color-primari), white 97%); /* Zebra dinàmic suavitzat */
 }
 
 tr:hover td {
