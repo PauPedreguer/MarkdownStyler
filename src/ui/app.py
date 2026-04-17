@@ -64,7 +64,7 @@ class App(QMainWindow):
         self.layout.addWidget(self.title_input)
         
         self.layout.addWidget(QLabel("Data:"))
-        self.data_input = QLineEdit(datetime.now().strftime("%Y-%m-%d"))
+        self.data_input = QLineEdit(datetime.now().strftime("%d-%m-%Y"))
         self.layout.addWidget(self.data_input)
         
         self.layout.addStretch()
