@@ -6,7 +6,7 @@ import threading
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QComboBox, QFileDialog, QMessageBox
+    QLabel, QLineEdit, QPushButton, QComboBox, QFileDialog, QMessageBox, QScrollArea
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 from PyQt6.QtGui import QDragEnterEvent, QDropEvent
@@ -24,13 +24,20 @@ class App(QMainWindow):
         super().__init__()
         self.setAcceptDrops(True)
         self.setWindowTitle("Markdown Styler Premium")
-        self.setMinimumSize(550, 700)
+        self.setMinimumSize(450, 600)
         
-        self.centralwidget = QWidget()
-        self.setCentralWidget(self.centralwidget)
-        self.layout = QVBoxLayout(self.centralwidget)
+        # --- Contenidor Scrollable ---
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+        self.setCentralWidget(self.scroll)
+        
+        self.container = QWidget()
+        self.scroll.setWidget(self.container)
+        
+        self.layout = QVBoxLayout(self.container)
         self.layout.setSpacing(18)
-        self.layout.setContentsMargins(40, 40, 40, 40)
+        self.layout.setContentsMargins(30, 30, 30, 30)
 
         # Capçalera Premium
         header_widget = QWidget()
@@ -38,8 +45,11 @@ class App(QMainWindow):
         header_layout.setContentsMargins(0, 0, 0, 10)
         
         main_title = QLabel("Markdown Styler")
-        main_title.setStyleSheet("font-size: 28px; font-weight: 800; color: #111827;")
+        main_title.setWordWrap(True)
+        main_title.setStyleSheet("font-size: 24px; font-weight: 800; color: #111827;")
+        
         sub_title = QLabel("Editor de Pràctiques Digitals")
+        sub_title.setWordWrap(True)
         sub_title.setStyleSheet("font-size: 14px; color: #6b7280; font-weight: normal;")
         
         header_layout.addWidget(main_title)

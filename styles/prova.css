@@ -56,15 +56,17 @@ body {
 
 /* HEADER SUPERIOR */
 .header {
-    height: 70px;
+    min-height: 55px;
     background: #ffffff;
     border-bottom: 1px solid var(--color-bord);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    padding: 0 40px;
+    padding: 8px 40px;
     position: sticky;
     top: 0;
     z-index: 1000;
+    gap: 15px;
 }
 
 .header-left {
@@ -584,12 +586,45 @@ img {
    ========================= */
 
 @media (max-width: 900px) {
-    nav {
+    .header {
+        flex-direction: column;
+        padding: 12px;
+        text-align: center;
+        gap: 8px;
+        height: auto;
+    }
+
+    .header-left, .header-center, .header-right {
+        flex: none;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header-right {
+        border-top: 1px solid var(--color-bord);
+        padding-top: 10px;
+    }
+
+    .main-title {
+        font-size: 1.2rem;
+    }
+
+    .sidebar {
         display: none;
     }
 
+    #sidebar-toggle {
+        display: none;
+    }
+
+    main {
+        padding: 20px 15px;
+    }
+
     .content {
-        padding: 20px;
+        padding: 25px 20px;
+        border-radius: 8px;
     }
 }
 

@@ -1,9 +1,13 @@
 import sys
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import Qt
 from src.ui.app import App
 
 if __name__ == "__main__":
+    # Suport per a pantalles de alta resolució (Retina/4K)
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    
     app_qt = QApplication(sys.argv)
     
     style_path = Path("src/ui/style.qss")
