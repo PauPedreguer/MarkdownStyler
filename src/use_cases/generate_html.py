@@ -16,5 +16,6 @@ def execute_export(options: ExportOptions) -> None:
         md_path=options.md_path,
         output_path=options.output_path,
         css_path=options.css_path,
+        template_path=options.template_path,
         metadata=metadata
     )

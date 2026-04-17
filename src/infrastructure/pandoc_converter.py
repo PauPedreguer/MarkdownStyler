@@ -2,10 +2,9 @@ import subprocess
 from typing import Dict, Any
 from pathlib import Path
 
-def convert_markdown(md_path: str, output_path: str, css_path: str, metadata: Dict[str, Any]):
+def convert_markdown(md_path: str, output_path: str, css_path: str, template_path: str, metadata: Dict[str, Any]):
     current_dir = Path(__file__).parent.parent.parent # Arrel del projecte
-    template_path = (current_dir / "templates" / "base.html").absolute()
-
+    
     cmd = [
         "pandoc",
         md_path,
@@ -16,7 +15,7 @@ def convert_markdown(md_path: str, output_path: str, css_path: str, metadata: Di
         "--toc",
         "--toc-depth=3",
         "--highlight-style=zenburn",
-        f"--template={template_path}",
+        f"--template={Path(template_path).absolute()}",
         f"--resource-path=.:{current_dir}:{current_dir}/templates" 
     ]
 

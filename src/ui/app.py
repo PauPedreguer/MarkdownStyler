@@ -1,5 +1,5 @@
-import os
 import sys
+import shutil
 from pathlib import Path
 from datetime import datetime
 import threading
@@ -59,9 +59,30 @@ class App(QMainWindow):
         self.layout.addWidget(self.drop_zone)
         
         self.layout.addWidget(QLabel("Estil CSS:"))
+        style_layout = QHBoxLayout()
         self.style_combo = QComboBox()
         self.load_styles()
-        self.layout.addWidget(self.style_combo)
+        self.add_style_btn = QPushButton("+")
+        self.add_style_btn.setFixedSize(36, 40)
+        self.add_style_btn.setProperty("class", "secondary")
+        self.add_style_btn.setToolTip("Afegeix un nou estil .css")
+        self.add_style_btn.clicked.connect(self.import_style)
+        style_layout.addWidget(self.style_combo)
+        style_layout.addWidget(self.add_style_btn)
+        self.layout.addLayout(style_layout)
+        
+        self.layout.addWidget(QLabel("Plantilla HTML:"))
+        template_layout = QHBoxLayout()
+        self.template_combo = QComboBox()
+        self.load_templates()
+        self.add_template_btn = QPushButton("+")
+        self.add_template_btn.setFixedSize(36, 40)
+        self.add_template_btn.setProperty("class", "secondary")
+        self.add_template_btn.setToolTip("Afegeix una nova plantilla .html")
+        self.add_template_btn.clicked.connect(self.import_template)
+        template_layout.addWidget(self.template_combo)
+        template_layout.addWidget(self.add_template_btn)
+        self.layout.addLayout(template_layout)
         
         self.layout.addWidget(QLabel("Títol de la pràctica:"))
         self.title_input = QLineEdit()
@@ -135,10 +156,50 @@ class App(QMainWindow):
                 return
 
     def load_styles(self):
+        self.style_combo.clear()
         styles_dir = Path("styles")
         if styles_dir.exists():
             for f in sorted(styles_dir.glob("*.css")):
                 self.style_combo.addItem(f.name)
+
+    def load_templates(self):
+        self.template_combo.clear()
+        templates_dir = Path("templates")
+        if templates_dir.exists():
+            for f in sorted(templates_dir.glob("*.html")):
+                self.template_combo.addItem(f.name)
+
+    def import_style(self):
+        self.import_resource("styles", "*.css", "Estil CSS", self.load_styles, self.style_combo)
+
+    def import_template(self):
+        self.import_resource("templates", "*.html", "Plantilla HTML", self.load_templates, self.template_combo)
+
+    def import_resource(self, target_dir, file_filter, resource_name, refresh_callback, combo):
+        file, _ = QFileDialog.getOpenFileName(self, f"Importar {resource_name}", "", f"{resource_name} ({file_filter})")
+        if not file:
+            return
+            
+        dest_dir = Path(target_dir)
+        dest_dir.mkdir(exist_ok=True)
+        dest_path = dest_dir / Path(file).name
+        
+        if dest_path.exists():
+            reply = QMessageBox.question(self, "Substituir", f"El fitxer '{dest_path.name}' ja existeix. Vols substituir-lo?", 
+                                       QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if reply == QMessageBox.StandardButton.No:
+                return
+        
+        try:
+            shutil.copy(file, dest_path)
+            refresh_callback()
+            # Seleccionar automàticament el nou recurs
+            index = combo.findText(dest_path.name)
+            if index >= 0:
+                combo.setCurrentIndex(index)
+            QMessageBox.information(self, "Èxit", f"{resource_name} importat correctament.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No s'ha pogut importar el recurs: {str(e)}")
 
     def select_md(self):
         file, _ = QFileDialog.getOpenFileName(self, "Obrir Markdown", "", "Markdown (*.md)")
@@ -185,11 +246,16 @@ class App(QMainWindow):
         if self.style_combo.currentText():
             css_path = f"styles/{self.style_combo.currentText()}"
 
+        template_path = "templates/base.html" # Default
+        if self.template_combo.currentText():
+            template_path = f"templates/{self.template_combo.currentText()}"
+
         try:
             options = ExportOptions(
                 md_path=md,
                 output_path=output,
                 css_path=css_path,
+                template_path=template_path,
                 title=self.title_input.text(),
                 data=self.data_input.text(),
                 primary_color=self.selected_color
