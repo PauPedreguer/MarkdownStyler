@@ -12,11 +12,11 @@
 --color-text: #1f2937;
 --color-secundari: #64748b;
 --color-bord: #e5e7eb;
---color-guia: #1e293b; 
+--color-guia: #1e293b;
 --font-principal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 --font-mono: "Source Code Pro", monospace;
 --sidebar-width: 280px;
-
+--header-height: 65px;
 }
 
 * {
@@ -47,7 +47,7 @@ background: #9ca3af;
 }
 
 .header {
-min-height: 55px;
+min-height: var(--header-height);
 background: #ffffff;
 border-bottom: 1px solid var(--color-bord);
 display: flex;
@@ -67,7 +67,7 @@ flex: 1;
 #sidebar-toggle {
 position: fixed;
 left: var(--sidebar-width);
-top: 90px;
+top: calc(var(--header-height) + 25px);
 z-index: 900;
 width: 40px;
 height: 40px;
@@ -164,17 +164,17 @@ gap: 6px;
 .layout {
 display: flex;
 position: relative;
-min-height: calc(100vh - 70px);
+min-height: calc(100vh - var(--header-height));
 }
 
 .sidebar {
 width: var(--sidebar-width);
 min-width: var(--sidebar-width);
-height: calc(100vh - 70px);
+height: calc(100vh - var(--header-height));
 overflow-y: auto;
 overflow-x: hidden;
 position: sticky;
-top: 70px;
+top: var(--header-height);
 background: color-mix(in srgb, var(--color-primari), white 97%); 
 border-right: 1px solid color-mix(in srgb, var(--color-primari), transparent 90%);
 padding: 0;
@@ -317,7 +317,7 @@ font-size: 2.2rem;
 margin-bottom: 20px;
 padding-bottom: 10px;
 color: var(--color-primari);
-scroll-margin-top: 90px;
+scroll-margin-top: calc(var(--header-height) + 20px);
 position: relative;
 }
 h1::after {
@@ -333,14 +333,14 @@ font-size: 1.6rem;
 margin-top: 45px;
 margin-bottom: 12px;
 color: var(--color-primari);
-scroll-margin-top: 90px;
+scroll-margin-top: calc(var(--header-height) + 20px);
 }
 h3 {
 margin-top: 30px;
 margin-bottom: 10px;
 color: var(--color-primari);
 font-size: 1.3rem;
-scroll-margin-top: 90px;
+scroll-margin-top: calc(var(--header-height) + 20px);
 }
 h4 { margin-top: 25px; margin-bottom: 10px; color: var(--color-primari); font-size: 1.15rem; }
 h5 { margin-top: 20px; margin-bottom: 8px; color: var(--color-primari); font-size: 1.05rem; }
@@ -493,6 +493,7 @@ margin: 20px 0;
 
 @media (max-width: 900px) {
 .header {
+position: relative; 
 flex-direction: column;
 padding: 12px;
 text-align: center;
@@ -692,7 +693,7 @@ Informàtics</span>
 Server</span>
         </div>
         <div class="meta-item">
-            <span class="icon">📅</span> <span>17-04-2026</span>
+            <span class="icon">📅</span> <span>2025-2026</span>
         </div>
     </div>
 </div>
@@ -904,6 +905,20 @@ Server</span>
 </div>
 
 <script>document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 0. DYNAMIC HEADER HEIGHT SYNC ---
+    // Mesura l'alçada real del header i actualitza la variable CSS
+    // perquè la sidebar i els ancoratges s'ajusten exactament.
+    function syncHeaderHeight() {
+        const header = document.querySelector('.header');
+        if (header) {
+            const h = header.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--header-height', h + 'px');
+        }
+    }
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
+
     // --- 1. SIDEBAR TOGGLE LOGIC ---
     const sidebarToggle = document.getElementById('sidebar-toggle');
     if (sidebarToggle) {

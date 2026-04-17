@@ -6,5 +6,6 @@
   "professor": "Pau Palacios Server",
   "css_name": "prova.css",
   "template_name": "base.html",
-  "js_name": "script.js"
+  "js_name": "script.js",
+  "highlight_style": "zenburn"
 }

@@ -49,9 +49,25 @@ class SettingsDialog(QDialog):
         style_layout = QHBoxLayout()
         self.style_combo = QComboBox()
         self.load_styles()
-        # Seleccionar valor guardat
-        idx = self.style_combo.findText(self.config.get("css_name", ""))
-        if idx >= 0: self.style_combo.setCurrentIndex(idx)
+        
+        # Seleccionar estils actuals als combos
+        idx_style = self.style_combo.findText(self.config.get("css_name", "prova.css"))
+        if idx_style >= 0: self.style_combo.setCurrentIndex(idx_style)
+        
+        self.template_combo = QComboBox()
+        self.load_templates()
+        idx_temp = self.template_combo.findText(self.config.get("template_name", "base.html"))
+        if idx_temp >= 0: self.template_combo.setCurrentIndex(idx_temp)
+        
+        self.script_combo = QComboBox()
+        self.load_scripts()
+        idx_script = self.script_combo.findText(self.config.get("js_name", "script.js"))
+        if idx_script >= 0: self.script_combo.setCurrentIndex(idx_script)
+
+        self.highlight_combo = QComboBox()
+        self.highlight_combo.addItems(["pygments", "tango", "espresso", "zenburn", "kate", "monochrome", "breezedark", "haddock"])
+        idx_h = self.highlight_combo.findText(self.config.get("highlight_style", "zenburn"))
+        if idx_h >= 0: self.highlight_combo.setCurrentIndex(idx_h)
         
         self.add_style_btn = QPushButton("+")
         self.add_style_btn.setFixedSize(30, 30)
@@ -63,11 +79,6 @@ class SettingsDialog(QDialog):
         
         # Plantilla HTML
         template_layout = QHBoxLayout()
-        self.template_combo = QComboBox()
-        self.load_templates()
-        idx = self.template_combo.findText(self.config.get("template_name", ""))
-        if idx >= 0: self.template_combo.setCurrentIndex(idx)
-        
         self.add_template_btn = QPushButton("+")
         self.add_template_btn.setFixedSize(30, 30)
         self.add_template_btn.setProperty("class", "secondary")
@@ -78,11 +89,6 @@ class SettingsDialog(QDialog):
         
         # Script JS
         script_layout = QHBoxLayout()
-        self.script_combo = QComboBox()
-        self.load_scripts()
-        idx = self.script_combo.findText(self.config.get("js_name", ""))
-        if idx >= 0: self.script_combo.setCurrentIndex(idx)
-        
         self.add_script_btn = QPushButton("+")
         self.add_script_btn.setFixedSize(30, 30)
         self.add_script_btn.setProperty("class", "secondary")
@@ -92,6 +98,8 @@ class SettingsDialog(QDialog):
         layout.addRow(QLabel("Script JS:"), script_layout)
         
         layout.addRow(QLabel("<br>"))
+        # Estil de Codi (Highlight)
+        layout.addRow(QLabel("Ressaltat de codi:"), self.highlight_combo)
         
         save_btn = PrimaryButton("Desar Ajustos")
         save_btn.clicked.connect(self.save_config)
@@ -163,7 +171,8 @@ class SettingsDialog(QDialog):
             "professor": self.prof_input.text(),
             "css_name": self.style_combo.currentText(),
             "template_name": self.template_combo.currentText(),
-            "js_name": self.script_combo.currentText()
+            "js_name": self.script_combo.currentText(),
+            "highlight_style": self.highlight_combo.currentText()
         }
         save_institut_config(new_config)
         QMessageBox.information(self, "Guardat", "S'han desat els ajustos de manera persistent.")

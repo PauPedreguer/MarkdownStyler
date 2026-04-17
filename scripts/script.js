@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 0. DYNAMIC HEADER HEIGHT SYNC ---
+    // Mesura l'alçada real del header i actualitza la variable CSS
+    // perquè la sidebar i els ancoratges s'ajusten exactament.
+    function syncHeaderHeight() {
+        const header = document.querySelector('.header');
+        if (header) {
+            const h = header.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--header-height', h + 'px');
+        }
+    }
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
+
     // --- 1. SIDEBAR TOGGLE LOGIC ---
     const sidebarToggle = document.getElementById('sidebar-toggle');
     if (sidebarToggle) {

@@ -7,6 +7,7 @@ class ExportOptions:
     css_path: str
     template_path: str
     js_path: str
+    highlight_style: str
     title: str
     data: str
     primary_color: str = "#1d4ed8"

@@ -9,13 +9,11 @@
     --color-text: #1f2937;
     --color-secundari: #64748b;
     --color-bord: #e5e7eb;
-    --color-guia: #1e293b; /* Blau molt fosc i professional per a línies de guia */
-
+    --color-guia: #1e293b;
     --font-principal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: "Source Code Pro", monospace;
     --sidebar-width: 280px;
-
-    /* Jerarquia d'Encapçalaments Unificada al Color Primari */
+    --header-height: 65px;
 }
 
 /* RESET */
@@ -56,7 +54,7 @@ body {
 
 /* HEADER SUPERIOR */
 .header {
-    min-height: 55px;
+    min-height: var(--header-height);
     background: #ffffff;
     border-bottom: 1px solid var(--color-bord);
     display: flex;
@@ -78,7 +76,7 @@ body {
 #sidebar-toggle {
     position: fixed;
     left: var(--sidebar-width);
-    top: 90px;
+    top: calc(var(--header-height) + 25px);
     z-index: 900;
     width: 40px;
     height: 40px;
@@ -190,18 +188,18 @@ body {
 .layout {
     display: flex;
     position: relative;
-    min-height: calc(100vh - 70px);
+    min-height: calc(100vh - var(--header-height));
 }
 
 /* SIDEBAR */
 .sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
-    height: calc(100vh - 70px);
+    height: calc(100vh - var(--header-height));
     overflow-y: auto;
     overflow-x: hidden;
     position: sticky;
-    top: 70px;
+    top: var(--header-height);
     background: color-mix(in srgb, var(--color-primari), white 97%); /* Tint suau dinàmic */
     border-right: 1px solid color-mix(in srgb, var(--color-primari), transparent 90%);
     padding: 0;
@@ -368,7 +366,7 @@ h1 {
     margin-bottom: 20px;
     padding-bottom: 10px;
     color: var(--color-primari);
-    scroll-margin-top: 90px;
+    scroll-margin-top: calc(var(--header-height) + 20px);
     position: relative;
 }
 
@@ -386,7 +384,7 @@ h2 {
     margin-top: 45px;
     margin-bottom: 12px;
     color: var(--color-primari);
-    scroll-margin-top: 90px;
+    scroll-margin-top: calc(var(--header-height) + 20px);
 }
 
 h3 {
@@ -394,7 +392,7 @@ h3 {
     margin-bottom: 10px;
     color: var(--color-primari);
     font-size: 1.3rem;
-    scroll-margin-top: 90px;
+    scroll-margin-top: calc(var(--header-height) + 20px);
 }
 
 h4 { margin-top: 25px; margin-bottom: 10px; color: var(--color-primari); font-size: 1.15rem; }
@@ -587,6 +585,7 @@ img {
 
 @media (max-width: 900px) {
     .header {
+        position: relative; /* Alliberem el flux per evitar tapes en mòbil */
         flex-direction: column;
         padding: 12px;
         text-align: center;

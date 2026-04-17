@@ -207,12 +207,15 @@ class App(QMainWindow):
             js_name = config.get("js_name", "script.js")
             js_path = f"scripts/{js_name}" if js_name else "scripts/script.js"
 
+            highlight_style = config.get("highlight_style", "zenburn")
+
             options = ExportOptions(
                 md_path=md,
                 output_path=output,
                 css_path=css_path,
                 template_path=template_path,
                 js_path=js_path,
+                highlight_style=highlight_style,
                 title=self.title_input.text(),
                 data=self.data_input.text(),
                 primary_color=self.selected_color
