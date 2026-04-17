@@ -2,19 +2,20 @@
 <html lang="ca">
 <head>
     <meta charset="utf-8">
-    <title>Examen SI</title>
+    <title>Práctica sistemes</title>
 
         <style type="text/css">
 :root {
---color-primari: #2563eb;
+--color-primari: hsl(221, 65%, 40%); 
 --color-fons: #f9fafb;
 --color-superficie: #ffffff;
 --color-text: #1f2937;
---color-secundari: #6b7280;
+--color-secundari: #64748b;
 --color-bord: #e5e7eb;
 --font-principal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 --font-mono: "Source Code Pro", monospace;
 --sidebar-width: 280px;
+
 }
 
 * {
@@ -46,8 +47,7 @@ background: #9ca3af;
 
 .header {
 height: 70px;
-background: rgba(255, 255, 255, 0.85);
-backdrop-filter: blur(10px);
+background: #ffffff;
 border-bottom: 1px solid var(--color-bord);
 display: flex;
 align-items: center;
@@ -172,8 +172,8 @@ overflow-y: auto;
 overflow-x: hidden;
 position: sticky;
 top: 70px;
-background: #fdfdfd;
-border-right: 1px solid var(--color-bord);
+background: #f8fbff; 
+border-right: 1px solid rgba(30, 58, 138, 0.1);
 padding: 0;
 display: flex;
 flex-direction: column;
@@ -190,14 +190,15 @@ border-right-width: 0;
 }
 .sidebar-section {
 padding: 25px 20px;
-border-bottom: 1px solid #f3f4f6;
+border-bottom: 1px solid rgba(30, 58, 138, 0.05);
 }
 .section-title {
 font-size: 0.7rem;
 font-weight: 800;
-color: #9ca3af;
+color: var(--color-primari); 
 letter-spacing: 0.1em;
 margin-bottom: 15px;
+opacity: 0.8;
 }
 
 .toc-container {
@@ -251,7 +252,7 @@ padding-left: 16px;
 .toc ul ul {
 padding-left: 15px;
 margin-top: 2px;
-border-left: 1px solid #f3f4f6;
+border-left: 2px solid rgba(30, 58, 138, 0.08); 
 margin-left: 10px;
 }
 
@@ -274,50 +275,64 @@ width: 100%;
 padding: 12px;
 background: white;
 border: 1px solid var(--color-bord);
-border-radius: 8px;
-font-weight: bold;
-color: var(--color-secundari);
+border-radius: 10px;
+color: var(--color-text);
+font-weight: 600;
 cursor: pointer;
 transition: all 0.2s;
-font-size: 0.85rem;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
 }
 .print-btn:hover {
-background: #f9fafb;
+background: #f8fafc;
 border-color: var(--color-primari);
 color: var(--color-primari);
 }
 
 main {
 flex: 1;
-min-width: 0;
+padding: 60px 80px;
 display: flex;
 justify-content: center;
+transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .content {
-width: 100%;
 max-width: 850px;
-padding: 40px 30px;
+width: 100%;
+background: var(--color-superficie);
+padding: 60px;
+border-radius: 16px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+border: 1px solid var(--color-bord);
 }
 
 h1 {
 font-size: 2.2rem;
 margin-bottom: 20px;
-border-bottom: 1px solid var(--color-bord);
-padding-bottom: 10px;
+border-bottom: 2px solid var(--color-bord);
+padding-bottom: 15px;
+color: var(--color-primari);
 scroll-margin-top: 90px;
 }
 h2 {
 font-size: 1.6rem;
-margin-top: 40px;
+margin-top: 45px;
 margin-bottom: 12px;
 color: var(--color-primari);
 scroll-margin-top: 90px;
 }
 h3 {
-margin-top: 24px;
-margin-bottom: 8px;
+margin-top: 30px;
+margin-bottom: 10px;
+color: var(--color-primari);
+font-size: 1.3rem;
 scroll-margin-top: 90px;
 }
+h4 { margin-top: 25px; margin-bottom: 10px; color: var(--color-primari); font-size: 1.15rem; }
+h5 { margin-top: 20px; margin-bottom: 8px; color: var(--color-primari); font-size: 1.05rem; }
+h6 { margin-top: 20px; margin-bottom: 8px; color: var(--color-primari); font-size: 1rem; }
 p {
 margin: 1.2rem 0;
 line-height: 1.7;
@@ -457,7 +472,112 @@ cursor: pointer;
 }
 .actions button:hover {
 background: #1d4ed8;
-}</style>
+}
+
+@media print {
+.sidebar,
+#sidebar-toggle,
+.sidebar-footer,
+.copy-code-btn,
+.print-btn {
+display: none !important;
+}
+.layout {
+display: block;
+}
+main {
+padding: 0;
+margin: 0;
+}
+.content {
+max-width: 100%;
+padding: 0;
+box-shadow: none;
+border: none;
+}
+.header {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+background: white;
+border-bottom: 2px solid #000;
+padding: 0 20px;
+height: 50px;
+z-index: 1000;
+display: flex;
+align-items: center;
+gap: 0;
+}
+.header-left {
+flex: none;
+gap: 10px;
+}
+.header-center {
+flex: none;
+text-align: left;
+padding-left: 20px;
+margin-left: 10px;
+border-left: 1px solid rgba(0,0,0,0.1);
+}
+.header-right {
+margin-left: auto;
+flex: none;
+}
+.logo-img {
+height: 30px;
+}
+.institut-info {
+line-height: 1.1;
+}
+.institut-name {
+font-size: 0.7rem;
+}
+.header-subtitle {
+gap: 5px;
+}
+.subject-name {
+font-size: 0.65rem;
+}
+.badget-curs {
+padding: 2px 6px;
+font-size: 0.55rem;
+}
+.main-title {
+font-size: 1rem;
+}
+.meta-item {
+font-size: 0.65rem;
+gap: 3px;
+}
+.layout {
+display: block;
+margin-top: 70px; 
+}
+main {
+padding: 0;
+margin: 0;
+display: block;
+}
+.content {
+max-width: 100%;
+padding: 0;
+box-shadow: none;
+border: none;
+}
+
+pre, blockquote, table, img {
+page-break-inside: avoid;
+}
+a {
+text-decoration: none;
+color: #000;
+}
+@page {
+margin: 15mm;
+}
+}
+</style>
 
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -483,7 +603,7 @@ informàtics</span>
     </div>
 
     <div class="header-center">
-        <h1 class="main-title">Examen SI</h1>
+        <h1 class="main-title">Práctica sistemes</h1>
     </div>
 
     <div class="header-right">
