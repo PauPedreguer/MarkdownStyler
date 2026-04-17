@@ -15,3 +15,4 @@ if __name__ == "__main__":
     window = App()
     window.show()
     sys.exit(app_qt.exec())
+    

@@ -2,9 +2,13 @@ import subprocess
 from typing import Dict, Any
 from pathlib import Path
 
-def convert_markdown(md_path: str, output_path: str, css_path: str, template_path: str, metadata: Dict[str, Any]):
+def convert_markdown(md_path: str, output_path: str, css_path: str, template_path: str, js_path: str, metadata: Dict[str, Any]):
     current_dir = Path(__file__).parent.parent.parent # Arrel del projecte
     
+    # Afegir el JS a la metadata per a la plantilla
+    if js_path:
+        metadata["js"] = str(Path(js_path).absolute())
+
     cmd = [
         "pandoc",
         md_path,
@@ -16,7 +20,7 @@ def convert_markdown(md_path: str, output_path: str, css_path: str, template_pat
         "--toc-depth=3",
         "--highlight-style=zenburn",
         f"--template={Path(template_path).absolute()}",
-        f"--resource-path=.:{current_dir}:{current_dir}/templates" 
+        f"--resource-path=.:{current_dir}:{current_dir}/templates:{current_dir}/scripts" 
     ]
 
     if css_path:

@@ -83,6 +83,19 @@ class App(QMainWindow):
         template_layout.addWidget(self.template_combo)
         template_layout.addWidget(self.add_template_btn)
         self.layout.addLayout(template_layout)
+
+        self.layout.addWidget(QLabel("Script JS:"))
+        script_layout = QHBoxLayout()
+        self.script_combo = QComboBox()
+        self.load_scripts()
+        self.add_script_btn = QPushButton("+")
+        self.add_script_btn.setFixedSize(36, 40)
+        self.add_script_btn.setProperty("class", "secondary")
+        self.add_script_btn.setToolTip("Afegeix un nou script .js")
+        self.add_script_btn.clicked.connect(self.import_script)
+        script_layout.addWidget(self.script_combo)
+        script_layout.addWidget(self.add_script_btn)
+        self.layout.addLayout(script_layout)
         
         self.layout.addWidget(QLabel("Títol de la pràctica:"))
         self.title_input = QLineEdit()
@@ -169,11 +182,21 @@ class App(QMainWindow):
             for f in sorted(templates_dir.glob("*.html")):
                 self.template_combo.addItem(f.name)
 
+    def load_scripts(self):
+        self.script_combo.clear()
+        scripts_dir = Path("scripts")
+        if scripts_dir.exists():
+            for f in sorted(scripts_dir.glob("*.js")):
+                self.script_combo.addItem(f.name)
+
     def import_style(self):
         self.import_resource("styles", "*.css", "Estil CSS", self.load_styles, self.style_combo)
 
     def import_template(self):
         self.import_resource("templates", "*.html", "Plantilla HTML", self.load_templates, self.template_combo)
+
+    def import_script(self):
+        self.import_resource("scripts", "*.js", "Script JS", self.load_scripts, self.script_combo)
 
     def import_resource(self, target_dir, file_filter, resource_name, refresh_callback, combo):
         file, _ = QFileDialog.getOpenFileName(self, f"Importar {resource_name}", "", f"{resource_name} ({file_filter})")
@@ -238,24 +261,29 @@ class App(QMainWindow):
         threading.Thread(target=self._export_thread, args=(output_dir,), daemon=True).start()
 
     def _export_thread(self, output_dir):
-        md = self.md_path_input.text()
-        base = Path(md).stem
-        output = os.path.join(output_dir, f"{base}.html")
-        
-        css_path = ""
-        if self.style_combo.currentText():
-            css_path = f"styles/{self.style_combo.currentText()}"
-
-        template_path = "templates/base.html" # Default
-        if self.template_combo.currentText():
-            template_path = f"templates/{self.template_combo.currentText()}"
-
         try:
+            md = self.md_path_input.text()
+            base = Path(md).stem
+            output = str(Path(output_dir) / f"{base}.html")
+            
+            css_path = ""
+            if self.style_combo.currentText():
+                css_path = f"styles/{self.style_combo.currentText()}"
+
+            template_path = "templates/base.html" # Default
+            if self.template_combo.currentText():
+                template_path = f"templates/{self.template_combo.currentText()}"
+
+            js_path = "" # Opcional
+            if self.script_combo.currentText():
+                js_path = f"scripts/{self.script_combo.currentText()}"
+
             options = ExportOptions(
                 md_path=md,
                 output_path=output,
                 css_path=css_path,
                 template_path=template_path,
+                js_path=js_path,
                 title=self.title_input.text(),
                 data=self.data_input.text(),
                 primary_color=self.selected_color
