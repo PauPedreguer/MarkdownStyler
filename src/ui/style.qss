@@ -80,3 +80,18 @@ QWidget#drop_zone_widget QLabel {
     border: none;
     background: transparent;
 }
+
+/* Section Headers (Settings Dialog) */
+.section-header {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1d4ed8;
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
+
+/* Scrollbars & Selection polish */
+QComboBox QAbstractItemView {
+    selection-background-color: #2563eb;
+    selection-color: #ffffff;
+}
