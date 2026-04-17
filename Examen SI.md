@@ -1,5 +1,7 @@
 # Examen máquinas virtuales, instalación de sistemas operativos y gestión de discos y procesos.
 
+
+
 Una vez descargado este documento se debe desconectar la conexión a la Red hasta finalizar el examen. Tampoco se podrán conectar USBs o medios extraibles una vez copiados los archivos ISO necesarios.
 
 Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtual Box ni acceder a ningún documento de memoria o documentación de las prácticas.
