@@ -1,0 +1,59 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 1. TOC COLLAPSIBLE LOGIC ---
+    const tocItems = document.querySelectorAll('.toc li');
+    
+    tocItems.forEach(item => {
+        const subList = item.querySelector('ul');
+        if (subList) {
+            // Creem el botó de toggle
+            const toggle = document.createElement('span');
+            toggle.className = 'toc-toggle';
+            toggle.innerHTML = '▾'; // Fletxa cap avall (obert)
+            
+            // Inserim el toggle abans del link
+            item.insertBefore(toggle, item.firstChild);
+            
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                item.classList.toggle('is-collapsed');
+                toggle.innerHTML = item.classList.contains('is-collapsed') ? '▸' : '▾';
+            });
+        }
+    });
+
+    // --- 2. COPY CODE BUTTON LOGIC ---
+    const codeBlocks = document.querySelectorAll('pre');
+    
+    codeBlocks.forEach(block => {
+        // Creem el contenidor per al botó si no existeix
+        const container = block.parentElement.classList.contains('sourceCode') 
+            ? block.parentElement 
+            : block;
+            
+        container.style.position = 'relative';
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-code-btn';
+        copyBtn.innerHTML = 'Copiar';
+        
+        container.appendChild(copyBtn);
+        
+        copyBtn.addEventListener('click', () => {
+            const code = block.querySelector('code') || block;
+            const text = code.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.innerHTML = 'Copiat! ✅';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = 'Copiar';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+});
+
+</script>

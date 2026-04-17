@@ -16,31 +16,45 @@
 
 <div class="header">
     <div class="header-left">
-        <img src="$institut_logo$" class="logo-img">
-        <div class="institut-info">
-            <div class="institut">$institut_nom$</div>
-            <div class="assignatura">$assignatura$ · $curs$</div>
+        <div class="logo-container">
+            <img src="$institut_logo$" class="logo-img">
+            <div class="institut-info">
+                <span class="institut-name">$institut_nom$</span>
+                <div class="header-subtitle">
+                    <span class="subject-name">$assignatura$</span>
+                    <span class="separator">·</span>
+                    <span class="badget-curs">$curs$</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="header-center">
-        $title$
+        <h1 class="main-title">$title$</h1>
     </div>
 
     <div class="header-right">
-        $professor$ · $data$
+        <div class="meta-item">
+            <span class="icon">👤</span> <span>$professor$</span>
+        </div>
+        <div class="meta-item">
+            <span class="icon">📅</span> <span>$data$</span>
+        </div>
     </div>
 </div>
 
 <div class="layout">
 
     <aside class="sidebar">
-        <div class="doc-info">
-            <p><b>$tema$</b></p>
-        </div>
+        <nav class="sidebar-section toc-container">
+            <div class="section-title">SUMARI</div>
+            <div class="toc">
+                $toc$
+            </div>
+        </nav>
 
-        <div class="toc">
-            $toc$
+        <div class="sidebar-footer">
+            <button onclick="window.print()" class="print-btn">🖨️ Imprimir pràctica</button>
         </div>
     </aside>
 
@@ -52,5 +66,6 @@
 
 </div>
 
+<script src="templates/assets/script.js"></script>
 </body>
 </html>

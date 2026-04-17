@@ -20,9 +20,7 @@ Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtua
 
 - Iso de windows 10 insertada
 
-> **Comprobación:** Mostrar las características de la máquina virtual una vez creada.
-
-## 
+> **Comprobación:** Mostrar las características de la máquina virtual una vez creada. 
 
 ## 2. Instala windows (1p)
 
@@ -54,9 +52,7 @@ Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtua
 > 
 > - Cambiar a modo pantalla completa
 > 
-> - Compartir un archivo mediante la carpeta compartida
-
-## 
+> - Compartir un archivo mediante la carpeta compartida 
 
 ## 4. Clona la máquina virtual creada (0.5p)
 
@@ -70,19 +66,13 @@ Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtua
 
 - Genera una nueva dirección MAC
 
-- 
-
-> **Comprobación:** Hay una máquina con windows en la ruta indicada
-
-## 
+> **Comprobación:** Hay una máquina con windows en la ruta indicada 
 
 ## 5. Instala linux mint en la misma máquina virtual (2p)
 
 - Instala linux mint en el mismo disco con arranque dual
 
-> **Comprobación:** Puede arrancar desde los 2 sistemas operativos 
-
-## 
+> **Comprobación:** Puede arrancar desde los 2 sistemas operativos  
 
 ## 6. Instala las guest additions en linux mint (1p)
 
@@ -96,9 +86,7 @@ Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtua
 > 
 > - Copiar y pegar un texto
 > 
-> - Cambiar a modo pantalla completa
-
-## 
+> - Cambiar a modo pantalla completa 
 
 ## 7. Crea una instantánea en Linux mint (0.5p)
 
@@ -108,17 +96,13 @@ Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtua
 
 - Restaura la instantánea anterior
 
-> **Comprobación:** Se restaura la instantánea y vuelve al fondo original sin el archivo
-
-## 
+> **Comprobación:** Se restaura la instantánea y vuelve al fondo original sin el archivo 
 
 ## 8. Revisa el activity (0.5p)
 
 - Revisar la actividad y consumo de las máquinas virtuales
 
-> Comprobación: Captura con RAM y CPU consumida por la máquina virtual arrancando en windows y en linux
-
-## 
+> Comprobación: Captura con RAM y CPU consumida por la máquina virtual arrancando en windows y en linux 
 
 ## 9. Añadir discos y crear particiones (2p)
 
@@ -130,11 +114,7 @@ Antes de empezar no se podrá tener ninguna máquina virtual ya creada en Virtua
 
 - El segundo disco tendrá una partición de 3GB y una de 2GB y solo será accesible desde Linux Mint
 
-- 
-
-> **Comprobación:** Guardar archivos txt desde distintos sistemas operativos y muestra los formatos de los discos
-
-## 
+> **Comprobación:** Guardar archivos txt desde distintos sistemas operativos y muestra los formatos de los discos 
 
 ## 10. Cierre forzoso de tareas en linux mint (0.5p)
 
