@@ -18,9 +18,10 @@ def convert_markdown(md_path: str, output_path: str, css_path: str, template_pat
         "--embed-resources",       # Incrusta imatges, CSS i JS en l'HTML final
         "--toc",
         "--toc-depth=3",
+        "--mathml",                # Renderitza matemàtiques com a MathML natiu (funciona offline)
         f"--highlight-style={highlight_style}",
         f"--template={Path(template_path).absolute()}",
-        f"--resource-path=.:{current_dir}:{current_dir}/templates:{current_dir}/scripts" 
+        f"--resource-path=.:{current_dir}:{current_dir}/templates:{current_dir}/scripts:{current_dir}/styles" 
     ]
 
     if css_path:

@@ -2,18 +2,27 @@
    EDU DOCS STYLE (PRO)
    ========================= */
 
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
 :root {
-    --color-primari: hsl(221, 65%, 40%); /* Millor sintonia amb la identitat visual */
-    --color-fons: #f9fafb;
+    --color-primari: hsl(221, 65%, 40%);
+    --color-fons: #f4f6f9;
     --color-superficie: #ffffff;
     --color-text: #1f2937;
+    --color-text-suau: #374151;
     --color-secundari: #64748b;
-    --color-bord: #e5e7eb;
+    --color-bord: #e2e8f0;
     --color-guia: #1e293b;
-    --font-principal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: "Source Code Pro", monospace;
+    --font-principal: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'Fira Code', 'Source Code Pro', monospace;
     --sidebar-width: 280px;
     --header-height: 65px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.04);
 }
 
 /* RESET */
@@ -32,15 +41,17 @@ body {
     background: var(--color-fons);
     color: var(--color-text);
     scroll-behavior: smooth;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 /* Scrollbar personalitzada */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 7px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -65,6 +76,7 @@ body {
     top: 0;
     z-index: 1000;
     gap: 15px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
 }
 
 .header-left {
@@ -148,7 +160,7 @@ body {
 .badget-curs {
     font-size: 0.7rem;
     color: var(--color-primari);
-    background: #eff6ff;
+    background: color-mix(in srgb, var(--color-primari), white 90%);
     padding: 1px 10px;
     border-radius: 99px;
     font-weight: 700;
@@ -200,13 +212,13 @@ body {
     overflow-x: hidden;
     position: sticky;
     top: var(--header-height);
-    background: color-mix(in srgb, var(--color-primari), white 97%); /* Tint suau dinàmic */
+    background: color-mix(in srgb, var(--color-primari), white 97%);
     border-right: 1px solid color-mix(in srgb, var(--color-primari), transparent 90%);
     padding: 0;
     display: flex;
     flex-direction: column;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    align-self: flex-start; /* Fix per al sticky en flexbox */
+    align-self: flex-start;
 }
 
 body.sidebar-collapsed {
@@ -227,7 +239,7 @@ body.sidebar-collapsed {
 .section-title {
     font-size: 0.7rem;
     font-weight: 800;
-    color: var(--color-primari); /* Blau d'identitat */
+    color: var(--color-primari);
     letter-spacing: 0.1em;
     margin-bottom: 15px;
     opacity: 0.8;
@@ -294,7 +306,7 @@ body.sidebar-collapsed {
     padding-left: 15px;
     margin-top: 2px;
     border-left: 2px solid var(--color-primari);
-    border-left-color: color-mix(in srgb, var(--color-primari), transparent 85%); /* Guia dinàmica */
+    border-left-color: color-mix(in srgb, var(--color-primari), transparent 85%);
     margin-left: 10px;
 }
 
@@ -341,19 +353,19 @@ body.sidebar-collapsed {
 /* MAIN CONTENT AREA */
 main {
     flex: 1;
-    padding: 60px 80px;
+    padding: 50px 70px;
     display: flex;
     justify-content: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .content {
-    max-width: 850px;
+    max-width: 860px;
     width: 100%;
     background: var(--color-superficie);
-    padding: 60px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    padding: 60px 70px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--color-bord);
 }
 
@@ -361,8 +373,16 @@ main {
    TIPOGRAFIA
    ========================= */
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-principal);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
 h1 {
     font-size: 2.2rem;
+    font-weight: 800;
     margin-bottom: 20px;
     padding-bottom: 10px;
     color: var(--color-primari);
@@ -373,82 +393,294 @@ h1 {
 h1::after {
     content: "";
     display: block;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--color-primari), transparent);
-    opacity: 0.4;
-    margin-top: 15px;
+    height: 3px;
+    background: linear-gradient(to right, var(--color-primari), color-mix(in srgb, var(--color-primari), white 60%), transparent);
+    opacity: 0.5;
+    margin-top: 14px;
+    border-radius: 2px;
 }
 
 h2 {
-    font-size: 1.6rem;
-    margin-top: 45px;
-    margin-bottom: 12px;
-    color: var(--color-primari);
+    font-size: 1.55rem;
+    margin-top: 50px;
+    margin-bottom: 14px;
+    color: var(--color-guia);
     scroll-margin-top: calc(var(--header-height) + 20px);
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--color-bord);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1.2em;
+    background: var(--color-primari);
+    border-radius: 2px;
+    flex-shrink: 0;
 }
 
 h3 {
-    margin-top: 30px;
+    margin-top: 32px;
     margin-bottom: 10px;
     color: var(--color-primari);
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     scroll-margin-top: calc(var(--header-height) + 20px);
 }
 
-h4 { margin-top: 25px; margin-bottom: 10px; color: var(--color-primari); font-size: 1.15rem; }
-h5 { margin-top: 20px; margin-bottom: 8px; color: var(--color-primari); font-size: 1.05rem; }
-h6 { margin-top: 20px; margin-bottom: 8px; color: var(--color-primari); font-size: 1rem; }
+h4 { margin-top: 25px; margin-bottom: 10px; color: var(--color-text); font-size: 1.1rem; }
+h5 { margin-top: 20px; margin-bottom: 8px; color: var(--color-secundari); font-size: 1.0rem; font-weight: 600; }
+h6 { margin-top: 20px; margin-bottom: 8px; color: var(--color-secundari); font-size: 0.95rem; font-weight: 600; }
 
 p {
-    margin: 1.2rem 0;
-    line-height: 1.7;
-    color: #374151;
+    margin: 1.1rem 0;
+    line-height: 1.8;
+    color: var(--color-text-suau);
     text-align: justify;
     hyphens: auto;
     text-justify: inter-word;
 }
 
-.content ul, .content ol {
-    margin: 1.2rem 0;
-    padding-left: 1.5rem;
+/* =========================
+   INLINE FORMATTING
+   ========================= */
+
+strong {
+    font-weight: 700;
+    color: var(--color-text);
 }
 
-.content li {
-    margin-bottom: 0.6rem;
-    line-height: 1.7;
-    color: #374151;
-    text-align: justify;
-    hyphens: auto;
+em {
+    font-style: italic;
+    color: inherit;
 }
 
-.content li > p {
-    margin: 0.4rem 0;
+del {
+    text-decoration: line-through;
+    color: var(--color-secundari);
+    opacity: 0.75;
 }
 
-/* LINKS */
-a {
-    color: var(--color-primari);
-    text-decoration: none;
+mark {
+    background: color-mix(in srgb, #fbbf24, white 55%);
+    padding: 1px 4px;
+    border-radius: 3px;
 }
 
-a:hover {
-    text-decoration: underline;
+sup {
+    font-size: 0.75em;
+    vertical-align: super;
 }
 
 /* =========================
-   CODI (IMPORTANT)
+   LLISTES
    ========================= */
 
+.content ul, .content ol {
+    margin: 1.1rem 0;
+    padding-left: 1.8rem;
+}
+
+.content ul {
+    list-style: none;
+    padding-left: 1.2rem;
+}
+
+.content ul li {
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.content ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--color-primari);
+    font-size: 0.85em;
+    top: 0.05em;
+}
+
+/* Nested lists — diferent marcador */
+.content ul ul li::before {
+    content: "◦";
+    font-size: 1em;
+    top: 0;
+}
+
+.content ol {
+    list-style: decimal;
+    padding-left: 1.8rem;
+}
+
+.content li {
+    margin-bottom: 0.5rem;
+    line-height: 1.75;
+    color: var(--color-text-suau);
+}
+
+.content li > p {
+    margin: 0.3rem 0;
+}
+
+/* TASK LISTS */
+.task-list {
+    list-style: none !important;
+    padding-left: 0.4rem !important;
+}
+
+.task-list li {
+    padding-left: 0.2rem !important;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.task-list li::before {
+    display: none !important;
+}
+
+.task-list li label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: default;
+    line-height: 1.6;
+}
+
+.task-list input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 2px solid var(--color-bord);
+    border-radius: 4px;
+    background: white;
+    cursor: default;
+    position: relative;
+    margin-top: 2px;
+    transition: all 0.15s ease;
+}
+
+.task-list input[type="checkbox"]:checked {
+    background: var(--color-primari);
+    border-color: var(--color-primari);
+}
+
+.task-list input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 6px;
+    height: 10px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+}
+
+/* =========================
+   LINKS
+   ========================= */
+
+a {
+    color: var(--color-primari);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, opacity 0.15s;
+}
+
+a:hover {
+    border-bottom-color: var(--color-primari);
+    opacity: 0.85;
+}
+
+/* Footnote refs */
+a.footnote-ref {
+    font-size: 0.8em;
+    border: none;
+    font-weight: 700;
+    vertical-align: super;
+}
+
+a.footnote-back {
+    border: none;
+    font-size: 0.9em;
+}
+
+/* =========================
+   CODI
+   ========================= */
+
+/* Codi inline */
+code {
+    background: color-mix(in srgb, var(--color-primari), white 92%);
+    color: color-mix(in srgb, var(--color-primari), #1e293b 30%);
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    font-weight: 500;
+    border: 1px solid color-mix(in srgb, var(--color-primari), white 82%);
+}
+
+/* Blocs de codi (pandoc genera div.sourceCode > pre) */
+.sourceCode {
+    position: relative;
+    margin: 28px 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Etiqueta de llenguatge */
+.sourceCode[data-lang]::before,
+pre[class*="sourceCode"]::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px;
+    right: 48px; /* deixar espai al botó de copiar */
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+}
+
 pre {
-    background: #1e293b;
-    color: #f8fafc;
-    padding: 20px;
-    border-radius: 12px;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 22px 26px;
+    border-radius: var(--radius-md);
     overflow-x: auto;
-    margin: 24px 0;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    border: 1px solid rgba(255,255,255,0.05);
+    margin: 28px 0;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    font-family: var(--font-mono);
+    border: 1px solid rgba(255,255,255,0.06);
+    tab-size: 4;
+}
+
+/* Quan pre és fill de .sourceCode, treure el marge propi */
+.sourceCode pre {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    font-weight: 400;
 }
 
 /* COPY BUTTON */
@@ -456,10 +688,10 @@ pre {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #e5e7eb;
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     padding: 6px;
     cursor: pointer;
     transition: all 0.2s;
@@ -467,11 +699,12 @@ pre {
     align-items: center;
     justify-content: center;
     opacity: 0;
+    z-index: 2;
 }
 
 .copy-code-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
 }
 
 .sourceCode:hover .copy-code-btn,
@@ -480,68 +713,110 @@ pre:hover .copy-code-btn {
 }
 
 .copy-code-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .copy-code-btn.copied {
     background: #10b981;
     color: white;
     border-color: #10b981;
-}
-
-code {
-    background: #e5e7eb;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-family: var(--font-mono);
-}
-
-pre code {
-    background: transparent;
-    padding: 0;
+    opacity: 1;
 }
 
 /* =========================
-   BLOCKQUOTE (molt important)
+   BLOCKQUOTE
    ========================= */
 
 blockquote {
+    position: relative;
     border-left: 4px solid var(--color-primari);
-    background: color-mix(in srgb, var(--color-primari), white 96%);
-    padding: 16px;
-    margin: 20px 0;
-    border-radius: 0 10px 10px 0;
+    background: color-mix(in srgb, var(--color-primari), white 95%);
+    padding: 18px 22px 18px 24px;
+    margin: 24px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
 }
+
+blockquote::before {
+    content: '\201C';
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    font-size: 3.5rem;
+    color: var(--color-primari);
+    opacity: 0.18;
+    font-family: Georgia, serif;
+    line-height: 1;
+    pointer-events: none;
+}
+
+blockquote p {
+    margin: 0.3rem 0;
+    color: color-mix(in srgb, var(--color-primari), #1e293b 40%);
+    font-style: italic;
+    line-height: 1.75;
+    text-align: left;
+}
+
+blockquote p strong {
+    font-style: normal;
+    color: var(--color-text);
+}
+
+blockquote p code {
+    background: color-mix(in srgb, var(--color-primari), white 85%);
+    border-color: color-mix(in srgb, var(--color-primari), white 75%);
+    font-style: normal;
+}
+
+/* blockquote buit — amagar */
+blockquote:empty,
+blockquote p:empty {
+    display: none;
+}
+
+/* =========================
+   SEPARADORS (HR)
+   ========================= */
 
 hr {
     border: none;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--color-primari), transparent);
-    opacity: 0.4;
-    margin: 50px 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-bord) 20%, var(--color-bord) 80%, transparent);
+    margin: 48px 0;
 }
 
 /* =========================
    TAULES
    ========================= */
 
-table {
+.content table {
     width: 100%;
     border-collapse: collapse;
     margin: 30px 0;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    border-radius: 10px;
     border: 1px solid var(--color-bord);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Wrapper per permetre scroll horitzontal en taules amples */
+.content table {
+    display: table;
+    overflow-x: auto;
 }
 
 thead th {
     background: var(--color-primari);
     color: white;
     text-align: left;
-    padding: 14px 16px;
+    padding: 13px 16px;
     font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
     border: none;
 }
 
@@ -550,33 +825,166 @@ th {
     background: var(--color-primari);
     color: white;
     text-align: left;
-    padding: 14px 16px;
+    padding: 13px 16px;
     font-weight: 600;
+    font-size: 0.88rem;
 }
+
+/* Alineació de columnes */
+th[align="center"], td[align="center"] { text-align: center; }
+th[align="right"],  td[align="right"]  { text-align: right; }
+th[align="left"],   td[align="left"]   { text-align: left; }
 
 td {
-    padding: 12px 16px;
+    padding: 11px 16px;
     border-top: 1px solid var(--color-bord);
-    color: #374151;
-    transition: background 0.2s;
+    color: var(--color-text-suau);
+    transition: background 0.15s;
+    vertical-align: top;
 }
 
-tr:nth-child(even) {
-    background: color-mix(in srgb, var(--color-primari), white 97%); /* Zebra dinàmic suavitzat */
+tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--color-primari), white 97%);
 }
 
-tr:hover td {
-    background: #f1f5f9; /* Feedback visual */
+tbody tr:hover td {
+    background: color-mix(in srgb, var(--color-primari), white 93%);
 }
 
 /* =========================
-   IMATGES
+   IMATGES I FIGURES
    ========================= */
 
 img {
     max-width: 100%;
-    border-radius: 10px;
+    height: auto;
+    border-radius: var(--radius-md);
     margin: 20px 0;
+    display: block;
+}
+
+figure {
+    margin: 28px 0;
+    text-align: center;
+}
+
+figure img {
+    margin: 0 auto;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-bord);
+}
+
+figcaption {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--color-secundari);
+    font-style: italic;
+    text-align: center;
+}
+
+/* =========================
+   NOTES AL PEU (FOOTNOTES)
+   ========================= */
+
+.footnotes {
+    margin-top: 50px;
+    border-top: 2px solid var(--color-bord);
+    padding-top: 24px;
+}
+
+.footnotes hr {
+    display: none; /* Pandoc afegeix un hr extra, l'amaguem */
+}
+
+.footnotes ol {
+    padding-left: 1.8rem;
+    margin-top: 12px;
+}
+
+.footnotes li {
+    font-size: 0.88rem;
+    color: var(--color-secundari);
+    margin-bottom: 8px;
+    line-height: 1.65;
+}
+
+.footnotes li p {
+    margin: 0;
+    color: var(--color-secundari);
+    font-size: 0.88rem;
+    text-align: left;
+    line-height: 1.65;
+}
+
+/* =========================
+   MATEMÀTIQUES (MathML natiu via --mathml)
+   ========================= */
+
+/* Math inline: pandoc genera <math display="inline"> */
+math {
+    font-style: italic;
+    font-size: 1.05em;
+    font-family: 'STIX Two Math', 'Latin Modern Math', 'Cambria Math', Georgia, serif;
+    color: var(--color-text);
+}
+
+/* Contenidor inline: el <p> que conté <math display="inline"> */
+p math[display="inline"],
+math[display="inline"] {
+    background: color-mix(in srgb, #6366f1, white 91%);
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid color-mix(in srgb, #6366f1, white 79%);
+    display: inline-block;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+/* Math en bloc: pandoc genera <math display="block"> dins un <p> */
+math[display="block"] {
+    display: block;
+    text-align: center;
+    overflow-x: auto;
+    font-size: 1.15em;
+    line-height: 2;
+    margin: 0 auto;
+    padding: 4px 0;
+}
+
+/* El <p> que conté un math en bloc */
+p:has(> math[display="block"]) {
+    text-align: center;
+    padding: 18px 24px;
+    margin: 24px 0;
+    background: color-mix(in srgb, #6366f1, white 94%);
+    border: 1px solid color-mix(in srgb, #6366f1, white 80%);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+}
+
+/* =========================
+   SIDEBAR SECCIONS
+   ========================= */
+
+.doc-info {
+    font-size: 0.85rem;
+    color: #374151;
+}
+
+.actions button {
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px;
+    border: none;
+    background: var(--color-primari);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.actions button:hover {
+    opacity: 0.85;
 }
 
 /* =========================
@@ -585,7 +993,7 @@ img {
 
 @media (max-width: 900px) {
     .header {
-        position: relative; /* Alliberem el flux per evitar tapes en mòbil */
+        position: relative;
         flex-direction: column;
         padding: 12px;
         text-align: center;
@@ -622,36 +1030,15 @@ img {
     }
 
     .content {
-        padding: 25px 20px;
-        border-radius: 8px;
+        padding: 28px 22px;
+        border-radius: 10px;
     }
 }
-
 
 .logo-img {
     height: 40px;
 }
 
-/* SIDEBAR SECCIONS */
-.doc-info {
-    font-size: 0.85rem;
-    color: #374151;
-}
-
-.actions button {
-    width: 100%;
-    margin-top: 6px;
-    padding: 8px;
-    border: none;
-    background: #2563eb;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.actions button:hover {
-    background: #1d4ed8;
-}
 /* =========================
    IMPRESSIÓ (@media print)
    ========================= */
@@ -750,7 +1137,7 @@ img {
 
     .layout {
         display: block;
-        margin-top: 70px; /* Reduït per coincidir amb el header ultra-compacte */
+        margin-top: 70px;
     }
 
     main {
@@ -767,13 +1154,29 @@ img {
     }
 
     /* Evitar talls d'imatges i taules */
-    pre, blockquote, table, img {
+    pre, blockquote, table, img, figure {
         page-break-inside: avoid;
+    }
+
+    h2, h3, h4 {
+        page-break-after: avoid;
+    }
+
+    pre {
+        background: #f8fafc !important;
+        color: #1e293b !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    blockquote {
+        background: #f8fafc !important;
+        border-color: #000 !important;
     }
 
     a {
         text-decoration: none;
-        color: #000;
+        color: inherit;
+        border: none;
     }
 
     @page {

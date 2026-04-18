@@ -2,10 +2,10 @@
   "institut_nom": "IES Pere Maria Orts i Bosch",
   "institut_logo": "assets/logoIESPereMariaOrtsiBosch.png",
   "curs": "1r DAM",
-  "assignatura": "Sistemes Informàtics",
+  "assignatura": "Sistemas Informáticos",
   "professor": "Pau Palacios Server",
   "css_name": "prova.css",
   "template_name": "base.html",
   "js_name": "script.js",
-  "highlight_style": "zenburn"
+  "highlight_style": "pygments"
 }
