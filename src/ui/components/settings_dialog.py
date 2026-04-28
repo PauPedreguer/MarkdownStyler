@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
     QDialog, QFormLayout, QHBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox, QComboBox
 )
 from src.infrastructure.config_repo import load_institut_config, save_institut_config
+from src.infrastructure.project_paths import from_project_root
 from src.ui.components.buttons import PrimaryButton
 
 class SettingsDialog(QDialog):
@@ -112,21 +113,21 @@ class SettingsDialog(QDialog):
 
     def load_styles(self):
         self.style_combo.clear()
-        styles_dir = Path("styles")
+        styles_dir = from_project_root("styles")
         if styles_dir.exists():
             for f in sorted(styles_dir.glob("*.css")):
                 self.style_combo.addItem(f.name)
 
     def load_templates(self):
         self.template_combo.clear()
-        templates_dir = Path("templates")
+        templates_dir = from_project_root("templates")
         if templates_dir.exists():
             for f in sorted(templates_dir.glob("*.html")):
                 self.template_combo.addItem(f.name)
 
     def load_scripts(self):
         self.script_combo.clear()
-        scripts_dir = Path("scripts")
+        scripts_dir = from_project_root("scripts")
         if scripts_dir.exists():
             for f in sorted(scripts_dir.glob("*.js")):
                 self.script_combo.addItem(f.name)
@@ -144,7 +145,7 @@ class SettingsDialog(QDialog):
         file, _ = QFileDialog.getOpenFileName(self, f"Importar {resource_name}", "", f"{resource_name} ({file_filter})")
         if not file: return
             
-        dest_dir = Path(target_dir)
+        dest_dir = from_project_root(target_dir)
         dest_dir.mkdir(exist_ok=True)
         dest_path = dest_dir / Path(file).name
         

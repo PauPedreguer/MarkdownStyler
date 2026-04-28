@@ -1,13 +1,15 @@
 import subprocess
 from typing import Dict, Any
 from pathlib import Path
+from src.infrastructure.project_paths import PROJECT_ROOT
 
 def convert_markdown(md_path: str, output_path: str, css_path: str, template_path: str, js_path: str, highlight_style: str, metadata: Dict[str, Any]):
-    current_dir = Path(__file__).parent.parent.parent # Arrel del projecte
-    
+    # Arrel del projecte per a convertir rutes relatives a absolutes
+    current_dir = PROJECT_ROOT
+
     # Afegir el JS a la metadata per a la plantilla
     if js_path:
-        metadata["js"] = str(Path(js_path).absolute())
+        metadata["js"] = str((current_dir / js_path).resolve())
 
     cmd = [
         "pandoc",
@@ -20,12 +22,12 @@ def convert_markdown(md_path: str, output_path: str, css_path: str, template_pat
         "--toc-depth=3",
         "--mathml",                # Renderitza matemàtiques com a MathML natiu (funciona offline)
         f"--highlight-style={highlight_style}",
-        f"--template={Path(template_path).absolute()}",
+        f"--template={(current_dir / template_path).resolve()}",
         f"--resource-path=.:{current_dir}:{current_dir}/templates:{current_dir}/scripts:{current_dir}/styles" 
     ]
 
     if css_path:
-        abs_css = Path(css_path).absolute()
+        abs_css = (current_dir / css_path).resolve()
         cmd.append(f"--css={abs_css}")
 
     for key, value in metadata.items():

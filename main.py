@@ -1,8 +1,8 @@
 import sys
-from pathlib import Path
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import Qt
 from src.ui.app import App
+from src.infrastructure.project_paths import from_project_root
 
 if __name__ == "__main__":
     # Suport per a pantalles de alta resolució (Retina/4K)
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     
     app_qt = QApplication(sys.argv)
     
-    style_path = Path("src/ui/style.qss")
+    style_path = from_project_root("src", "ui", "style.qss")
     if style_path.exists():
         with open(style_path, "r") as f:
             app_qt.setStyleSheet(f.read())

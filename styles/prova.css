@@ -1069,18 +1069,17 @@ p:has(> math[display="block"]) {
     }
 
     .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+        position: static;
         background: white;
         border-bottom: 2px solid #000;
-        padding: 0 20px;
-        height: 50px;
-        z-index: 1000;
+        padding: 8px 14px;
+        min-height: 50px;
+        height: auto;
+        margin-bottom: 10mm;
         display: flex;
         align-items: center;
         gap: 0;
+        page-break-inside: avoid;
     }
 
     .header-left {
@@ -1137,7 +1136,7 @@ p:has(> math[display="block"]) {
 
     .layout {
         display: block;
-        margin-top: 70px;
+        margin-top: 0;
     }
 
     main {

@@ -1,12 +1,10 @@
-import sys
-import shutil
 from pathlib import Path
 from datetime import datetime
 import threading
 
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QComboBox, QFileDialog, QMessageBox, QScrollArea
+    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox, QScrollArea
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 from PyQt6.QtGui import QDragEnterEvent, QDropEvent
@@ -191,36 +189,16 @@ class App(QMainWindow):
 
     def _export_thread(self, output_dir):
         try:
-            from src.infrastructure.config_repo import load_institut_config
-            config = load_institut_config()
-            
             md = self.md_path_input.text()
-            base = Path(md).stem
-            output = str(Path(output_dir) / f"{base}.html")
-            
-            css_name = config.get("css_name", "prova.css")
-            css_path = f"styles/{css_name}" if css_name else "styles/prova.css"
-
-            template_name = config.get("template_name", "base.html")
-            template_path = f"templates/{template_name}" if template_name else "templates/base.html"
-
-            js_name = config.get("js_name", "script.js")
-            js_path = f"scripts/{js_name}" if js_name else "scripts/script.js"
-
-            highlight_style = config.get("highlight_style", "zenburn")
 
             options = ExportOptions(
                 md_path=md,
-                output_path=output,
-                css_path=css_path,
-                template_path=template_path,
-                js_path=js_path,
-                highlight_style=highlight_style,
+                output_dir=output_dir,
                 title=self.title_input.text(),
                 data=self.data_input.text(),
                 primary_color=self.selected_color
             )
-            execute_export(options)
+            output = execute_export(options)
             self.signals.finished.emit(output)
         except Exception as e:
             self.signals.error.emit(str(e))
