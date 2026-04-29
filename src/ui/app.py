@@ -94,7 +94,7 @@ class App(QMainWindow):
         colors_layout.setSpacing(10)
         
         presets = [
-            ("#1e40af", "Blau Atlàntic"),
+            ("#1d4ed8", "Blau Professional"),
             ("#166534", "Verd Bosc"),
             ("#334155", "Gris Pissarra"),
             ("#991b1b", "Granat Vi"),

@@ -551,9 +551,9 @@ sup {
     position: absolute;
     left: 0;
     color: var(--color-primari);
-    font-size: 1.4em;
+    font-size: 1.15em; /* Reduït per a ser més elegant */
     line-height: 1;
-    top: -0.1em;
+    top: 0.15em; /* Re-ajustat per a la nova mida */
 }
 
 /* Nested lists */
@@ -568,8 +568,8 @@ sup {
 
 .content ul ul li::before {
     content: "◦";
-    font-size: 1.2em;
-    top: 0;
+    font-size: 1.0em; /* També reduït */
+    top: 0.1em;
 }
 
 /* ORDERED LISTS */
