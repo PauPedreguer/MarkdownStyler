@@ -667,19 +667,20 @@ pre[class*="sourceCode"]::before,
 pre[data-lang]::before {
 content: attr(data-lang);
 position: absolute;
-top: 0;
-left: 0;
-padding: 4px 12px;
+top: 8px; 
+right: 48px; 
+padding: 5px 10px;
 font-family: var(--font-mono);
 font-size: 0.65rem;
-font-weight: 700;
-color: rgba(255, 255, 255, 0.5);
-background: rgba(255, 255, 255, 0.05);
-border-radius: 0 0 8px 0;
+font-weight: 600;
+color: #a8a8a2;
+background: #3e3d32;
+border-radius: 4px; 
 text-transform: uppercase;
-letter-spacing: 0.1em;
+letter-spacing: 0.05em;
 pointer-events: none;
-z-index: 3;
+border: 1px solid #49483e;
+z-index: 10;
 }
 pre {
 background: #0f172a;
@@ -777,12 +778,12 @@ color: #75715e
 
 .copy-code-btn {
 position: absolute;
-top: 10px;
+top: 8px; 
 right: 10px;
 background: rgba(255, 255, 255, 0.08);
 color: #94a3b8;
 border: 1px solid rgba(255, 255, 255, 0.1);
-border-radius: var(--radius-sm);
+border-radius: 4px;
 padding: 6px;
 cursor: pointer;
 transition: all 0.2s;

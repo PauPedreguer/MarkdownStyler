@@ -716,25 +716,26 @@ code {
     box-shadow: var(--shadow-sm);
 }
 
-/* Etiqueta de llenguatge (Cantonada superior esquerra) */
+/* Etiqueta de llenguatge (Integrada amb l'estil del codi Monokai) */
 .sourceCode[data-lang]::before,
 pre[class*="sourceCode"]::before,
 pre[data-lang]::before {
     content: attr(data-lang);
     position: absolute;
-    top: 0;
-    left: 0;
-    padding: 4px 12px;
+    top: 8px; /* Mateixa alçada que el botó de copy */
+    right: 48px; /* Espaiat simètric respecte al botó */
+    padding: 5px 10px;
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0 0 8px 0;
+    font-weight: 600;
+    color: #a8a8a2;
+    background: #3e3d32;
+    border-radius: 4px; /* Ara és un badge flotant, com el botó */
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     pointer-events: none;
-    z-index: 3;
+    border: 1px solid #49483e;
+    z-index: 10;
 }
 
 pre {
@@ -848,12 +849,12 @@ pre code {
 /* COPY BUTTON */
 .copy-code-btn {
     position: absolute;
-    top: 10px;
+    top: 8px; /* Alineat amb l'etiqueta */
     right: 10px;
     background: rgba(255, 255, 255, 0.08);
     color: #94a3b8;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-sm);
+    border-radius: 4px;
     padding: 6px;
     cursor: pointer;
     transition: all 0.2s;
