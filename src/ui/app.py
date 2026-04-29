@@ -94,11 +94,14 @@ class App(QMainWindow):
         colors_layout.setSpacing(10)
         
         presets = [
-            ("#1d4ed8", "Blau"),
-            ("#047857", "Verd"),
-            ("#b91c1c", "Vermell"),
-            ("#b45309", "Taronja"),
-            ("#6d28d9", "Violeta")
+            ("#1e40af", "Blau Atlàntic"),
+            ("#166534", "Verd Bosc"),
+            ("#334155", "Gris Pissarra"),
+            ("#991b1b", "Granat Vi"),
+            ("#b45309", "Ocre Terra"),
+            ("#6b21a8", "Lila Profund"),
+            ("#0f766e", "Teal Marí"),
+            ("#d4ac00", "Groc Or")
         ]
         
         for hex_color, name in presets:
