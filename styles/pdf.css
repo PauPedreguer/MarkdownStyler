@@ -328,7 +328,7 @@ pre, table, blockquote, .katex-display, .content p img {
 
 /* Unordered Lists */
 .content ul { list-style: none; }
-.content ul li::before {
+.content ul > li::before {
     content: "•";
     position: absolute;
     left: 0;
@@ -343,10 +343,10 @@ pre, table, blockquote, .katex-display, .content p img {
     list-style: none;
     counter-reset: pdf-counter;
 }
-.content ol li {
+.content ol > li {
     counter-increment: pdf-counter;
 }
-.content ol li::before {
+.content ol > li::before {
     content: counter(pdf-counter) ".";
     position: absolute;
     left: 0;
@@ -355,9 +355,17 @@ pre, table, blockquote, .katex-display, .content p img {
 }
 
 /* Nested Lists */
-.content ul ul, .content ol ol {
+.content ul ul, .content ol ol, .content ul ol, .content ol ul {
     margin: 5px 0;
     padding-left: 20px;
+}
+
+.content ul ul > li::before {
+    content: "◦";
+}
+
+.content ul ul ul > li::before {
+    content: "▪";
 }
 
 /* --- Blockquotes --- */

@@ -4,6 +4,7 @@
   "curs": "1º DAM/DAW",
   "assignatura": "Sistemas Informáticos",
   "professor": "Pau Palacios Server",
+  "departament": "Informàtica",
   "css_name": "prova.css",
   "template_name": "base.html",
   "js_name": "script.js",
