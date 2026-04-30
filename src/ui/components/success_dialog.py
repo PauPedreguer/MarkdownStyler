@@ -17,7 +17,7 @@ class SuccessDialog(QDialog):
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.setSpacing(15)
         
-        title = QLabel("L'HTML s'ha generat correctament 🎉")
+        title = QLabel("Fitxer generat correctament 🎉")
         title.setProperty("class", "title")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title)

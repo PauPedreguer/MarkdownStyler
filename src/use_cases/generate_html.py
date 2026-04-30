@@ -6,7 +6,11 @@ from pathlib import Path
 
 def execute_export(options: ExportOptions) -> str:
     config = load_institut_config()
-    output_path = str(Path(options.output_dir) / f"{Path(options.md_path).stem}.html")
+    
+    extension = "pdf" if options.format == "pdf" else "html"
+    output_filename = f"{Path(options.md_path).stem}.{extension}"
+    output_path = str(Path(options.output_dir) / output_filename)
+    
     css_path = str(Path("styles") / config["css_name"])
     template_path = str(Path("templates") / config["template_name"])
     js_path = str(Path("scripts") / config["js_name"])
@@ -14,7 +18,9 @@ def execute_export(options: ExportOptions) -> str:
     metadata = {
         **config,
         "title": options.title,
+        "subtitol": options.subtitol,
         "data": options.data,
+        "departament": options.departament,
         "primary_color": options.primary_color
     }
     

@@ -1218,153 +1218,198 @@ p:has(> math[display="block"]) {
     height: 40px;
 }
 
+/* --- Elements de PDF/Impressió amagats per defecte --- */
+/* --- Elements de PDF/Impressió amagats per defecte en pantalla --- */
+.pdf-cover, 
+.pdf-toc,
+.pdf-metadata,
+.no-screen {
+    display: none !important;
+}
+
 /* =========================
    IMPRESSIÓ (@media print)
    ========================= */
-
+/* =========================
+   IMPRESSIÓ (@media print)
+   ========================= */
 @media print {
-
+    /* Amagar elements de la interfície web */
     .sidebar,
     #sidebar-toggle,
     .sidebar-footer,
     .copy-code-btn,
-    .print-btn {
+    .print-btn,
+    .no-print {
         display: none !important;
     }
 
+    body {
+        background: white !important;
+        color: black !important;
+        margin: 0;
+        padding: 0;
+    }
+
     .layout {
-        display: block;
+        display: block !important;
     }
 
     main {
-        padding: 0;
-        margin: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
     }
 
     .content {
-        max-width: 100%;
-        padding: 0;
-        box-shadow: none;
-        border: none;
+        max-width: 100% !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: transparent !important;
     }
 
-    .header {
-        position: static;
+    /* --- Portada per a PDF/Impressió --- */
+    .pdf-cover {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 275mm; /* Altura A4 aproximada */
+        padding: 2cm;
+        page-break-after: always;
+        break-after: page;
         background: white;
-        border-bottom: 2px solid #000;
-        padding: 8px 14px;
-        min-height: 50px;
-        height: auto;
-        margin-bottom: 10mm;
+    }
+
+    .cover-header {
         display: flex;
         align-items: center;
-        gap: 0;
-        page-break-inside: avoid;
+        gap: 20px;
+        border-bottom: 2px solid var(--color-primari);
+        padding-bottom: 20px;
     }
 
-    .header-left {
-        flex: none;
-        gap: 10px;
+    .cover-logo {
+        height: 60px;
+        width: auto;
     }
 
-    .header-center {
-        flex: none;
-        text-align: left;
-        padding-left: 20px;
-        margin-left: 10px;
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
+    .cover-inst-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #374151;
     }
 
-    .header-right {
-        margin-left: auto;
-        flex: none;
+    .cover-main {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
     }
 
-    .logo-img {
-        height: 30px;
+    .cover-title {
+        font-size: 3.5rem !important;
+        font-weight: 900 !important;
+        color: var(--color-primari) !important;
+        margin: 10% 0 !important;
+        border: none !important;
+        padding: 0 !important;
+        line-height: 1.1 !important;
+    }
+    
+    .cover-title::after { display: none !important; }
+
+    .cover-footer {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 20px;
     }
 
-    .institut-info {
-        line-height: 1.1;
-    }
-
-    .institut-name {
-        font-size: 0.7rem;
-    }
-
-    .header-subtitle {
-        gap: 5px;
-    }
-
-    .subject-name {
-        font-size: 0.65rem;
-    }
-
-    .badget-curs {
-        padding: 2px 6px;
-        font-size: 0.55rem;
-    }
-
-    .main-title {
+    .cover-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
         font-size: 1rem;
     }
 
-    .meta-item {
-        font-size: 0.65rem;
-        gap: 3px;
+    /* --- TOC PDF --- */
+    .pdf-toc {
+        display: block !important;
+        break-after: page;
+        page-break-after: always;
+        padding: 1cm 0;
     }
 
-    .layout {
-        display: block;
-        margin-top: 0;
-    }
-
-    main {
-        padding: 0;
-        margin: 0;
-        display: block;
-    }
-
-    .content {
-        max-width: 100%;
-        padding: 0;
-        box-shadow: none;
+    .pdf-toc h2 {
+        font-size: 2rem;
+        margin-bottom: 1cm;
+        text-align: center;
         border: none;
     }
 
-    /* Evitar talls d'imatges i taules */
-    pre,
-    blockquote,
-    table,
-    img,
-    figure {
+    .pdf-toc .toc ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .pdf-toc .toc a {
+        display: flex;
+        align-items: baseline;
+        text-decoration: none;
+        color: black;
+        font-weight: 500;
+    }
+
+    /* --- Header de pàgina (re-estilitzat per a print) --- */
+    .header {
+        position: static !important;
+        background: white !important;
+        border-bottom: 1px solid #ddd !important;
+        padding: 5mm 0 !important;
+        margin-bottom: 10mm !important;
+        display: flex !important;
+        box-shadow: none !important;
+    }
+
+    .main-title {
+        font-size: 1.1rem !important;
+        color: black !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    .main-title::after { display: none !important; }
+
+    /* --- Configuració de Pàgina --- */
+    @page {
+        size: A4;
+        margin: 2cm;
+    }
+
+    /* Evitar talls en elements importants */
+    pre, blockquote, table, img, figure {
         page-break-inside: avoid;
+        break-inside: avoid;
     }
 
-    h2,
-    h3,
-    h4 {
+    h1, h2, h3 {
         page-break-after: avoid;
+        break-after: avoid;
     }
 
+    /* Estils de codi per a impressió */
     pre {
         background: #f8fafc !important;
         color: #1e293b !important;
         border: 1px solid #e2e8f0 !important;
+        font-size: 9pt !important;
+        white-space: pre-wrap !important;
     }
+}
 
-    blockquote {
-        background: #f8fafc !important;
-        border-color: #000 !important;
-    }
-
-    a {
-        text-decoration: none;
-        color: inherit;
-        border: none;
-    }
-
-    @page {
-        margin: 15mm;
-    }
+/* --- Elements de PDF/Impressió amagats per defecte en pantalla --- */
+.pdf-cover, 
+.pdf-toc,
+.no-screen {
+    display: none !important;
 }

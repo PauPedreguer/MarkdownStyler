@@ -41,6 +41,9 @@ class SettingsDialog(QDialog):
         self.prof_input = QLineEdit(self.config.get("professor", ""))
         layout.addRow(QLabel("Professor:"), self.prof_input)
         
+        self.dept_input = QLineEdit(self.config.get("departament", "Informàtica"))
+        layout.addRow(QLabel("Departament:"), self.dept_input)
+        
         # --- Secció Configuració de Documents ---
         header = QLabel("CONFIGURACIÓ DE DOCUMENTS")
         header.setProperty("class", "section-header")
@@ -170,6 +173,7 @@ class SettingsDialog(QDialog):
             "curs": self.curs_input.text(),
             "assignatura": self.assig_input.text(),
             "professor": self.prof_input.text(),
+            "departament": self.dept_input.text(),
             "css_name": self.style_combo.currentText(),
             "template_name": self.template_combo.currentText(),
             "js_name": self.script_combo.currentText(),

@@ -40,6 +40,18 @@ QPushButton[class="primary"] {
 QPushButton[class="primary"]:hover { background-color: #1d4ed8; }
 QPushButton[class="primary"]:disabled { background-color: #93c5fd; }
 
+QPushButton[class="premium"] {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #7c3aed, stop:1 #2563eb);
+    color: white;
+    font-weight: bold;
+    padding: 12px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+}
+QPushButton[class="premium"]:hover { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #6d28d9, stop:1 #1d4ed8); }
+QPushButton[class="premium"]:disabled { background-color: #c4b5fd; }
+
 /* Secondary Actions / Smaller Buttons */
 QPushButton[class="secondary"] {
     background-color: #2563eb;

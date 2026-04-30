@@ -84,6 +84,10 @@ class App(QMainWindow):
         self.title_input = QLineEdit()
         self.layout.addWidget(self.title_input)
         
+        self.layout.addWidget(QLabel("Subtítol (opcional):"))
+        self.subtitle_input = QLineEdit()
+        self.layout.addWidget(self.subtitle_input)
+        
         self.layout.addWidget(QLabel("Data:"))
         self.data_input = QLineEdit(datetime.now().strftime("%d-%m-%Y"))
         self.layout.addWidget(self.data_input)
@@ -124,9 +128,20 @@ class App(QMainWindow):
         
         self.layout.addStretch()
         
+        # Botons d'exportació
+        buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(15)
+        
         self.export_btn = PrimaryButton("Exportar HTML")
-        self.export_btn.clicked.connect(self.export)
-        self.layout.addWidget(self.export_btn)
+        self.export_btn.clicked.connect(lambda: self.export("html"))
+        buttons_layout.addWidget(self.export_btn)
+        
+        self.export_pdf_btn = PrimaryButton("Exportar PDF ✨")
+        self.export_pdf_btn.setProperty("class", "premium")
+        self.export_pdf_btn.clicked.connect(lambda: self.export("pdf"))
+        buttons_layout.addWidget(self.export_pdf_btn)
+        
+        self.layout.addLayout(buttons_layout)
         
         self.signals = WorkerSignals()
         self.signals.finished.connect(self.on_export_success)
@@ -176,7 +191,7 @@ class App(QMainWindow):
         dialog = SettingsDialog(self)
         dialog.exec()
         
-    def export(self):
+    def export(self, format="html"):
         if not self.md_path_input.text():
             QMessageBox.critical(self, "Error", "Selecciona un markdown abans d'exportar.")
             return
@@ -186,11 +201,17 @@ class App(QMainWindow):
             return
             
         self.export_btn.setEnabled(False)
-        self.export_btn.setText("Exportant atèntament...")
+        self.export_pdf_btn.setEnabled(False)
         
-        threading.Thread(target=self._export_thread, args=(output_dir,), daemon=True).start()
+        btn_text = "Exportant HTML..." if format == "html" else "Generant PDF amb estil... ✨"
+        if format == "html":
+            self.export_btn.setText(btn_text)
+        else:
+            self.export_pdf_btn.setText(btn_text)
+        
+        threading.Thread(target=self._export_thread, args=(output_dir, format), daemon=True).start()
 
-    def _export_thread(self, output_dir):
+    def _export_thread(self, output_dir, format):
         try:
             md = self.md_path_input.text()
 
@@ -198,8 +219,10 @@ class App(QMainWindow):
                 md_path=md,
                 output_dir=output_dir,
                 title=self.title_input.text(),
+                subtitol=self.subtitle_input.text(),
                 data=self.data_input.text(),
-                primary_color=self.selected_color
+                primary_color=self.selected_color,
+                format=format
             )
             output = execute_export(options)
             self.signals.finished.emit(output)
@@ -208,12 +231,16 @@ class App(QMainWindow):
             
     def on_export_success(self, output):
         self.export_btn.setEnabled(True)
+        self.export_pdf_btn.setEnabled(True)
         self.export_btn.setText("Exportar HTML")
+        self.export_pdf_btn.setText("Exportar PDF ✨")
 
         dialog = SuccessDialog(output, self)
         dialog.exec()
         
     def on_export_error(self, error_msg):
         self.export_btn.setEnabled(True)
+        self.export_pdf_btn.setEnabled(True)
         self.export_btn.setText("Exportar HTML")
+        self.export_pdf_btn.setText("Exportar PDF ✨")
         QMessageBox.critical(self, "Error", f"Error al convertir:\n{error_msg}")

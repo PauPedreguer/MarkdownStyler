@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="$css$">
     $endif$
 
-
     $if(primary_color)$
     <style>
         :root {
@@ -18,9 +17,47 @@
     $endif$
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    $math$
 </head>
 
 <body>
+
+<!-- Portada per a PDF/Impressió -->
+<div class="pdf-cover">
+    <div class="cover-header">
+        <img src="$institut_logo$" class="cover-logo">
+        <div class="cover-inst-info">
+            <div class="cover-inst-name">$institut_nom$</div>
+            <div class="cover-inst-dept">$departament$</div>
+        </div>
+    </div>
+    
+    <div class="cover-main">
+        <h1 class="cover-title">$title$</h1>
+        <div class="cover-subtitle">$subtitol$</div>
+    </div>
+    
+    <div class="cover-footer">
+        <div class="cover-meta">
+            <div class="meta-item">
+                <div class="meta-label">PROFESSOR/A</div>
+                <div class="meta-value">$professor$</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">ASSIGNATURA</div>
+                <div class="meta-value">$assignatura$</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">CURS</div>
+                <div class="meta-value">$curs$</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">DATA</div>
+                <div class="meta-value">$data$</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="header">
     <div class="header-left">
@@ -52,11 +89,11 @@
 </div>
 
 <div class="layout">
-    <button id="sidebar-toggle" title="Amagar/Mostrar barra lateral">
+    <button id="sidebar-toggle" title="Amagar/Mostrar barra lateral" class="no-print">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
 
-    <aside class="sidebar">
+    <aside class="sidebar no-print">
         <nav class="sidebar-section toc-container">
             <div class="section-title">SUMARI</div>
             <div class="toc">
@@ -70,7 +107,24 @@
     </aside>
 
     <main>
+        <!-- Índex per a PDF -->
+        <div class="pdf-toc no-screen">
+            <h2>Índex</h2>
+            <div class="toc">
+                $toc$
+            </div>
+        </div>
+
         <div class="content">
+            <!-- Metadades ocultes per a la capçalera del PDF -->
+            <div class="pdf-metadata no-screen">
+                <span class="pdf-meta-dept">$departament$</span>
+                <span class="pdf-meta-assig">$assignatura$</span>
+                <span class="pdf-meta-title">$title$</span>
+                <span class="pdf-meta-prof">$professor$</span>
+                <span class="pdf-meta-data">$data$</span>
+            </div>
+            
             $body$
         </div>
     </main>
