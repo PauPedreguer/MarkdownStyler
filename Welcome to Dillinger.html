@@ -513,12 +513,12 @@ padding-left: 1.2rem;
 .content ul {
 list-style: none;
 }
-.content ul li {
+.content ul > li {
 position: relative;
 padding-left: 1.8rem;
 margin-bottom: 0.6rem;
 }
-.content ul li::before {
+.content ul > li::before {
 content: "•";
 position: absolute;
 left: 0;
@@ -536,23 +536,28 @@ margin: 0.5rem 0;
 padding-left: 1.5rem;
 
 }
-.content ul ul li::before {
+.content ul ul > li::before {
 content: "◦";
-font-size: 1.0em; 
+font-size: 1.0em;
 top: 0.1em;
+}
+.content ul ul ul > li::before {
+content: "▪";
+font-size: 0.8em;
+top: 0.2em;
 }
 
 .content ol {
 list-style: none;
 counter-reset: custom-counter;
 }
-.content ol li {
+.content ol > li {
 counter-increment: custom-counter;
 position: relative;
 padding-left: 2.2rem;
 margin-bottom: 0.6rem;
 }
-.content ol li::before {
+.content ol > li::before {
 content: counter(custom-counter) ".";
 position: absolute;
 left: 0;
@@ -1242,7 +1247,7 @@ display: none !important;
     
         <style>
 :root {
---color-primari: #1d4ed8;
+--color-primari: #b45309;
 }
 </style>
     

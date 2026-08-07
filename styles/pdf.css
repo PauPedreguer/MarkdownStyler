@@ -505,3 +505,9 @@ hr {
 .header, .sidebar, #sidebar-toggle, .no-print {
     display: none !important;
 }
+
+/* Amagar la barra de capçalera dels quadres de codi en PDF */
+.code-header {
+    display: none !important;
+}
+

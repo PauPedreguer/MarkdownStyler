@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Entorns virtuals
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Fitxers generats
+*.html
+*.pdf
+!templates/*.html
+!examples/*.html
+!examples/*.pdf
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,5 @@
+# Dependències de l'aplicació
+PyQt6>=6.6.0
+
+# Dependències de desenvolupament
+pytest>=8.0.0

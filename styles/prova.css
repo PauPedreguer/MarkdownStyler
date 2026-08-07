@@ -719,49 +719,91 @@ code {
     margin: 28px 0;
     border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
+    border: 1px solid #334155;
+    background: #1e293b;
 }
 
-/* Etiqueta de llenguatge (Integrada amb l'estil del codi Monokai) */
-.sourceCode[data-lang]::before,
-pre[class*="sourceCode"]::before,
-pre[data-lang]::before {
-    content: attr(data-lang);
-    position: absolute;
-    top: 8px; /* Mateixa alçada que el botó de copy */
-    right: 48px; /* Espaiat simètric respecte al botó */
-    padding: 5px 10px;
+/* --- Barra de capçalera del bloc de codi --- */
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #273449;
+    border-bottom: 1px solid #334155;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* Nom del llenguatge */
+.code-lang {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: #a8a8a2;
-    background: #3e3d32;
-    border-radius: 4px; /* Ara és un badge flotant, com el botó */
+    color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    pointer-events: none;
-    border: 1px solid #49483e;
-    z-index: 10;
+    letter-spacing: 0.08em;
+    flex: 1;
 }
 
+/* Botó de copiar (dins la barra) */
+.copy-code-btn {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    padding: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.copy-code-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+.code-header:hover .copy-code-btn {
+    opacity: 1;
+}
+
+.copy-code-btn:hover {
+    background: #334155;
+    color: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.copy-code-btn.copied {
+    background: #16a34a;
+    color: white;
+    border-color: #16a34a;
+    opacity: 1;
+}
+
+/* Contingut del bloc de codi */
 pre {
-    background: #0f172a;
+    background: #1e293b;
     color: #e2e8f0;
-    padding: 22px 26px;
-    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
     overflow-x: auto;
-    margin: 28px 0;
+    margin: 0;
     font-size: 0.875rem;
-    line-height: 1.65;
+    line-height: 1.7;
     font-family: var(--font-mono);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: none;
     tab-size: 4;
 }
 
 /* Quan pre és fill de .sourceCode, treure el marge propi */
 .sourceCode pre {
     margin: 0;
-    border-radius: 0;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
     border: none;
 }
 
@@ -776,123 +818,81 @@ pre code {
 /* Millora de contrast per a highlight.js */
 .hljs {
     background: transparent !important;
-    /* Deixar que el 'pre' controli el fons */
-    color: #f8f8f2 !important;
+    color: #e2e8f0 !important;
     padding: 0 !important;
 }
 
-/* Monokai Sublime Theme for Highlight.js */
-.hljs-subst,
-.hljs-tag {
-    color: #f8f8f2
+/* Tema One Dark adaptat per a Highlight.js (fons mitjà, colors vius i contrastats) */
+.hljs-comment,
+.hljs-quote {
+    color: #7d8799;
+    font-style: italic;
 }
 
-.hljs-emphasis,
-.hljs-strong {
-    color: #a8a8a2
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+    color: #c678dd;
+    font-weight: 600;
 }
 
-.hljs-bullet,
-.hljs-link,
 .hljs-literal,
 .hljs-number,
-.hljs-quote,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
 .hljs-regexp {
-    color: #ae81ff
+    color: #d19a66;
 }
 
-.hljs-code,
-.hljs-section,
-.hljs-selector-class,
-.hljs-title {
-    color: #a6e22e
-}
-
-.hljs-strong {
-    font-weight: 700
-}
-
-.hljs-emphasis {
-    font-style: italic
-}
-
-.hljs-attr,
-.hljs-keyword,
-.hljs-name,
-.hljs-selector-tag {
-    color: #f92672 !important
-}
-
-.hljs-attribute,
-.hljs-symbol {
-    color: #66d9ef
-}
-
-.hljs-class .hljs-title,
-.hljs-params,
-.hljs-title.class_ {
-    color: #f8f8f2
-}
-
-.hljs-addition,
-.hljs-built_in,
-.hljs-selector-attr,
-.hljs-selector-id,
-.hljs-selector-pseudo,
 .hljs-string,
+.hljs-addition,
+.hljs-attribute,
 .hljs-template-variable,
 .hljs-type,
 .hljs-variable {
-    color: #e6db74 !important
+    color: #98c379;
 }
 
-.hljs-comment,
-.hljs-deletion,
-.hljs-meta {
-    color: #75715e
+.hljs-title,
+.hljs-section,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-name {
+    color: #61afef;
 }
 
-/* COPY BUTTON */
-.copy-code-btn {
-    position: absolute;
-    top: 8px; /* Alineat amb l'etiqueta */
-    right: 10px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #94a3b8;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    padding: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    z-index: 2;
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-class .hljs-title,
+.hljs-params {
+    color: #e5c07b;
 }
 
-.copy-code-btn svg {
-    width: 16px;
-    height: 16px;
+.hljs-meta,
+.hljs-doctag,
+.hljs-tag {
+    color: #56b6c2;
 }
 
-.sourceCode:hover .copy-code-btn,
-pre:hover .copy-code-btn {
-    opacity: 1;
+.hljs-strong {
+    font-weight: 700;
 }
 
-.copy-code-btn:hover {
-    background: rgba(255, 255, 255, 0.18);
-    color: white;
-    border-color: rgba(255, 255, 255, 0.25);
+.hljs-emphasis {
+    font-style: italic;
 }
 
-.copy-code-btn.copied {
-    background: #10b981;
-    color: white;
-    border-color: #10b981;
-    opacity: 1;
+.hljs-deletion {
+    color: #e06c75;
 }
+
+.hljs-attr,
+.hljs-attribute {
+    color: #61afef;
+}
+
+
 
 /* =========================
    BLOCKQUOTE

@@ -11,20 +11,31 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "highlight_style": "zenburn",
 }
 
+
 def load_institut_config() -> Dict[str, Any]:
+    """Carrega la configuració de l'institut des del fitxer JSON.
+
+    Si el fitxer no existeix o és invàlid, retorna la configuració per defecte.
+    Els valors carregats es fusionen amb els valors per defecte.
+    """
     try:
         if not CONFIG_PATH.parent.exists():
             CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
-            
+
         if not CONFIG_PATH.exists():
             return DEFAULT_CONFIG.copy()
-            
+
         loaded = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
         return {**DEFAULT_CONFIG, **loaded}
     except (FileNotFoundError, json.JSONDecodeError):
         return DEFAULT_CONFIG.copy()
 
+
 def save_institut_config(config: Dict[str, Any]) -> None:
+    """Desa la configuració de l'institut al fitxer JSON."""
     if not CONFIG_PATH.parent.exists():
         CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
-    CONFIG_PATH.write_text(json.dumps(config, indent=2, ensure_ascii=False), encoding="utf-8")
+    CONFIG_PATH.write_text(
+        json.dumps(config, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
