@@ -88,7 +88,18 @@
     </div>
 </div>
 
+<button id="header-toggle" title="Amagar/Mostrar capçalera" class="no-print">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</button>
+
+<button id="fullscreen-toggle" title="Pantalla completa" class="no-print">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+</button>
+
+
+
 <div class="layout">
+
     <button id="sidebar-toggle" title="Amagar/Mostrar barra lateral" class="no-print">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
@@ -135,5 +146,25 @@
 $if(js)$
 <script src="$js$"></script>
 $endif$
+
+<!-- Mermaid.js per a diagrames -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e0e7ff',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#6366f1',
+                lineColor: '#64748b',
+                fontSize: '14px'
+            },
+            securityLevel: 'loose'
+        });
+    }
+</script>
 </body>
 </html>
+

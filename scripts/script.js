@@ -13,7 +13,79 @@ document.addEventListener('DOMContentLoaded', () => {
     syncHeaderHeight();
     window.addEventListener('resize', syncHeaderHeight);
 
+    // --- 0b. HEADER TOGGLE LOGIC ---
+    // Permet amagar/mostrar la capçalera superior (com la barra lateral).
+    const headerToggle = document.getElementById('header-toggle');
+    if (headerToggle) {
+        // Icones: fletxa cap amunt (amagar) / fletxa cap avall (mostrar)
+        const chevronUp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+        const chevronDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+        function updateHeaderIcon() {
+            const isCollapsed = document.body.classList.contains('header-collapsed');
+            headerToggle.innerHTML = isCollapsed ? chevronDown : chevronUp;
+            headerToggle.title = isCollapsed ? 'Mostrar capçalera' : 'Amagar capçalera';
+        }
+
+        headerToggle.addEventListener('click', () => {
+            document.body.classList.toggle('header-collapsed');
+
+            // Desa l'estat en localStorage per a la següent vegada
+            const isCollapsed = document.body.classList.contains('header-collapsed');
+            localStorage.setItem('header-collapsed', isCollapsed);
+
+            // Actualitzar la icona i recalcular l'alçada de la capçalera
+            updateHeaderIcon();
+            syncHeaderHeight();
+        });
+
+        // Recuperar l'estat desat
+        if (localStorage.getItem('header-collapsed') === 'true') {
+            document.body.classList.add('header-collapsed');
+        }
+        updateHeaderIcon();
+    }
+
+    // --- 0c. FULLSCREEN TOGGLE LOGIC ---
+    // Activa el mode pantalla completa del navegador i amaga la capçalera.
+    const fullscreenToggle = document.getElementById('fullscreen-toggle');
+    if (fullscreenToggle) {
+        fullscreenToggle.addEventListener('click', () => {
+            // Amagar la capçalera
+            document.body.classList.add('header-collapsed');
+            localStorage.setItem('header-collapsed', 'true');
+            syncHeaderHeight();
+
+            // Actualitzar la icona del botó de capçalera
+            const headerToggle = document.getElementById('header-toggle');
+            if (headerToggle) {
+                headerToggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+                headerToggle.title = 'Mostrar capçalera';
+            }
+
+            // Activar pantalla completa
+            const el = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (el.requestFullscreen) {
+                    el.requestFullscreen();
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                } else if (el.msRequestFullscreen) {
+                    el.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        });
+    }
+
+
     // --- 1. SIDEBAR TOGGLE LOGIC ---
+
     const sidebarToggle = document.getElementById('sidebar-toggle');
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', () => {
@@ -29,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('sidebar-collapsed');
         }
     }
+
 
     // --- 2. TOC COLLAPSIBLE LOGIC ---
     const tocItems = document.querySelectorAll('.toc li');
@@ -64,9 +137,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const classes = Array.from(code.classList);
         const lang = classes.find(c => c !== 'sourceCode' && !c.startsWith('language-'));
 
-        // Netejar possibles spans de Pandoc perquè highlight.js pugui treballar de zero
+        // Netejar els spans de numeració de línies de Pandoc.
+        // Pandoc genera: <span id="cbN-M"><a ...></a>contingut</span>
+        // Desempaquem els spans i enllaços però CONSERVEM el text tal qual,
+        // perquè si el codi és HTML no es trenqui (no fem servir innerText/innerHTML).
         if (code.children.length > 0) {
-            code.innerHTML = code.innerText;
+            // Recórrer tots els nodes fills i substituir els spans per el seu text
+            const walker = document.createTreeWalker(code, NodeFilter.SHOW_ELEMENT, {
+                acceptNode(node) {
+                    return (node.tagName === 'SPAN' || node.tagName === 'A')
+                        ? NodeFilter.FILTER_ACCEPT
+                        : NodeFilter.FILTER_SKIP;
+                }
+            });
+            const toReplace = [];
+            while (walker.nextNode()) {
+                toReplace.push(walker.currentNode);
+            }
+            toReplace.forEach(el => {
+                // Substituir l'element pel seu text (conserva el contingut com a text)
+                el.replaceWith(document.createTextNode(el.textContent));
+            });
         }
 
         if (lang) {
@@ -76,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pre.parentElement.setAttribute('data-lang', lang);
             }
         }
+
 
         // 3b. Determinar el contenidor del bloc de codi
         const container = pre.parentElement.classList.contains('sourceCode')

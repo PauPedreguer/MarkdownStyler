@@ -196,12 +196,88 @@ body {
     gap: 6px;
 }
 
+/* BOTÓ PER AMAGAR/MOSTRAR LA CAPÇALERA */
+/* Pegat al borde inferior de la capçalera, a la dreta. */
+#header-toggle {
+    position: fixed;
+    top: var(--header-height);
+    right: 15px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    background: #ffffff;
+    border: 1px solid var(--color-bord);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    color: var(--color-secundari);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+}
+
+#header-toggle:hover {
+    color: var(--color-primari);
+    border-color: var(--color-primari);
+}
+
+#header-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* BOTÓ DE PANTALLA COMPLETA */
+/* Situat just a sota del botó de la capçalera. */
+#fullscreen-toggle {
+    position: fixed;
+    top: calc(var(--header-height) + 40px);
+    right: 15px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    background: #ffffff;
+    border: 1px solid var(--color-bord);
+    border-radius: 8px;
+    color: var(--color-secundari);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+}
+
+#fullscreen-toggle:hover {
+    color: var(--color-primari);
+    border-color: var(--color-primari);
+}
+
+#fullscreen-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+
+
+/* Quan la capçalera està amagada */
+body.header-collapsed {
+    --header-height: 0px;
+}
+
+body.header-collapsed .header {
+    display: none;
+}
+
 /* CONTENEDOR PRINCIPAL */
 .layout {
     display: flex;
     position: relative;
     min-height: calc(100vh - var(--header-height));
 }
+
 
 /* SIDEBAR */
 .sidebar {
@@ -454,19 +530,49 @@ h2::before {
 }
 
 h3 {
-    margin-top: 32px;
-    margin-bottom: 10px;
-    color: var(--color-primari);
-    font-size: 1.25rem;
+    margin-top: 36px;
+    margin-bottom: 14px;
+    color: var(--color-guia);
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding-left: 14px;
+    position: relative;
     scroll-margin-top: calc(var(--header-height) + 20px);
 }
 
-h4 {
-    margin-top: 25px;
-    margin-bottom: 10px;
-    color: var(--color-text);
-    font-size: 1.1rem;
+h3::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 4px;
+    background: var(--color-primari);
+    border-radius: 2px;
 }
+
+h4 {
+    margin-top: 28px;
+    margin-bottom: 12px;
+    color: var(--color-text);
+    font-size: 1.15rem;
+    font-weight: 700;
+    padding-left: 12px;
+    position: relative;
+    scroll-margin-top: calc(var(--header-height) + 20px);
+}
+
+h4::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    background: color-mix(in srgb, var(--color-primari), white 40%);
+    border-radius: 2px;
+}
+
 
 h5 {
     margin-top: 20px;
@@ -732,9 +838,12 @@ code {
     gap: 12px;
     padding: 10px 16px;
     background: #273449;
-    border-bottom: 1px solid #334155;
+    /* Sense border-bottom: el contenidor .sourceCode ja té el seu propi
+       border, així evitem que apareguin 2 línies horitzontals. */
+    border-bottom: none;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
+
 
 /* Nom del llenguatge */
 .code-lang {
@@ -892,11 +1001,40 @@ pre code {
     color: #61afef;
 }
 
+/* Eliminar qualsevol línia de títol duplicada generada per CSS
+   (evita que els quadres de codi mostren 2 línies: una del ::before
+   i una altra de la barra .code-header creada pel JS). */
+.sourceCode[data-lang]::before,
+pre[class*="sourceCode"]::before,
+pre[data-lang]::before {
+    content: none !important;
+    display: none !important;
+}
 
+/* =========================
+   MERMAID (DIAGRAMES)
+   ========================= */
+
+.mermaid {
+    background: #ffffff;
+    border: 1px solid var(--color-bord);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin: 28px 0;
+    text-align: center;
+    overflow-x: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
 
 /* =========================
    BLOCKQUOTE
    ========================= */
+
 
 blockquote {
     position: relative;
@@ -1206,13 +1344,17 @@ p:has(> math[display="block"]) {
         display: none;
     }
 
-    #sidebar-toggle {
+    #sidebar-toggle,
+    #header-toggle,
+    #fullscreen-toggle {
         display: none;
     }
+
 
     main {
         padding: 20px 15px;
     }
+
 
     .content {
         padding: 28px 22px;

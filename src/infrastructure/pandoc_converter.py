@@ -1,7 +1,67 @@
+import re
+import html as html_module
 import subprocess
 from typing import Dict, Any
-from pathlib import Path
 from src.infrastructure.project_paths import PROJECT_ROOT, from_project_root
+
+
+
+def _postprocess_mermaid(html_path: str) -> None:
+    """Converteix els blocs de codi mermaid de l'HTML generat en <div class="mermaid">.
+
+    Pandoc tracta els diagrames mermaid com a blocs de codi normals, generant
+    una estructura com:
+        <div class="sourceCode"><pre class="sourceCode mermaid"><code>...</code></pre></div>
+
+    Aquest postprocessat (fet DESPRÉS de pandoc) els transforma en contenidors
+    que mermaid.js pot renderitzar al navegador. Fer-ho després de pandoc evita
+    que els caràcters especials del diagrama (com -->, &, etc.) siguin escapats.
+
+    Args:
+        html_path: Ruta del fitxer HTML generat per pandoc.
+    """
+    with open(html_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Patró robust per trobar blocs de codi mermaid generats per pandoc.
+    # Pandoc pot generar estructures lleugerament diferents, per això busquem
+    # qualsevol <pre> amb classe que contingui "mermaid" seguit d'un <code>.
+    # Exemple típic:
+    #   <div class="sourceCode" id="cbN"><pre class="sourceCode mermaid"><code class="sourceCode mermaid">...</code></pre></div>
+    pattern = re.compile(
+        r'<pre[^>]*class="[^"]*\bmermaid\b[^"]*"[^>]*>\s*<code[^>]*>(.*?)</code>\s*</pre>',
+        re.DOTALL,
+    )
+
+    def replace(match):
+        diagram = match.group(1)
+        # Desescapar les entitats HTML que pandoc hagi pogut generar
+        diagram = html_module.unescape(diagram)
+
+        # Eliminar els enllaços de numeració de línies que pandoc afegeix
+        diagram = re.sub(r'<a[^>]*>.*?</a>', '', diagram)
+        # Eliminar les etiquetes span (obertura i tancament) però CONSERVAR el text
+        diagram = re.sub(r'</?span[^>]*>', '', diagram)
+        # Eliminar qualsevol altra etiqueta residual
+        diagram = re.sub(r'<[^>]+>', '', diagram)
+        return '<div class="mermaid">\n' + diagram.strip() + '\n</div>'
+
+    new_content = pattern.sub(replace, content)
+
+    # Netejar els <div class="sourceCode"> buits que hagin quedat al voltant
+    # del div mermaid (pandoc els genera com a contenidor del bloc de codi).
+    new_content = re.sub(
+        r'<div class="sourceCode"[^>]*>\s*(<div class="mermaid">.*?</div>)\s*</div>',
+        r'\1',
+        new_content,
+        flags=re.DOTALL,
+    )
+
+    if new_content != content:
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+
+
 
 
 def convert_markdown(
@@ -51,6 +111,7 @@ def convert_markdown(
         f"--resource-path=.:{PROJECT_ROOT}:{from_project_root('templates')}:{from_project_root('scripts')}:{from_project_root('styles')}",
     ]
 
+
     if is_pdf:
         cmd.append("--pdf-engine=weasyprint")
         cmd.append("--pdf-engine-opt=--presentational-hints")
@@ -69,4 +130,12 @@ def convert_markdown(
     # Log de la comanda per a debug
     print(f"Executant Pandoc: {' '.join(cmd)}")
     subprocess.run(cmd, check=True)
+
+    # Postprocessar els blocs mermaid (només per a HTML, no per a PDF).
+    # Es fa DESPRÉS de pandoc per evitar que els caràcters especials del
+    # diagrama siguin escapats.
+    if not is_pdf:
+        _postprocess_mermaid(output_path)
+
+
 
