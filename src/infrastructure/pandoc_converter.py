@@ -1,8 +1,11 @@
 import re
 import html as html_module
 import subprocess
+import tempfile
+import os
 from typing import Dict, Any
 from src.infrastructure.project_paths import PROJECT_ROOT, from_project_root
+
 
 
 
@@ -123,9 +126,31 @@ def convert_markdown(
     else:
         cmd.append("--katex")
 
+    # Combinar el CSS base (compartit entre HTML i PDF) amb el CSS específic
+    # (prova.css per a HTML o pdf.css per a PDF) en un sol fitxer temporal.
+    # Passar dos --css a pandoc amb --embed-resources pot fallar, així que
+    # concatenem els fitxers en un únic CSS. El CSS específic es carrega
+    # DESPRÉS del base, de manera que pot sobreescriure els seus valors.
+    css_files = []
+    base_css = from_project_root("styles", "base.css")
+    if base_css.exists():
+        css_files.append(base_css.resolve())
     if css_path:
         abs_css = from_project_root(css_path).resolve()
-        cmd.append(f"--css={abs_css}")
+        css_files.append(abs_css)
+
+    temp_css = None
+    if css_files:
+        # Concatenar tots els fitxers CSS en un de temporal
+        temp_css = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".css", delete=False, encoding="utf-8"
+        )
+        for f in css_files:
+            with open(f, "r", encoding="utf-8") as fh:
+                temp_css.write(fh.read())
+                temp_css.write("\n")
+        temp_css.close()
+        cmd.append(f"--css={temp_css.name}")
 
     for key, value in metadata.items():
         if value:
@@ -133,7 +158,13 @@ def convert_markdown(
 
     # Log de la comanda per a debug
     print(f"Executant Pandoc: {' '.join(cmd)}")
-    subprocess.run(cmd, check=True)
+    try:
+        subprocess.run(cmd, check=True)
+    finally:
+        # Netejar el fitxer CSS temporal
+        if temp_css is not None and os.path.exists(temp_css.name):
+            os.remove(temp_css.name)
+
 
     # Postprocessar els blocs mermaid (només per a HTML, no per a PDF).
     # Es fa DESPRÉS de pandoc per evitar que els caràcters especials del

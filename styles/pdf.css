@@ -1,6 +1,11 @@
 /* =========================
    PDF SPECIFIC STYLES (WeasyPrint Compatible)
-   ========================= */
+   =========================
+   Aquest fitxer conté només els estils específics del PDF.
+   Els estils compartits amb l'HTML es troben a base.css (que es carrega
+   abans que aquest fitxer). Aquí només es sobreescriuen els valors que
+   difereixen per al format imprès.
+*/
 
 @page {
     size: A4;
@@ -251,7 +256,7 @@ h1.main-title {
     display: none;
 }
 
-/* --- Títols (Estil HTML) --- */
+/* --- Títols (sobreescriuen els valors de base.css per al PDF) --- */
 .content h1 {
     break-before: page; /* Cada H1 comença en pàgina nova */
     font-size: 2.2rem;
@@ -314,7 +319,7 @@ pre, table, blockquote, .katex-display, .content p img {
     margin-bottom: 0.5cm;
 }
 
-/* --- Llistes --- */
+/* --- Llistes (sobreescriuen els valors de base.css per al PDF) --- */
 .content ul, .content ol {
     margin: 1.2rem 0;
     padding-left: 1rem;
@@ -368,7 +373,7 @@ pre, table, blockquote, .katex-display, .content p img {
     content: "▪";
 }
 
-/* --- Blockquotes --- */
+/* --- Blockquotes (sobreescriuen els valors de base.css per al PDF) --- */
 blockquote {
     margin: 1.5cm 0;
     padding: 20px 25px;
@@ -379,7 +384,7 @@ blockquote {
     color: #475569;
 }
 
-/* --- Taules --- */
+/* --- Taules (sobreescriuen els valors de base.css per al PDF) --- */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -405,7 +410,7 @@ table tr:nth-child(even) {
     background: #f1f5f9;
 }
 
-/* --- Codi --- */
+/* --- Codi (sobreescriuen els valors de base.css per al PDF) --- */
 pre {
     background: #1e293b;
     color: #f8faf2;
@@ -482,7 +487,7 @@ img[src*="cgi-bin"] {
     margin: 0 2px;
 }
 
-/* --- Imatges --- */
+/* --- Imatges (sobreescriuen els valors de base.css per al PDF) --- */
 img {
     max-width: 100%;
     height: auto;
@@ -510,4 +515,3 @@ hr {
 .code-header {
     display: none !important;
 }
-

@@ -83,7 +83,17 @@ class TestPandocConverter(unittest.TestCase):
 
     def test_pdf_uses_pdf_css(self):
         """L'exportació PDF ha d'usar styles/pdf.css si existeix."""
-        with mock.patch.object(pandoc_converter.subprocess, "run") as mock_run, \
+        captured = {}
+
+        def fake_run(cmd, **kwargs):
+            # Capturar el contingut del fitxer CSS temporal abans que s'elimini
+            css_args = [arg for arg in cmd if arg.startswith("--css=")]
+            if css_args:
+                temp_path = css_args[0].split("=", 1)[1]
+                with open(temp_path, "r", encoding="utf-8") as f:
+                    captured["content"] = f.read()
+
+        with mock.patch.object(pandoc_converter.subprocess, "run", side_effect=fake_run) as mock_run, \
              mock.patch.object(pandoc_converter.Path, "exists", return_value=True):
             pandoc_converter.convert_markdown(
                 md_path=self.md_path,
@@ -95,8 +105,14 @@ class TestPandocConverter(unittest.TestCase):
                 metadata=self.metadata,
             )
         cmd = mock_run.call_args.args[0]
-        # Ha de contenir la ruta absoluta a styles/pdf.css
-        self.assertTrue(any("pdf.css" in arg for arg in cmd))
+        # Ha de contenir un únic --css amb un fitxer temporal concatenat
+        css_args = [arg for arg in cmd if arg.startswith("--css=")]
+        self.assertEqual(len(css_args), 1)
+        # El fitxer temporal ha de contenir el contingut de pdf.css i de base.css
+        self.assertIn("PDF SPECIFIC STYLES", captured["content"])
+        self.assertIn("BASE STYLES", captured["content"])
+
+
 
 
 if __name__ == "__main__":

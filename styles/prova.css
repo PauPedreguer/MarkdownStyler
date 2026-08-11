@@ -1,49 +1,10 @@
 /* =========================
-   EDU DOCS STYLE (PRO)
-   ========================= */
-
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
-
-:root {
-    --color-primari: hsl(221, 65%, 40%);
-    --color-fons: #f4f6f9;
-    --color-superficie: #ffffff;
-    --color-text: #1f2937;
-    --color-text-suau: #374151;
-    --color-secundari: #64748b;
-    --color-bord: #e2e8f0;
-    --color-guia: #1e293b;
-    --font-principal: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: 'Fira Code', 'Source Code Pro', monospace;
-    --sidebar-width: 280px;
-    --header-height: 65px;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-/* RESET */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* =========================
-   LAYOUT
-   ========================= */
-
-body {
-    font-family: var(--font-principal);
-    background: var(--color-fons);
-    color: var(--color-text);
-    scroll-behavior: smooth;
-    font-size: 16px;
-    line-height: 1.6;
-}
+   EDU DOCS STYLE (PRO) — HTML específic
+   =========================
+   Aquest fitxer conté només els estils específics de la versió HTML.
+   Els estils compartits amb el PDF es troben a base.css (que es carrega
+   abans que aquest fitxer).
+*/
 
 /* Scrollbar personalitzada */
 ::-webkit-scrollbar {
@@ -61,6 +22,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+}
+
+/* =========================
+   LAYOUT
+   ========================= */
+
+body {
+    font-family: var(--font-principal);
+    background: var(--color-fons);
+    color: var(--color-text);
+    scroll-behavior: smooth;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 /* HEADER SUPERIOR */
@@ -259,9 +233,6 @@ body {
     height: 20px;
 }
 
-
-
-
 /* Quan la capçalera està amagada */
 body.header-collapsed {
     --header-height: 0px;
@@ -277,7 +248,6 @@ body.header-collapsed .header {
     position: relative;
     min-height: calc(100vh - var(--header-height));
 }
-
 
 /* SIDEBAR */
 .sidebar {
@@ -338,10 +308,10 @@ body.sidebar-collapsed {
 
 .toc-toggle {
     position: absolute;
-    left: -10px; /* Ajustat per a la nova mida */
-    top: 4px; /* Ajustat per a la nova mida */
+    left: -10px;
+    top: 4px;
     cursor: pointer;
-    font-size: 1.1rem; /* Més gran com demanat */
+    font-size: 1.1rem;
     color: var(--color-secundari);
     user-select: none;
     transition: transform 0.2s;
@@ -448,387 +418,8 @@ main {
 }
 
 /* =========================
-   TIPOGRAFIA
+   CODI — Barra de capçalera del bloc
    ========================= */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: var(--font-principal);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-}
-
-h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 40px;
-    padding-bottom: 25px;
-    /* Més espai entre títol i línia */
-    color: var(--color-primari);
-    text-align: center;
-    scroll-margin-top: calc(var(--header-height) + 20px);
-    position: relative;
-    letter-spacing: -0.02em;
-}
-
-h1::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(to right, transparent 5%, var(--color-primari) 50%, transparent 95%);
-    opacity: 0.8;
-    /* Opacitat augmentada */
-    border-radius: 2px;
-}
-
-/* Eliminat h1::before */
-
-h2 {
-    font-size: 1.6rem;
-    margin-top: 60px;
-    margin-bottom: 25px;
-    color: var(--color-guia);
-    scroll-margin-top: calc(var(--header-height) + 20px);
-    padding: 5px 0 12px 18px;
-    /* Espai per a la barra vertical */
-    position: relative;
-    font-weight: 700;
-}
-
-h2::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    /* Tornem a un gruix més fi */
-    background: linear-gradient(to right, var(--color-primari) 0%, transparent 90%);
-    opacity: 0.5;
-}
-
-h2::before {
-    content: "";
-    display: block !important;
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 12px;
-    width: 4px;
-    /* Tornem a 4px */
-    background: var(--color-primari);
-    border-radius: 2px;
-    opacity: 1;
-}
-
-h3 {
-    margin-top: 36px;
-    margin-bottom: 14px;
-    color: var(--color-guia);
-    font-size: 1.3rem;
-    font-weight: 700;
-    padding-left: 14px;
-    position: relative;
-    scroll-margin-top: calc(var(--header-height) + 20px);
-}
-
-h3::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 4px;
-    bottom: 4px;
-    width: 4px;
-    background: var(--color-primari);
-    border-radius: 2px;
-}
-
-h4 {
-    margin-top: 28px;
-    margin-bottom: 12px;
-    color: var(--color-text);
-    font-size: 1.15rem;
-    font-weight: 700;
-    padding-left: 12px;
-    position: relative;
-    scroll-margin-top: calc(var(--header-height) + 20px);
-}
-
-h4::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 6px;
-    bottom: 6px;
-    width: 3px;
-    background: color-mix(in srgb, var(--color-primari), white 40%);
-    border-radius: 2px;
-}
-
-
-h5 {
-    margin-top: 20px;
-    margin-bottom: 8px;
-    color: var(--color-secundari);
-    font-size: 1.0rem;
-    font-weight: 600;
-}
-
-h6 {
-    margin-top: 20px;
-    margin-bottom: 8px;
-    color: var(--color-secundari);
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-p {
-    margin: 1.1rem 0;
-    line-height: 1.8;
-    color: var(--color-text-suau);
-    text-align: justify;
-    hyphens: auto;
-    text-justify: inter-word;
-}
-
-/* =========================
-   INLINE FORMATTING
-   ========================= */
-
-strong {
-    font-weight: 700;
-    color: var(--color-text);
-}
-
-em {
-    font-style: italic;
-    color: inherit;
-}
-
-del {
-    text-decoration: line-through;
-    color: var(--color-secundari);
-    opacity: 0.75;
-}
-
-mark {
-    background: color-mix(in srgb, #fbbf24, white 55%);
-    padding: 1px 4px;
-    border-radius: 3px;
-}
-
-sup {
-    font-size: 0.75em;
-    vertical-align: super;
-}
-
-/* =========================
-   LLISTES
-   ========================= */
-
-.content ul,
-.content ol {
-    margin: 1.2rem 0;
-    padding-left: 1.2rem;
-    /* Indentació base (tabulació) */
-}
-
-/* UNORDERED LISTS */
-.content ul {
-    list-style: none;
-}
-
-.content ul > li {
-    position: relative;
-    padding-left: 1.8rem;
-    margin-bottom: 0.6rem;
-}
-
-.content ul > li::before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: var(--color-primari);
-    font-size: 1.15em; /* Reduït per a ser més elegant */
-    line-height: 1;
-    top: 0.15em; /* Re-ajustat per a la nova mida */
-}
-
-/* Nested lists */
-.content ul ul,
-.content ol ol,
-.content ul ol,
-.content ol ul {
-    margin: 0.5rem 0;
-    padding-left: 1.5rem;
-    /* Indentació per a sub-llistes */
-}
-
-.content ul ul > li::before {
-    content: "◦";
-    font-size: 1.0em;
-    top: 0.1em;
-}
-
-.content ul ul ul > li::before {
-    content: "▪";
-    font-size: 0.8em;
-    top: 0.2em;
-}
-
-/* ORDERED LISTS */
-.content ol {
-    list-style: none;
-    counter-reset: custom-counter;
-}
-
-.content ol > li {
-    counter-increment: custom-counter;
-    position: relative;
-    padding-left: 2.2rem;
-    margin-bottom: 0.6rem;
-}
-
-.content ol > li::before {
-    content: counter(custom-counter) ".";
-    position: absolute;
-    left: 0;
-    color: var(--color-primari);
-    font-weight: 800;
-    font-family: var(--font-principal);
-    font-size: 0.95em;
-}
-
-.content li {
-    line-height: 1.75;
-    color: var(--color-text-suau);
-}
-
-.content li>p {
-    margin: 0.3rem 0;
-}
-
-/* TASK LISTS */
-.task-list {
-    list-style: none !important;
-    padding-left: 0.4rem !important;
-}
-
-.task-list li {
-    padding-left: 0.2rem !important;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.task-list li::before {
-    display: none !important;
-}
-
-.task-list li label {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    cursor: default;
-    line-height: 1.6;
-}
-
-.task-list input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    border: 2px solid var(--color-bord);
-    border-radius: 4px;
-    background: white;
-    cursor: default;
-    position: relative;
-    margin-top: 2px;
-    transition: all 0.15s ease;
-}
-
-.task-list input[type="checkbox"]:checked {
-    background: var(--color-primari);
-    border-color: var(--color-primari);
-}
-
-.task-list input[type="checkbox"]:checked::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 1px;
-    width: 6px;
-    height: 10px;
-    border: 2px solid white;
-    border-top: none;
-    border-left: none;
-    transform: rotate(45deg);
-}
-
-/* =========================
-   LINKS
-   ========================= */
-
-a {
-    color: var(--color-primari);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s, opacity 0.15s;
-}
-
-a:hover {
-    border-bottom-color: var(--color-primari);
-    opacity: 0.85;
-}
-
-/* Footnote refs */
-a.footnote-ref {
-    font-size: 0.8em;
-    border: none;
-    font-weight: 700;
-    vertical-align: super;
-}
-
-a.footnote-back {
-    border: none;
-    font-size: 0.9em;
-}
-
-/* =========================
-   CODI
-   ========================= */
-
-/* Codi inline */
-code {
-    background: color-mix(in srgb, var(--color-primari), white 92%);
-    color: color-mix(in srgb, var(--color-primari), #1e293b 30%);
-    padding: 2px 7px;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-mono);
-    font-size: 0.88em;
-    font-weight: 500;
-    border: 1px solid color-mix(in srgb, var(--color-primari), white 82%);
-}
-
-/* Blocs de codi (pandoc genera div.sourceCode > pre) */
-.sourceCode {
-    position: relative;
-    margin: 28px 0;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    border: 1px solid #334155;
-    background: #1e293b;
-}
 
 /* --- Barra de capçalera del bloc de codi --- */
 .code-header {
@@ -843,7 +434,6 @@ code {
     border-bottom: none;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
-
 
 /* Nom del llenguatge */
 .code-lang {
@@ -893,48 +483,6 @@ code {
     border-color: #16a34a;
     opacity: 1;
 }
-
-/* Contingut del bloc de codi */
-pre {
-    background: #1e293b;
-    color: #e2e8f0;
-    padding: 20px 24px;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    overflow-x: auto;
-    margin: 0;
-    font-size: 0.875rem;
-    line-height: 1.7;
-    font-family: var(--font-mono);
-    border: none;
-    tab-size: 4;
-}
-
-/* Quan pre és fill de .sourceCode, treure el marge propi */
-.sourceCode pre {
-    margin: 0;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    border: none;
-}
-
-/* El <code> interior de pandoc també té class="sourceCode", per tant
-   coincideix amb la regla .sourceCode (que aplica border, border-radius,
-   margin, overflow, box-shadow, etc.). Aquesta regla anul·la TOTS aquests
-   estils sobre el <code> perquè no apareguin les 2 línies horitzontals ni
-   els semicercles al voltant del text interior. Cal !important per vèncer
-   l'especificitat de .sourceCode (selector de classe). */
-pre code {
-    background: transparent !important;
-    padding: 0;
-    border: none !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    overflow: visible !important;
-    box-shadow: none !important;
-    position: static !important;
-    font-size: inherit;
-    font-weight: 400;
-}
-
 
 /* Millora de contrast per a highlight.js */
 .hljs {
@@ -1041,212 +589,6 @@ pre[data-lang]::before {
 .mermaid svg {
     max-width: 100%;
     height: auto;
-}
-
-/* =========================
-   BLOCKQUOTE
-   ========================= */
-
-
-blockquote {
-    position: relative;
-    border-left: 4px solid var(--color-primari);
-    background: color-mix(in srgb, var(--color-primari), white 95%);
-    padding: 18px 22px 18px 24px;
-    margin: 24px 0;
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    box-shadow: var(--shadow-sm);
-}
-
-blockquote::before {
-    content: '\201C';
-    position: absolute;
-    top: -10px;
-    left: 12px;
-    font-size: 3.5rem;
-    color: var(--color-primari);
-    opacity: 0.18;
-    font-family: Georgia, serif;
-    line-height: 1;
-    pointer-events: none;
-}
-
-blockquote p {
-    margin: 0.3rem 0;
-    color: color-mix(in srgb, var(--color-primari), #1e293b 40%);
-    font-style: italic;
-    line-height: 1.75;
-    text-align: left;
-}
-
-blockquote p strong {
-    font-style: normal;
-    color: var(--color-text);
-}
-
-blockquote p code {
-    background: color-mix(in srgb, var(--color-primari), white 85%);
-    border-color: color-mix(in srgb, var(--color-primari), white 75%);
-    font-style: normal;
-}
-
-/* blockquote buit — amagar */
-blockquote:empty,
-blockquote p:empty {
-    display: none;
-}
-
-/* =========================
-   SEPARADORS (HR)
-   ========================= */
-
-hr {
-    border: none;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--color-primari) 15%, var(--color-primari) 85%, transparent);
-    margin: 60px auto;
-    width: 80%;
-    opacity: 0.6;
-}
-
-/* =========================
-   TAULES
-   ========================= */
-
-.content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 30px 0;
-    font-size: 0.92rem;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--color-bord);
-    box-shadow: var(--shadow-sm);
-}
-
-/* Wrapper per permetre scroll horitzontal en taules amples */
-.content table {
-    display: table;
-    overflow-x: auto;
-}
-
-thead th {
-    background: var(--color-primari);
-    color: white;
-    text-align: left;
-    padding: 13px 16px;
-    font-weight: 600;
-    font-size: 0.88rem;
-    letter-spacing: 0.02em;
-    border: none;
-}
-
-/* Fix per a pandoc que a vegades no usa thead */
-th {
-    background: var(--color-primari);
-    color: white;
-    text-align: left;
-    padding: 13px 16px;
-    font-weight: 600;
-    font-size: 0.88rem;
-}
-
-/* Alineació de columnes */
-th[align="center"],
-td[align="center"] {
-    text-align: center;
-}
-
-th[align="right"],
-td[align="right"] {
-    text-align: right;
-}
-
-th[align="left"],
-td[align="left"] {
-    text-align: left;
-}
-
-td {
-    padding: 11px 16px;
-    border-top: 1px solid var(--color-bord);
-    color: var(--color-text-suau);
-    transition: background 0.15s;
-    vertical-align: top;
-}
-
-tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--color-primari), white 97%);
-}
-
-tbody tr:hover td {
-    background: color-mix(in srgb, var(--color-primari), white 93%);
-}
-
-/* =========================
-   IMATGES I FIGURES
-   ========================= */
-
-img {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--radius-md);
-    margin: 20px 0;
-    display: block;
-}
-
-figure {
-    margin: 28px 0;
-    text-align: center;
-}
-
-figure img {
-    margin: 0 auto;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--color-bord);
-}
-
-figcaption {
-    margin-top: 10px;
-    font-size: 0.85rem;
-    color: var(--color-secundari);
-    font-style: italic;
-    text-align: center;
-}
-
-/* =========================
-   NOTES AL PEU (FOOTNOTES)
-   ========================= */
-
-.footnotes {
-    margin-top: 50px;
-    border-top: 2px solid var(--color-bord);
-    padding-top: 24px;
-}
-
-.footnotes hr {
-    display: none;
-    /* Pandoc afegeix un hr extra, l'amaguem */
-}
-
-.footnotes ol {
-    padding-left: 1.8rem;
-    margin-top: 12px;
-}
-
-.footnotes li {
-    font-size: 0.88rem;
-    color: var(--color-secundari);
-    margin-bottom: 8px;
-    line-height: 1.65;
-}
-
-.footnotes li p {
-    margin: 0;
-    color: var(--color-secundari);
-    font-size: 0.88rem;
-    text-align: left;
-    line-height: 1.65;
 }
 
 /* =========================
@@ -1362,11 +704,9 @@ p:has(> math[display="block"]) {
         display: none;
     }
 
-
     main {
         padding: 20px 15px;
     }
-
 
     .content {
         padding: 28px 22px;
@@ -1378,18 +718,14 @@ p:has(> math[display="block"]) {
     height: 40px;
 }
 
-/* --- Elements de PDF/Impressió amagats per defecte --- */
 /* --- Elements de PDF/Impressió amagats per defecte en pantalla --- */
-.pdf-cover, 
+.pdf-cover,
 .pdf-toc,
 .pdf-metadata,
 .no-screen {
     display: none !important;
 }
 
-/* =========================
-   IMPRESSIÓ (@media print)
-   ========================= */
 /* =========================
    IMPRESSIÓ (@media print)
    ========================= */
@@ -1477,7 +813,7 @@ p:has(> math[display="block"]) {
         padding: 0 !important;
         line-height: 1.1 !important;
     }
-    
+
     .cover-title::after { display: none !important; }
 
     .cover-footer {
@@ -1568,7 +904,7 @@ p:has(> math[display="block"]) {
 }
 
 /* --- Elements de PDF/Impressió amagats per defecte en pantalla --- */
-.pdf-cover, 
+.pdf-cover,
 .pdf-toc,
 .no-screen {
     display: none !important;
