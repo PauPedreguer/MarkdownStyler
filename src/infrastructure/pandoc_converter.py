@@ -50,16 +50,20 @@ def _postprocess_mermaid(html_path: str) -> None:
 
     # Netejar els <div class="sourceCode"> buits que hagin quedat al voltant
     # del div mermaid (pandoc els genera com a contenidor del bloc de codi).
+    # Optimització: com que el contingut del div mermaid ja no conté etiquetes
+    # HTML (s'han eliminat a la passada anterior), podem usar [^<]* en lloc de
+    # .*? amb re.DOTALL, que era molt més lent en fitxers grans.
     new_content = re.sub(
-        r'<div class="sourceCode"[^>]*>\s*(<div class="mermaid">.*?</div>)\s*</div>',
+        r'<div class="sourceCode"[^>]*>\s*(<div class="mermaid">[^<]*</div>)\s*</div>',
         r'\1',
         new_content,
-        flags=re.DOTALL,
     )
 
     if new_content != content:
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(new_content)
+
+
 
 
 
