@@ -317,6 +317,57 @@ pre, table, blockquote, .katex-display, .content p img {
     color: var(--color-primari, #1d4ed8);
     margin-top: 1.2cm;
     margin-bottom: 0.5cm;
+    padding: 5px 0 12px 0;
+    position: relative;
+}
+
+.content h3::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1pt;
+    background: linear-gradient(to right, var(--color-primari, #1d4ed8) 0%, transparent 90%);
+    opacity: 0.5;
+}
+
+.content h4 {
+    font-size: 1.15rem;
+    color: #1f2937;
+    margin-top: 0.8cm;
+    margin-bottom: 0.4cm;
+    padding-left: 12px;
+    position: relative;
+}
+
+.content h4::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 2.5px;
+    background: color-mix(in srgb, var(--color-primari, #1d4ed8), white 40%);
+    border-radius: 2px;
+}
+
+.content h5 {
+    font-size: 1.05rem;
+    color: #1f2937;
+    margin-top: 0.6cm;
+    margin-bottom: 0.3cm;
+    font-weight: 700;
+}
+
+.content h6 {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-top: 0.5cm;
+    margin-bottom: 0.25cm;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 /* --- Llistes (sobreescriuen els valors de base.css per al PDF) --- */

@@ -35,7 +35,7 @@ class TestExecuteExport(unittest.TestCase):
             md_path=str(self.md_file),
             output_dir=str(self.tmp_path),
             title="Examen",
-            data="01-01-2026",
+            curs_academic="26-27",
             format="html",
         )
         with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
@@ -52,7 +52,7 @@ class TestExecuteExport(unittest.TestCase):
             md_path=str(self.md_file),
             output_dir=str(self.tmp_path),
             title="Examen",
-            data="01-01-2026",
+            curs_academic="26-27",
             format="pdf",
         )
         with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
@@ -68,7 +68,7 @@ class TestExecuteExport(unittest.TestCase):
             md_path=str(self.md_file),
             output_dir=str(self.tmp_path),
             title="Títol Prova",
-            data="05-05-2026",
+            curs_academic="26-27",
             subtitol="Subtítol",
             departament="Matemàtiques",
             primary_color="#166534",
@@ -81,7 +81,7 @@ class TestExecuteExport(unittest.TestCase):
         call_kwargs = mock_convert.call_args.kwargs
         metadata = call_kwargs["metadata"]
         self.assertEqual(metadata["title"], "Títol Prova")
-        self.assertEqual(metadata["data"], "05-05-2026")
+        self.assertEqual(metadata["data"], "26-27")
         self.assertEqual(metadata["subtitol"], "Subtítol")
         self.assertEqual(metadata["departament"], "Matemàtiques")
         self.assertEqual(metadata["primary_color"], "#166534")
@@ -92,7 +92,7 @@ class TestExecuteExport(unittest.TestCase):
             md_path=str(self.md_file),
             output_dir=str(self.tmp_path),
             title="Examen",
-            data="01-01-2026",
+            curs_academic="26-27",
             format="html",
         )
         with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \

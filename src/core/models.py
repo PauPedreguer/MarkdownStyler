@@ -5,7 +5,7 @@ class ExportOptions:
     md_path: str
     output_dir: str
     title: str
-    data: str
+    curs_academic: str
     subtitol: str = ""
     departament: str = "Informàtica"
     primary_color: str = "#1d4ed8"

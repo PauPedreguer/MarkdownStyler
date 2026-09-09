@@ -13,7 +13,7 @@ class TestExportOptions(unittest.TestCase):
             md_path="examen.md",
             output_dir="/tmp",
             title="Examen",
-            data="01-01-2026",
+            curs_academic="26-27",
         )
         self.assertEqual(opts.subtitol, "")
         self.assertEqual(opts.departament, "Informàtica")
@@ -26,7 +26,7 @@ class TestExportOptions(unittest.TestCase):
             md_path="examen.md",
             output_dir="/tmp",
             title="Examen",
-            data="01-01-2026",
+            curs_academic="26-27",
             subtitol="Pràctica 1",
             departament="Matemàtiques",
             primary_color="#166534",
@@ -43,12 +43,12 @@ class TestExportOptions(unittest.TestCase):
             md_path="a.md",
             output_dir="out",
             title="T",
-            data="d",
+            curs_academic="26-27",
         )
         self.assertEqual(opts.md_path, "a.md")
         self.assertEqual(opts.output_dir, "out")
         self.assertEqual(opts.title, "T")
-        self.assertEqual(opts.data, "d")
+        self.assertEqual(opts.curs_academic, "26-27")
 
 
 if __name__ == "__main__":

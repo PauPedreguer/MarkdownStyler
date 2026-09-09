@@ -13,6 +13,19 @@ from src.core.models import ExportOptions
 from src.use_cases.generate_html import execute_export
 from src.ui.components import DropZone, SettingsDialog, SuccessDialog, PrimaryButton
 
+
+def calcular_curs_academic() -> str:
+    """Calcula el curs acadèmic actual (ex: '26-27').
+
+    Entre setembre i desembre → any actual + següent (ex: oct 2026 → '26-27').
+    Entre gener i agost → any anterior + actual (ex: març 2027 → '26-27').
+    """
+    now = datetime.now()
+    any_ini = now.year if now.month >= 9 else now.year - 1
+    any_fi = any_ini + 1
+    return f"{any_ini % 100:02d}-{any_fi % 100:02d}"
+
+
 class WorkerSignals(QObject):
     finished = pyqtSignal(str)
     error = pyqtSignal(str)
@@ -88,9 +101,9 @@ class App(QMainWindow):
         self.subtitle_input = QLineEdit()
         self.layout.addWidget(self.subtitle_input)
         
-        self.layout.addWidget(QLabel("Data:"))
-        self.data_input = QLineEdit(datetime.now().strftime("%d-%m-%Y"))
-        self.layout.addWidget(self.data_input)
+        self.layout.addWidget(QLabel("Curs acadèmic:"))
+        self.curs_input = QLineEdit(calcular_curs_academic())
+        self.layout.addWidget(self.curs_input)
         
         # Presets de color
         self.layout.addWidget(QLabel("Color d'identitat:"))
@@ -220,7 +233,7 @@ class App(QMainWindow):
                 output_dir=output_dir,
                 title=self.title_input.text(),
                 subtitol=self.subtitle_input.text(),
-                data=self.data_input.text(),
+                curs_academic=self.curs_input.text(),
                 primary_color=self.selected_color,
                 format=format
             )

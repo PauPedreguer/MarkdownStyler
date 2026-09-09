@@ -29,7 +29,7 @@ def execute_export(options: ExportOptions) -> str:
         **config,
         "title": options.title,
         "subtitol": options.subtitol,
-        "data": options.data,
+        "data": options.curs_academic,
         "departament": options.departament,
         "primary_color": options.primary_color,
     }
