@@ -7,7 +7,7 @@ Aplicació d'escriptori (PyQt6) que genera documents HTML i PDF amb estil profes
 - 🎨 **Personalització de colors**: presets de color d'identitat configurables.
 - 📄 **Exportació HTML i PDF**: genera documents amb portada, sumari i estil professional.
 - 🏫 **Configuració de l'institut**: nom, logo, curs, assignatura, professor i departament.
-- 🎯 **Ressaltat de codi**: suport per a múltiples estils de ressaltat (Pygments, Zenburn, Tango, etc.).
+- 🎯 **Ressaltat de codi**: el genera Pandoc (`--highlight-style`), amb estils com Zenburn, Pygments, Tango o Breeze Dark. Sense llibreries externes.
 - 📥 **Arrossega i deixa anar**: suport per arrossegar fitxers `.md` directament a la finestra.
 - 🧩 **Plantilles i estils personalitzables**: importa els teus propis CSS, plantilles HTML i scripts JS.
 
@@ -34,7 +34,9 @@ MarkdownStyler/
 │   ├── test_config_repo.py
 │   ├── test_project_paths.py
 │   ├── test_generate_html.py
-│   └── test_pandoc_converter.py
+│   ├── test_pandoc_converter.py
+│   ├── test_templates.py      # Invariants de plantilla/JS de l'HTML generat
+│   └── test_ui.py             # Helpers d'UI (sense QApplication)
 ├── config/                    # Configuració de l'institut (JSON)
 ├── templates/                 # Plantilles HTML de Pandoc
 ├── styles/                    # Fulls d'estil CSS
@@ -114,7 +116,7 @@ La configuració de l'institut es desa a `config/institut.json`:
   "css_name": "prova.css",
   "template_name": "base.html",
   "js_name": "script.js",
-  "highlight_style": "pygments"
+  "highlight_style": "zenburn"
 }
 ```
 

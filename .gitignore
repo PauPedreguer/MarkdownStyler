@@ -25,9 +25,6 @@ env/
 *.pdf
 !templates/*.html
 
-# Fitxers de referència locals
-Guía de CSS.html
-
 # Tests
 .pytest_cache/
 .coverage
