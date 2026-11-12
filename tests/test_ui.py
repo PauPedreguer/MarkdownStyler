@@ -10,6 +10,11 @@ from unittest import mock
 
 import main
 from src.core.models import ExportOptions
+from src.infrastructure.highlight_styles import (
+    ESTIL_RESSALTAT_DEFECTE,
+    ESTILS_PROJECTE,
+    ESTILS_RESSALTAT,
+)
 from src.infrastructure.project_paths import from_project_root
 from src.ui.app import App
 from src.ui.components.settings_dialog import (
@@ -103,6 +108,45 @@ class TestRecursosDisponibles(unittest.TestCase):
             ),
             [],
         )
+
+
+class TestEstilsRessaltat(unittest.TestCase):
+    """Comprova la llista d'estils de ressaltat que oferix el diàleg d'ajustos.
+
+    El bloc de codi té fons fosc (#1e293b), així que només els temes foscos es
+    llegixen bé. La llista ha de dir a l'usuari quin és quin i no ha d'oferir
+    els temes clars de pandoc, que deixen el codi quasi d'un sol color.
+    """
+
+    def test_one_dark_es_el_primer_i_el_recomanat(self):
+        """One Dark és el tema per defecte: ha d'anar primer i marcat."""
+        estil, etiqueta = ESTILS_RESSALTAT[0]
+        self.assertEqual(estil, ESTIL_RESSALTAT_DEFECTE)
+        self.assertEqual(estil, "themes/one-dark.theme")
+        self.assertIn("fosc", etiqueta)
+        self.assertIn("recomanat", etiqueta)
+
+    def test_els_temes_del_projecte_van_primer(self):
+        """Els temes propis s'ofereixen abans que els de pandoc."""
+        valors = [estil for estil, _ in ESTILS_RESSALTAT]
+        propis = [ruta for ruta, _ in ESTILS_PROJECTE]
+        self.assertEqual(valors[:len(propis)], propis)
+
+    def test_els_valors_son_unics(self):
+        """Els valors desats al desplegable no es poden repetir."""
+        valors = [estil for estil, _ in ESTILS_RESSALTAT]
+        self.assertEqual(len(valors), len(set(valors)))
+
+    def test_les_etiquetes_diuen_que_el_tema_es_fosc(self):
+        """Cada etiqueta ha d'avisar del tema, per a no triar-ne un de clar."""
+        for estil, etiqueta in ESTILS_RESSALTAT:
+            self.assertIn("fosc", etiqueta, estil)
+
+    def test_els_temes_clars_de_pandoc_no_s_oferixen(self):
+        """Els temes de fons clar fan el codi il·legible sobre el bloc fosc."""
+        valors = {estil for estil, _ in ESTILS_RESSALTAT}
+        self.assertEqual(valors & {"pygments", "tango", "kate", "haddock"}, set())
+
 
 
 class TestExportThread(unittest.TestCase):

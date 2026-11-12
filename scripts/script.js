@@ -144,6 +144,147 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
     const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
 
+    // Pandoc renombra alguns llenguatges (`c#` -> `cs`, `c++` -> `cpp`) i la
+    // classe que emet no és per a llegir. Este mapa dóna el nom "humà" que es
+    // mostra a la barra del bloc de codi.
+    const ETIQUETES_LLENGUATGE = {
+        cs: 'C#',
+        cpp: 'C++',
+        js: 'JavaScript',
+        javascript: 'JavaScript',
+        ts: 'TypeScript',
+        typescript: 'TypeScript',
+        bash: 'Bash',
+        sh: 'Bash',
+        py: 'Python',
+        python: 'Python',
+        html: 'HTML',
+        css: 'CSS',
+        php: 'PHP',
+        sql: 'SQL',
+    };
+
+    // Classes que pandoc posa al <pre> i que NO són el nom d'un llenguatge (les
+    // afig quan el bloc no es pot ressaltar o quan demana números de línia).
+    const CLASSES_DE_PANDOC = new Set([
+        'sourceCode', 'numberLines', 'numberSource', 'lineAnchors', 'example',
+    ]);
+
+    // --- 2b. RESSALTAT DE CRIDES ---
+    // Pandoc (skylighting) treballa amb expressions regulars i no sap què és
+    // una crida: en Kotlin, Java, JavaScript… un identificador seguit de
+    // parèntesis (`Column(`, `Modifier.fillMaxSize(`, `println(`) queda sense
+    // color. En codi de classe (i sobretot en Jetpack Compose) són justament
+    // les paraules que més es miren, així que les marquem amb la classe `fu`
+    // (Function) perquè agafen el color de funcions del tema de ressaltat.
+    //
+    // Només s'activa en llenguatges on `nom(` és una crida, i només sobre els
+    // textos que NO estan dins d'un <span class="…"> de pandoc: els tokens que
+    // pandoc ja ha pintat (paraules clau, tipus, cadenes…) no es toquen mai.
+    const LLENGUATGES_AMB_CRIDES = new Set([
+        'kotlin', 'java', 'javascript', 'typescript', 'cpp', 'cs', 'php',
+        'python', 'py', 'js', 'ts',
+    ]);
+
+    // Paraules que van seguides de parèntesis però no són crides.
+    const NO_SON_CRIDES = new Set([
+        'if', 'for', 'while', 'switch', 'when', 'catch', 'return', 'new',
+        'else', 'do', 'try', 'throw', 'finally', 'super', 'this', 'typeof',
+        'sizeof', 'delete', 'await', 'yield', 'function', 'def', 'in', 'is',
+        'as',
+    ]);
+
+    // Pandoc separa cada token en un <span>: `Column` i el parèntesi de
+    // `Column(` són dos elements distints, així que no n'hi ha prou de mirar
+    // dins del text: cal mirar el començament del següent germà.
+    function seguentCaracter(node) {
+        let germa = node.nextSibling;
+        while (germa) {
+            const text = (germa.textContent || '').trimStart();
+            if (text) return text[0];
+            germa = germa.nextSibling;
+        }
+        return '';
+    }
+
+    function anteriorCaracter(node) {
+        let germa = node.previousSibling;
+        while (germa) {
+            const text = (germa.textContent || '').trimEnd();
+            if (text) return text[text.length - 1];
+            germa = germa.previousSibling;
+        }
+        return '';
+    }
+
+    function esCrida(text, index, llarg, node) {
+        const resta = text.slice(index + llarg).trimStart();
+        if (resta) return resta[0] === '(';
+        return seguentCaracter(node) === '(';
+    }
+
+    // Un nom de tipus (`Modifier`, `Arrangement`, `Persona`…) comença amb
+    // majúscula i té alguna minúscula. S'exclouen les constants (`MAX_SIZE`)
+    // i l'accés a un membre (`Arrangement.Center`: `Center` és una propietat).
+    function esTipus(nom, text, index, node) {
+        if (!/^[A-Z]/.test(nom) || !/[a-z]/.test(nom)) return false;
+        const abans = text.slice(0, index).trimEnd();
+        const anterior = abans ? abans[abans.length - 1] : anteriorCaracter(node);
+        return anterior !== '.';
+    }
+
+    function marcaCrides(code, lang) {
+        if (!LLENGUATGES_AMB_CRIDES.has(lang)) return;
+
+        const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+        const textos = [];
+        while (walker.nextNode()) textos.push(walker.currentNode);
+
+        textos.forEach(node => {
+            // Un token de pandoc: el text ja té color, no s'hi toca.
+            if (node.parentElement.closest('span[class], a')) return;
+
+            const text = node.nodeValue;
+            // Un identificador que no ve precedit de paraula ni de `$`
+            // (variables de Kotlin o de PHP).
+            const re = /(?<![\w$])([A-Za-z_]\w*)/g;
+            let fragment = null;
+            let ultim = 0;
+            let m;
+            while ((m = re.exec(text)) !== null) {
+                const classe = classePerIdentificador(m, text, node);
+                if (!classe) continue;
+                fragment = fragment || document.createDocumentFragment();
+                if (m.index > ultim) {
+                    fragment.appendChild(
+                        document.createTextNode(text.slice(ultim, m.index))
+                    );
+                }
+                const span = document.createElement('span');
+                span.className = classe;
+                span.textContent = m[1];
+                fragment.appendChild(span);
+                ultim = m.index + m[1].length;
+            }
+            if (!fragment) return;
+            if (ultim < text.length) {
+                fragment.appendChild(document.createTextNode(text.slice(ultim)));
+            }
+            // Es canvia només este text; els spans de pandoc queden intactes
+            // perquè l'element <code> no es reconstrueix mai.
+            node.replaceWith(fragment);
+        });
+    }
+
+    // Classe de ressaltat que li toca a un identificador que pandoc ha deixat
+    // sense color: `fu` si és una crida, `dt` si pareix un tipus, res si no.
+    function classePerIdentificador(m, text, node) {
+        if (NO_SON_CRIDES.has(m[1])) return null;
+        if (esCrida(text, m.index, m[1].length, node)) return 'fu';
+        if (esTipus(m[1], text, m.index, node)) return 'dt';
+        return null;
+    }
+
     const allPreBlocks = document.querySelectorAll('pre');
 
     allPreBlocks.forEach(pre => {
@@ -152,44 +293,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3a. Detect Language
         const classes = Array.from(code.classList);
-        const lang = classes.find(c => c !== 'sourceCode' && !c.startsWith('language-'));
+        let lang = classes.find(c => c !== 'sourceCode' && !c.startsWith('language-'));
 
-        // Netejar els spans de numeració de línies de Pandoc.
-        // Pandoc genera: <span id="cbN-M"><a ...></a>contingut</span>
-        // Desempaquem els spans i enllaços però CONSERVEM el text tal qual,
-        // perquè si el codi és HTML no es trenqui (no fem servir innerText/innerHTML).
-        if (code.children.length > 0) {
-            // Recórrer tots els nodes fills i substituir els spans per el seu text
-            const walker = document.createTreeWalker(code, NodeFilter.SHOW_ELEMENT, {
-                acceptNode(node) {
-                    return (node.tagName === 'SPAN' || node.tagName === 'A')
-                        ? NodeFilter.FILTER_ACCEPT
-                        : NodeFilter.FILTER_SKIP;
-                }
-            });
-            const toReplace = [];
-            while (walker.nextNode()) {
-                toReplace.push(walker.currentNode);
-            }
-            toReplace.forEach(el => {
-                // Substituir l'element pel seu text (conserva el contingut com a text)
-                el.replaceWith(document.createTextNode(el.textContent));
-            });
+        // Si pandoc no ressalta el bloc, la classe del llenguatge la posa al
+        // <pre> (<pre class="text">, <pre class="foobar">). Així l'etiqueta diu
+        // el que ha escrit l'usuari i no sempre "TEXT".
+        if (!lang) {
+            lang = Array.from(pre.classList).find(
+                c => !CLASSES_DE_PANDOC.has(c) && !c.startsWith('language-')
+            );
         }
+
+        // IMPORTANT: no tocar els fills de <code>. Pandoc hi posa un
+        // <span id="cbN-M"> per línia i, dins, un <span class="kw">,
+        // <span class="st">… per token amb els colors de --highlight-style.
+        // Ací abans es desempaquetaven eixos spans (perquè highlight.js
+        // partira de zero), cosa que destruïa els tokens i deixava el bloc
+        // sense ressaltat: tot el codi s'heretava del color del <pre>.
 
         if (lang) {
             code.classList.add(`language-${lang}`);
             pre.setAttribute('data-lang', lang);
-            if (pre.parentElement.classList.contains('sourceCode')) {
-                pre.parentElement.setAttribute('data-lang', lang);
-            }
         }
 
+        // 3a-bis. Pintar les crides que pandoc no ha pogut reconéixer.
+        marcaCrides(code, lang);
 
-        // 3b. Determinar el contenidor del bloc de codi
-        const container = pre.parentElement.classList.contains('sourceCode')
+
+        // 3b. Determinar el contenidor del bloc de codi.
+        // Pandoc només embolcalla en <div class="sourceCode"> els blocs que sap
+        // ressaltar; la resta (``` sense info string, ```text, ```foobar)
+        // arriben com a <pre> solt. Si la barra s'inserira dins del <pre>
+        // quedaria dins del seu padding: sagnada respecte del bloc, més curta
+        // que la seua vora i amb la tipografia del codi. Es crea el mateix
+        // embolcall que fa pandoc perquè tots els blocs es vegen igual.
+        let container = pre.parentElement.classList.contains('sourceCode')
             ? pre.parentElement
-            : pre;
+            : null;
+
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'sourceCode';
+            pre.replaceWith(container);
+            container.appendChild(pre);
+        }
+
+        if (lang) container.setAttribute('data-lang', lang);
 
         // Evitar duplicats si es crida més d'un cop
         if (container.querySelector('.code-header')) return;
@@ -200,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const langLabel = document.createElement('span');
         langLabel.className = 'code-lang';
-        langLabel.textContent = lang || 'text';
+        langLabel.textContent = ETIQUETES_LLENGUATGE[lang] || lang || 'text';
 
         header.appendChild(langLabel);
 
@@ -231,5 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // NOTA: el ressaltat de codi el fa Pandoc (--highlight-style) amb els
     // spans `code span.*` que injecta la plantilla via $highlighting-css$.
-    // Ja no es carrega highlight.js (121 KB) ni cap postprocessat de tokens.
+    // Ja no es carrega highlight.js (121 KB). L'únic afegit és `marcaCrides`,
+    // que pinta les crides que pandoc no reconeix (Column(, println(…)).
 });

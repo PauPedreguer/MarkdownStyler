@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from typing import Dict, Any
+from src.infrastructure.highlight_styles import ESTIL_RESSALTAT_DEFECTE
 from src.infrastructure.project_paths import from_project_root
 
 CONFIG_PATH = from_project_root("config", "institut.json")
@@ -8,7 +9,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "css_name": "prova.css",
     "template_name": "base.html",
     "js_name": "script.js",
-    "highlight_style": "zenburn",
+    "highlight_style": ESTIL_RESSALTAT_DEFECTE,
 }
 
 

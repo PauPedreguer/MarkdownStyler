@@ -68,6 +68,30 @@ class TestPandocConverter(unittest.TestCase):
         cmd = mock_run.call_args.args[0]
         self.assertIn("--highlight-style=tango", cmd)
 
+    def test_highlight_style_theme_file_is_passed_as_absolute_path(self):
+        """Un tema propi (.theme) s'ha de passar com a ruta absoluta.
+
+        Pandoc només reconeix els noms dels temes que porta incorporats; per a
+        un tema del projecte cal donar-li el camí del fitxer.
+        """
+        with mock.patch.object(pandoc_converter.subprocess, "run") as mock_run:
+            pandoc_converter.convert_markdown(
+                md_path=self.md_path,
+                output_path=self.output_path,
+                css_path=self.css_path,
+                template_path=self.template_path,
+                js_path=self.js_path,
+                highlight_style="themes/one-dark.theme",
+                metadata=self.metadata,
+            )
+        cmd = mock_run.call_args.args[0]
+        estil = [arg for arg in cmd if arg.startswith("--highlight-style=")]
+        self.assertEqual(len(estil), 1)
+        ruta = estil[0].split("=", 1)[1]
+        self.assertTrue(ruta.startswith("/"), ruta)
+        self.assertTrue(ruta.endswith("themes/one-dark.theme"), ruta)
+        self.assertTrue(Path(ruta).is_file(), ruta)
+
     def test_html_concatenates_base_and_selected_css(self):
         """El CSS temporal de l'HTML ha de combinar base.css i l'estil triat."""
         captured = {}

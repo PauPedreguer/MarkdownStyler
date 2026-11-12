@@ -5,9 +5,9 @@
     <title>$title$</title>
 
     <!-- Google Fonts (carregades via <link> perquè pandoc amb --embed-resources
-         no intenti descarregar-les des del CSS) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+         no intenti descarregar-les des del CSS). No s'hi posen els enllaços de
+         preconnexió: l'HTML es carrega des de file:// (finestra i PDF amb
+         Chromium headless) i allí no avancen res, només fan soroll. -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
     <!-- CSS de ressaltat de codi generat per pandoc (--highlight-style).

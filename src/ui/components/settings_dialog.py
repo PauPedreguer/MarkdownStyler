@@ -4,6 +4,10 @@ from PyQt6.QtWidgets import (
     QDialog, QFormLayout, QHBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox, QComboBox
 )
 from src.infrastructure.config_repo import load_institut_config, save_institut_config
+from src.infrastructure.highlight_styles import (
+    ESTIL_RESSALTAT_DEFECTE,
+    ESTILS_RESSALTAT,
+)
 from src.infrastructure.project_paths import from_project_root
 from src.ui.components.buttons import PrimaryButton
 
@@ -95,8 +99,17 @@ class SettingsDialog(QDialog):
         if idx_script >= 0: self.script_combo.setCurrentIndex(idx_script)
 
         self.highlight_combo = QComboBox()
-        self.highlight_combo.addItems(["pygments", "tango", "espresso", "zenburn", "kate", "monochrome", "breezedark", "haddock"])
-        idx_h = self.highlight_combo.findText(self.config.get("highlight_style", "zenburn"))
+        for estil, etiqueta in ESTILS_RESSALTAT:
+            # El text visible porta l'etiqueta; el valor desat és l'estil.
+            self.highlight_combo.addItem(etiqueta, estil)
+        self.highlight_combo.setToolTip(
+            "El bloc de codi té fons fosc: els temes propis estan afinats "
+            "per als llenguatges de classe (kotlin, java, bash, html, css, "
+            "javascript, c++, c#, php)."
+        )
+        idx_h = self.highlight_combo.findData(
+            self.config.get("highlight_style", ESTIL_RESSALTAT_DEFECTE)
+        )
         if idx_h >= 0: self.highlight_combo.setCurrentIndex(idx_h)
         
         self.add_style_btn = QPushButton("+")
@@ -204,7 +217,7 @@ class SettingsDialog(QDialog):
             "css_name": self.style_combo.currentText(),
             "template_name": self.template_combo.currentText(),
             "js_name": self.script_combo.currentText(),
-            "highlight_style": self.highlight_combo.currentText()
+            "highlight_style": self.highlight_combo.currentData()
         }
         save_institut_config(new_config)
         QMessageBox.information(self, "Guardat", "S'han desat els ajustos de manera persistent.")

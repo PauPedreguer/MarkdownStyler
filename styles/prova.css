@@ -593,7 +593,7 @@ p:has(> math[display="block"]) {
    RESPONSIVE
    ========================= */
 
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
     .header {
         position: relative;
         flex-direction: column;
@@ -660,6 +660,15 @@ p:has(> math[display="block"]) {
    IMPRESSIÓ (@media print)
    ========================= */
 @media print {
+    /* Els fons (blocs de codi, capçaleres de taula, portada) s'han de conservar
+       en el PDF: Chromium els lleva per defecte i el codi quedaria blanc amb
+       text clar. Es declara a html (i no només a pre) per a cobrir tots els
+       elements amb fons propi. */
+    html {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
     /* Amagar elements de la interfície web */
     .sidebar,
     #sidebar-toggle,
@@ -828,7 +837,9 @@ p:has(> math[display="block"]) {
 
     /* Estils de codi per a impressió: es manté el fons fosc de la pantalla
        perquè els colors dels tokens (--highlight-style) s'hi continuen
-       llegint (l'estil per defecte, zenburn, té colors clars). */
+       llegint (l'estil per defecte, zenburn, té colors clars). Per això
+       `print-color-adjust: exact` va a html: sense eixa propietat Chromium
+       descarta els fons i el bloc quedaria blanc amb text clar (il·legible). */
     pre {
         background: #1e293b !important;
         color: #e2e8f0 !important;
@@ -838,8 +849,29 @@ p:has(> math[display="block"]) {
         overflow: visible !important;
         page-break-inside: auto;
         break-inside: auto;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+    }
+
+    /* Igual que en pantalla: el text sense token hereta el gris clar de <pre>
+       i no el color primari del codi inline. */
+    pre code {
+        color: inherit !important;
+        background: transparent !important;
+    }
+
+    /* En paper no hi ha barra de desplaçament: si el codi no es pot partir,
+       les línies llargues s'ixen del bloc (text clar sobre paper blanc, és a
+       dir, invisible). Pandoc posa `white-space: pre` al <code>, que és qui
+       realment reté les línies. */
+    pre > code.sourceCode {
+        white-space: pre-wrap !important;
+    }
+
+    /* I, com que ara les línies es poden partir, cal llevar el sagnat penjant
+       de 5em que pandoc aplica als spans de línia (és per als blocs amb
+       número de línia i desquadraria el text partit). */
+    pre > code.sourceCode > span {
+        text-indent: 0 !important;
+        padding-left: 0 !important;
     }
 
     div.sourceCode {

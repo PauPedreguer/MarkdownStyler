@@ -5,6 +5,7 @@ import tempfile
 import os
 from pathlib import Path
 from typing import Dict, Any
+from src.infrastructure.highlight_styles import ruta_estil_ressaltat
 from src.infrastructure.project_paths import PROJECT_ROOT, from_project_root
 
 
@@ -158,7 +159,8 @@ def convert_markdown(
         css_path: Ruta relativa del full d'estil CSS.
         template_path: Ruta relativa de la plantilla HTML.
         js_path: Ruta relativa de l'script JS.
-        highlight_style: Estil de ressaltat de codi de Pandoc.
+        highlight_style: Estil de ressaltat de codi de Pandoc (nom d'un tema
+            incorporat o ruta d'un fitxer ``.theme`` del projecte).
         metadata: Diccionari de metadades per a la plantilla.
     """
     # Afegir el JS a la metadata per a la plantilla
@@ -174,7 +176,7 @@ def convert_markdown(
         "--embed-resources",
         "--toc",
         "--toc-depth=3",
-        f"--highlight-style={highlight_style}",
+        f"--highlight-style={ruta_estil_ressaltat(highlight_style)}",
         f"--template={from_project_root(template_path).resolve()}",
         f"--resource-path=.:{PROJECT_ROOT}:{from_project_root('templates')}:{from_project_root('scripts')}:{from_project_root('styles')}",
         "--katex",

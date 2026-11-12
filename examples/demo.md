@@ -99,6 +99,90 @@ for _ in range(n):
 return a
 ```
 
+### Languages used in class
+
+```kotlin
+fun suma(nums: List<Int>): Int {
+    var total = 0
+    for (n in nums) total += n
+    return total
+}
+```
+
+```kotlin
+@Composable
+fun Contador(modifier: Modifier = Modifier) {
+    var total by remember { mutableStateOf(0) }
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(text = "Has premut $total voltes", fontSize = 24.sp)
+        Button(onClick = { total++ }) { Text("Prem") }
+    }
+}
+```
+
+```java
+public class Hola {
+    public static void main(String[] args) {
+        int suma = 0;
+        for (int i = 1; i <= 10; i++) suma += i;
+        System.out.println("Suma: " + suma);
+    }
+}
+```
+
+```bash
+#!/usr/bin/env bash
+for f in *.md; do
+    echo "Processant ${f}"
+    pandoc "$f" -o "${f%.md}.html" 2>/dev/null || echo "Error"
+done
+```
+
+```html
+<nav class="menu">
+    <a href="#inici">Inici</a>
+    <a href="#contacte">Contacte</a>
+</nav>
+```
+
+```css
+.menu a:hover {
+    color: #e06c75;
+    text-decoration: none;
+}
+```
+
+```c++
+#include <iostream>
+using namespace std;
+
+int main() {
+    int suma = 0;
+    for (int i = 1; i <= 10; i++) suma += i;
+    cout << "Suma: " << suma << endl;
+    return 0;
+}
+```
+
+```c#
+using System;
+
+class Programa {
+    static void Main() {
+        double preu = 19.95;
+        Console.WriteLine($"Preu: {preu:F2} €");
+    }
+}
+```
+
+```php
+<?php
+function suma(int $a, int $b): int {
+    return $a + $b;
+}
+echo "Suma: " . suma(2, 3);
+```
+
 ## Tables
 
 | Shortcut | Action             |

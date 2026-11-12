@@ -383,8 +383,14 @@ a.footnote-back {
    CODI
    ========================= */
 
-/* Codi inline */
-code {
+/* Codi inline.
+   El selector ha d'excloure el codi que viu DINS d'un bloc (<pre>): pandoc hi
+   genera <pre class="sourceCode"><code class="sourceCode"> amb un <span> per
+   token, i els colors de cada token els injecta --highlight-style
+   ($highlighting-css$). Amb un `code { color }` genèric, el color primari
+   s'heretava a tot el bloc i el codi eixia d'un sol color: abans ho tapava
+   highlight.js amb `.hljs { color: #e2e8f0 }`, que ja no existeix. */
+:not(pre) > code {
     background: color-mix(in srgb, var(--color-primari), white 92%);
     color: color-mix(in srgb, var(--color-primari), #1e293b 30%);
     padding: 2px 7px;
@@ -439,6 +445,11 @@ pre {
    l'especificitat de .sourceCode (selector de classe). */
 pre code {
     background: transparent !important;
+    /* El text sense token (espais i signes que pandoc no embolcalla en cap
+       <span>) ha d'heretar el gris clar de <pre>. Sense esta línia agafaria el
+       color primari de la regla de codi inline i el bloc es veuria d'eixe
+       color. Els <span> amb token conserven el color de --highlight-style. */
+    color: inherit !important;
     padding: 0;
     border: none !important;
     border-radius: 0 !important;
@@ -448,6 +459,16 @@ pre code {
     position: static !important;
     font-size: inherit;
     font-weight: 400;
+}
+
+/* Pandoc marca cada línia amb <span id="cbN-M"> i li aplica
+   `display: inline-block; line-height: 1.25` (pensat per als blocs amb número
+   de línia). Respectem el display, perquè així les línies buides es conserven,
+   però mantenim el nostre interlineat. */
+div.sourceCode pre > code > span {
+    line-height: inherit !important;
+    text-indent: 0 !important;
+    padding-left: 0 !important;
 }
 
 /* =========================
