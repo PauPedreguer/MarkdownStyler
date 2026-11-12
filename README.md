@@ -5,7 +5,7 @@ Aplicació d'escriptori (PyQt6) que genera documents HTML i PDF amb estil profes
 ## ✨ Característiques
 
 - 🎨 **Personalització de colors**: presets de color d'identitat configurables.
-- 📄 **Exportació HTML i PDF**: genera documents amb portada, sumari i estil professional.
+- 📄 **Documents HTML i PDF**: genera l'HTML amb portada, sumari i estil professional; el PDF s'obté imprimint-lo des del navegador (botó 🖨️ del document o `./pdf.sh`).
 - 🏫 **Configuració de l'institut**: nom, logo, curs, assignatura, professor i departament.
 - 🎯 **Ressaltat de codi**: el genera Pandoc (`--highlight-style`), amb estils com Zenburn, Pygments, Tango o Breeze Dark. Sense llibreries externes.
 - 📥 **Arrossega i deixa anar**: suport per arrossegar fitxers `.md` directament a la finestra.
@@ -58,7 +58,6 @@ MarkdownStyler/
 
 - **Python 3.10+**
 - **Pandoc** instal·lat i disponible al PATH
-- **WeasyPrint** (per a exportació PDF)
 
 ### Instal·lació de dependències
 

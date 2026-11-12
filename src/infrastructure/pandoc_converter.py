@@ -147,26 +147,20 @@ def convert_markdown(
     highlight_style: str,
     metadata: Dict[str, Any],
 ) -> None:
-    """Converteix un fitxer Markdown a HTML/PDF mitjançant Pandoc.
+    """Converteix un fitxer Markdown a HTML mitjançant Pandoc.
+
+    L'aplicació només genera HTML: el PDF s'obté imprimint el document des del
+    navegador (botó 🖨️ del propi document o l'script ``pdf.sh``).
 
     Args:
         md_path: Ruta del fitxer Markdown d'entrada.
-        output_path: Ruta del fitxer de sortida (.html o .pdf).
+        output_path: Ruta del fitxer HTML de sortida.
         css_path: Ruta relativa del full d'estil CSS.
         template_path: Ruta relativa de la plantilla HTML.
         js_path: Ruta relativa de l'script JS.
         highlight_style: Estil de ressaltat de codi de Pandoc.
         metadata: Diccionari de metadades per a la plantilla.
     """
-    # Determinar si és exportació a PDF
-    is_pdf = output_path.lower().endswith(".pdf")
-    if is_pdf:
-        metadata["pdf_export"] = True
-        # Usar el CSS especialitzat per a PDF si està disponible
-        pdf_css = from_project_root("styles", "pdf.css")
-        if pdf_css.exists():
-            css_path = "styles/pdf.css"
-
     # Afegir el JS a la metadata per a la plantilla
     if js_path:
         metadata["js"] = str(from_project_root(js_path).resolve())
@@ -183,21 +177,14 @@ def convert_markdown(
         f"--highlight-style={highlight_style}",
         f"--template={from_project_root(template_path).resolve()}",
         f"--resource-path=.:{PROJECT_ROOT}:{from_project_root('templates')}:{from_project_root('scripts')}:{from_project_root('styles')}",
+        "--katex",
     ]
 
-
-    if is_pdf:
-        cmd.append("--pdf-engine=weasyprint")
-        cmd.append("--pdf-engine-opt=--presentational-hints")
-        cmd.append("--webtex")
-    else:
-        cmd.append("--katex")
-
-    # Combinar el CSS base (compartit entre HTML i PDF) amb el CSS específic
-    # (prova.css per a HTML o pdf.css per a PDF) en un sol fitxer temporal.
-    # Passar dos --css a pandoc amb --embed-resources pot fallar, així que
-    # concatenem els fitxers en un únic CSS. El CSS específic es carrega
-    # DESPRÉS del base, de manera que pot sobreescriure els seus valors.
+    # Combinar el CSS base (compartit) amb el CSS específic de l'estil triat en
+    # un sol fitxer temporal. Passar dos --css a pandoc amb --embed-resources
+    # pot fallar, així que concatenem els fitxers en un únic CSS. L'estil
+    # específic es carrega DESPRÉS del base, de manera que pot sobreescriure
+    # els seus valors.
     css_files = []
     base_css = from_project_root("styles", "base.css")
     if base_css.exists():
@@ -251,11 +238,9 @@ def convert_markdown(
         print(f"Pandoc avisa: {avisos}")
 
 
-    # Postprocessar els blocs mermaid (només per a HTML, no per a PDF).
-    # Es fa DESPRÉS de pandoc per evitar que els caràcters especials del
-    # diagrama siguin escapats.
-    if not is_pdf:
-        _postprocess_mermaid(output_path)
+    # Postprocessar els blocs mermaid. Es fa DESPRÉS de pandoc per evitar que
+    # els caràcters especials del diagrama siguin escapats.
+    _postprocess_mermaid(output_path)
 
 
 

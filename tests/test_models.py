@@ -19,7 +19,6 @@ class TestExportOptions(unittest.TestCase):
         # Buit → s'usa el departament de config/institut.json
         self.assertEqual(opts.departament, "")
         self.assertEqual(opts.primary_color, "#1d4ed8")
-        self.assertEqual(opts.format, "html")
 
     def test_custom_values(self):
         """Els valors personalitzats s'han de respectar."""
@@ -31,12 +30,10 @@ class TestExportOptions(unittest.TestCase):
             subtitol="Pràctica 1",
             departament="Matemàtiques",
             primary_color="#166534",
-            format="pdf",
         )
         self.assertEqual(opts.subtitol, "Pràctica 1")
         self.assertEqual(opts.departament, "Matemàtiques")
         self.assertEqual(opts.primary_color, "#166534")
-        self.assertEqual(opts.format, "pdf")
 
     def test_fields_are_accessible(self):
         """Tots els camps han de ser accessibles com a atributs."""

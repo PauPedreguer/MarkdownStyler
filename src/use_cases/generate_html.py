@@ -7,19 +7,21 @@ from src.infrastructure.project_paths import from_project_root
 
 
 def execute_export(options: ExportOptions) -> str:
-    """Executa l'exportació d'un document Markdown a HTML/PDF.
+    """Executa l'exportació d'un document Markdown a HTML.
+
+    L'aplicació només genera HTML; el PDF s'obté imprimint el document des del
+    navegador (botó 🖨️ del propi document o l'script ``pdf.sh``), que aplica
+    les regles ``@page`` del full d'estil.
 
     Args:
-        options: Opcions d'exportació (ruta, títol, color, format, etc.).
+        options: Opcions d'exportació (ruta, títol, color, etc.).
 
     Returns:
-        La ruta del fitxer generat.
+        La ruta del fitxer HTML generat.
     """
     config = load_institut_config()
 
-    extension = "pdf" if options.format == "pdf" else "html"
-    output_filename = f"{Path(options.md_path).stem}.{extension}"
-    output_path = str(Path(options.output_dir) / output_filename)
+    output_path = str(Path(options.output_dir) / f"{Path(options.md_path).stem}.html")
 
     css_path = str(from_project_root("styles", config["css_name"]))
     template_path = str(from_project_root("templates", config["template_name"]))

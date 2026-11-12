@@ -21,7 +21,7 @@ class TestPandocConverter(unittest.TestCase):
         self.metadata = {"title": "Examen", "data": "01-01-2026"}
 
     def test_html_export_uses_katex(self):
-        """L'exportació HTML ha d'usar --katex."""
+        """L'exportació ha d'usar --katex i no cap motor de PDF."""
         with mock.patch.object(pandoc_converter.subprocess, "run") as mock_run:
             pandoc_converter.convert_markdown(
                 md_path=self.md_path,
@@ -34,24 +34,8 @@ class TestPandocConverter(unittest.TestCase):
             )
         cmd = mock_run.call_args.args[0]
         self.assertIn("--katex", cmd)
-        self.assertNotIn("--pdf-engine=weasyprint", cmd)
-
-    def test_pdf_export_uses_weasyprint(self):
-        """L'exportació PDF ha d'usar weasyprint i --webtex."""
-        with mock.patch.object(pandoc_converter.subprocess, "run") as mock_run:
-            pandoc_converter.convert_markdown(
-                md_path=self.md_path,
-                output_path="out/examen.pdf",
-                css_path=self.css_path,
-                template_path=self.template_path,
-                js_path=self.js_path,
-                highlight_style=self.highlight_style,
-                metadata=self.metadata,
-            )
-        cmd = mock_run.call_args.args[0]
-        self.assertIn("--pdf-engine=weasyprint", cmd)
-        self.assertIn("--webtex", cmd)
-        self.assertNotIn("--katex", cmd)
+        self.assertIn("--embed-resources", cmd)
+        self.assertFalse(any(arg.startswith("--pdf-engine") for arg in cmd))
 
     def test_metadata_is_passed(self):
         """Les metadades s'han de passar com a --metadata."""
@@ -83,46 +67,6 @@ class TestPandocConverter(unittest.TestCase):
             )
         cmd = mock_run.call_args.args[0]
         self.assertIn("--highlight-style=tango", cmd)
-
-    def test_pdf_uses_pdf_css(self):
-        """L'exportació PDF ha d'usar styles/pdf.css si existeix."""
-        captured = {}
-
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            tmp = Path(tmp_dir)
-            (tmp / "base.css").write_text("/* BASE STYLES */", encoding="utf-8")
-            (tmp / "pdf.css").write_text("/* PDF SPECIFIC STYLES */", encoding="utf-8")
-
-            def fake_root(*parts):
-                """Resol qualsevol ruta del projecte dins del directori temporal."""
-                return tmp / Path(*parts).name
-
-            def fake_run(cmd, **kwargs):
-                # Capturar el contingut del fitxer CSS temporal abans que s'elimini
-                css_args = [arg for arg in cmd if arg.startswith("--css=")]
-                if css_args:
-                    temp_path = css_args[0].split("=", 1)[1]
-                    captured["content"] = Path(temp_path).read_text(encoding="utf-8")
-
-            with mock.patch.object(pandoc_converter.subprocess, "run", side_effect=fake_run) as mock_run, \
-                 mock.patch.object(pandoc_converter, "from_project_root", side_effect=fake_root):
-                pandoc_converter.convert_markdown(
-                    md_path=self.md_path,
-                    output_path="out/examen.pdf",
-                    css_path=self.css_path,
-                    template_path=self.template_path,
-                    js_path=self.js_path,
-                    highlight_style=self.highlight_style,
-                    metadata=self.metadata,
-                )
-
-        cmd = mock_run.call_args.args[0]
-        # Ha de contenir un únic --css amb un fitxer temporal concatenat
-        css_args = [arg for arg in cmd if arg.startswith("--css=")]
-        self.assertEqual(len(css_args), 1)
-        # El fitxer temporal ha de contenir el contingut de pdf.css i de base.css
-        self.assertIn("PDF SPECIFIC STYLES", captured["content"])
-        self.assertIn("BASE STYLES", captured["content"])
 
     def test_html_concatenates_base_and_selected_css(self):
         """El CSS temporal de l'HTML ha de combinar base.css i l'estil triat."""

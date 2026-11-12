@@ -30,13 +30,12 @@ class TestExecuteExport(unittest.TestCase):
         self.tmp_dir.cleanup()
 
     def test_export_html_uses_correct_extension(self):
-        """L'exportació HTML ha de generar un fitxer .html."""
+        """L'exportació ha de generar un fitxer .html."""
         options = ExportOptions(
             md_path=str(self.md_file),
             output_dir=str(self.tmp_path),
             title="Examen",
             curs_academic="26-27",
-            format="html",
         )
         with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
              mock.patch.object(generate_html, "convert_markdown") as mock_convert:
@@ -45,22 +44,6 @@ class TestExecuteExport(unittest.TestCase):
         self.assertTrue(result.endswith(".html"))
         self.assertEqual(Path(result).name, "examen.html")
         mock_convert.assert_called_once()
-
-    def test_export_pdf_uses_correct_extension(self):
-        """L'exportació PDF ha de generar un fitxer .pdf."""
-        options = ExportOptions(
-            md_path=str(self.md_file),
-            output_dir=str(self.tmp_path),
-            title="Examen",
-            curs_academic="26-27",
-            format="pdf",
-        )
-        with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
-             mock.patch.object(generate_html, "convert_markdown") as mock_convert:
-            result = generate_html.execute_export(options)
-
-        self.assertTrue(result.endswith(".pdf"))
-        self.assertEqual(Path(result).name, "examen.pdf")
 
     def test_metadata_includes_user_options(self):
         """Les metadades han d'incloure les opcions de l'usuari."""
@@ -72,7 +55,6 @@ class TestExecuteExport(unittest.TestCase):
             subtitol="Subtítol",
             departament="Matemàtiques",
             primary_color="#166534",
-            format="html",
         )
         with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
              mock.patch.object(generate_html, "convert_markdown") as mock_convert:
@@ -93,7 +75,6 @@ class TestExecuteExport(unittest.TestCase):
             output_dir=str(self.tmp_path),
             title="Examen",
             curs_academic="26-27",
-            format="html",
         )
         with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
              mock.patch.object(generate_html, "convert_markdown") as mock_convert:
@@ -111,7 +92,6 @@ class TestExecuteExport(unittest.TestCase):
             output_dir=str(self.tmp_path),
             title="Examen",
             curs_academic="26-27",
-            format="html",
         )
         config = {**self.mock_config, "departament": "Matemàtiques"}
         with mock.patch.object(generate_html, "load_institut_config", return_value=config), \

@@ -651,7 +651,6 @@ p:has(> math[display="block"]) {
 @media screen {
     .pdf-cover,
     .pdf-toc,
-    .pdf-metadata,
     .no-screen {
         display: none !important;
     }

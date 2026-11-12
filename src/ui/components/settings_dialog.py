@@ -8,10 +8,8 @@ from src.infrastructure.project_paths import from_project_root
 from src.ui.components.buttons import PrimaryButton
 
 # Fitxers de suport: s'utilitzen internament però no s'han d'oferir com a
-# recurs seleccionable. base.css es carrega sempre abans de l'estil triat,
-# pdf.css només té sentit per a l'exportació PDF i highlight.min.js és una
-# llibreria de tercers, no un script de la plantilla.
-CSS_NO_SELECCIONABLES = frozenset({"base.css", "pdf.css"})
+# recurs seleccionable. base.css es carrega sempre abans de l'estil triat.
+CSS_NO_SELECCIONABLES = frozenset({"base.css"})
 JS_NO_SELECCIONABLES = frozenset({"highlight.min.js"})
 
 

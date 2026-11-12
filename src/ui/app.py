@@ -140,21 +140,25 @@ class App(QMainWindow):
         self.layout.addLayout(colors_layout)
         
         self.layout.addStretch()
-        
-        # Botons d'exportació
+
+        # Botó d'exportació
         buttons_layout = QHBoxLayout()
         buttons_layout.setSpacing(15)
-        
-        self.export_btn = PrimaryButton("Exportar HTML")
-        self.export_btn.clicked.connect(lambda: self.export("html"))
+
+        self.export_btn = PrimaryButton("Generar document HTML")
+        self.export_btn.clicked.connect(lambda: self.export())
         buttons_layout.addWidget(self.export_btn)
-        
-        self.export_pdf_btn = PrimaryButton("Exportar PDF ✨")
-        self.export_pdf_btn.setProperty("class", "premium")
-        self.export_pdf_btn.clicked.connect(lambda: self.export("pdf"))
-        buttons_layout.addWidget(self.export_pdf_btn)
-        
+
         self.layout.addLayout(buttons_layout)
+
+        # El PDF ja no es genera dins de l'aplicació: s'obté imprimint el
+        # document generat (botó 🖨️ del propi HTML) o amb ./pdf.sh.
+        pdf_hint = QLabel(
+            "Per al PDF: obri el document i prem 🖨️ Imprimir, o executa ./pdf.sh"
+        )
+        pdf_hint.setWordWrap(True)
+        pdf_hint.setStyleSheet("font-size: 12px; color: #6b7280;")
+        self.layout.addWidget(pdf_hint)
         
         self.signals = WorkerSignals()
         self.signals.finished.connect(self.on_export_success)
@@ -204,15 +208,16 @@ class App(QMainWindow):
         dialog = SettingsDialog(self)
         dialog.exec()
         
-    def export(self, format="html"):
+    def export(self):
+        """Demana la carpeta de destí i genera el document HTML."""
         if not self.md_path_input.text():
             QMessageBox.critical(self, "Error", "Selecciona un markdown abans d'exportar.")
             return
-            
+
         output_dir = QFileDialog.getExistingDirectory(self, "Selecciona la carpeta d'exportació")
         if not output_dir:
             return
-            
+
         # Els widgets de Qt només es poden llegir al fil principal: construïm
         # ací les opcions i el fil de treball només executa l'exportació.
         options = ExportOptions(
@@ -222,18 +227,11 @@ class App(QMainWindow):
             subtitol=self.subtitle_input.text(),
             curs_academic=self.curs_input.text(),
             primary_color=self.selected_color,
-            format=format,
         )
 
         self.export_btn.setEnabled(False)
-        self.export_pdf_btn.setEnabled(False)
-        
-        btn_text = "Exportant HTML..." if format == "html" else "Generant PDF amb estil... ✨"
-        if format == "html":
-            self.export_btn.setText(btn_text)
-        else:
-            self.export_pdf_btn.setText(btn_text)
-        
+        self.export_btn.setText("Generant document... ✨")
+
         threading.Thread(target=self._export_thread, args=(options,), daemon=True).start()
 
     def _export_thread(self, options):
@@ -249,11 +247,9 @@ class App(QMainWindow):
             self.signals.error.emit(str(e))
             
     def _reset_export_buttons(self):
-        """Restaura els botons d'exportació al seu estat inicial."""
+        """Restaura el botó d'exportació al seu estat inicial."""
         self.export_btn.setEnabled(True)
-        self.export_pdf_btn.setEnabled(True)
-        self.export_btn.setText("Exportar HTML")
-        self.export_pdf_btn.setText("Exportar PDF ✨")
+        self.export_btn.setText("Generar document HTML")
 
     def on_export_success(self, output):
         self._reset_export_buttons()

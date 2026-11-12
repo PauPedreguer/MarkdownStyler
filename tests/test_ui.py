@@ -76,9 +76,9 @@ class TestRecursosDisponibles(unittest.TestCase):
     """Comprova que els combos d'ajustos no oferisquen fitxers de suport."""
 
     def test_exclou_els_css_de_suport(self):
-        """base.css i pdf.css no han d'aparèixer com a estil seleccionable."""
+        """base.css no ha d'aparèixer com a estil seleccionable."""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            for nom in ("base.css", "pdf.css", "prova.css", "estil-examen.css"):
+            for nom in ("base.css", "prova.css", "estil-examen.css"):
                 (Path(tmp_dir) / nom).write_text("/* */", encoding="utf-8")
 
             noms = recursos_disponibles(Path(tmp_dir), ".css", CSS_NO_SELECCIONABLES)
