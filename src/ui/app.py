@@ -1,5 +1,4 @@
 from pathlib import Path
-from datetime import datetime
 import threading
 
 from PyQt6.QtWidgets import (
@@ -9,21 +8,10 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 from PyQt6.QtGui import QDragEnterEvent, QDropEvent
 
+from src.core.curs import calcular_curs_academic
 from src.core.models import ExportOptions
 from src.use_cases.generate_html import execute_export
 from src.ui.components import DropZone, SettingsDialog, SuccessDialog, PrimaryButton
-
-
-def calcular_curs_academic() -> str:
-    """Calcula el curs acadèmic actual (ex: '26-27').
-
-    Entre setembre i desembre → any actual + següent (ex: oct 2026 → '26-27').
-    Entre gener i agost → any anterior + actual (ex: març 2027 → '26-27').
-    """
-    now = datetime.now()
-    any_ini = now.year if now.month >= 9 else now.year - 1
-    any_fi = any_ini + 1
-    return f"{any_ini % 100:02d}-{any_fi % 100:02d}"
 
 
 class WorkerSignals(QObject):
