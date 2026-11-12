@@ -395,8 +395,11 @@ code {
     border: 1px solid color-mix(in srgb, var(--color-primari), white 82%);
 }
 
-/* Blocs de codi (pandoc genera div.sourceCode > pre) */
-.sourceCode {
+/* Blocs de codi (pandoc genera div.sourceCode > pre).
+   S'usa `div.sourceCode` (i no `.sourceCode`) per a tindre la mateixa
+   especificitat que les regles de ressaltat que injecta pandoc
+   (--highlight-style); com que el full d'estil va després, guanyem nosaltres. */
+div.sourceCode {
     position: relative;
     margin: 28px 0;
     border-radius: var(--radius-md);

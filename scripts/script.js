@@ -103,8 +103,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // --- 1b. CÒPIA DEL SUMARI PER A LA IMPRESSIÓ ---
+    // Pandoc genera el $toc$ una sola vegada (a la barra lateral). La còpia
+    // que s'imprimeix (.pdf-toc) es clona ací traient-li els ids per a no
+    // duplicar identificadors al DOM (ids repetits = HTML invàlid i enllaços
+    // ambigus). Es fa abans d'afegir els desplegables perquè la còpia surta
+    // neta, sense les fletxetes ▾/▸.
+    const sidebarToc = document.querySelector('.sidebar .toc');
+    const printToc = document.querySelector('.pdf-toc .toc');
+    if (sidebarToc && printToc) {
+        const tocClone = sidebarToc.cloneNode(true);
+        tocClone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+        printToc.replaceChildren(...Array.from(tocClone.childNodes));
+    }
+
+
     // --- 2. TOC COLLAPSIBLE LOGIC ---
-    const tocItems = document.querySelectorAll('.toc li');
+    // Només el sumari de la barra lateral és interactiu (el d'impressió és
+    // una còpia estàtica).
+    const tocItems = document.querySelectorAll('.sidebar .toc li');
     
     tocItems.forEach(item => {
         const subList = item.querySelector('ul');
@@ -123,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 3. CODE BLOCK ENHANCEMENTS (Header Bar, Highlight, Copy Button) ---
+    // --- 3. CODE BLOCK ENHANCEMENTS (Header Bar, Copy Button) ---
     const copyIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
     const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
 
@@ -212,15 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-
-    // Initialització final de highlight.js
-    if (typeof hljs !== 'undefined') {
-        console.log("Highlight.js detectat, processant blocs...");
-        allPreBlocks.forEach(pre => {
-            const code = pre.querySelector('code');
-            if (code) hljs.highlightElement(code);
-        });
-    } else {
-        console.warn("Highlight.js NO detectat. Revisa la càrrega del script.");
-    }
+    // NOTA: el ressaltat de codi el fa Pandoc (--highlight-style) amb els
+    // spans `code span.*` que injecta la plantilla via $highlighting-css$.
+    // Ja no es carrega highlight.js (121 KB) ni cap postprocessat de tokens.
 });

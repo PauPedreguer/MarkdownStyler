@@ -484,82 +484,9 @@ main {
     opacity: 1;
 }
 
-/* Millora de contrast per a highlight.js */
-.hljs {
-    background: transparent !important;
-    color: #e2e8f0 !important;
-    padding: 0 !important;
-}
-
-/* Tema One Dark adaptat per a Highlight.js (fons mitjà, colors vius i contrastats) */
-.hljs-comment,
-.hljs-quote {
-    color: #7d8799;
-    font-style: italic;
-}
-
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-subst {
-    color: #c678dd;
-    font-weight: 600;
-}
-
-.hljs-literal,
-.hljs-number,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-regexp {
-    color: #d19a66;
-}
-
-.hljs-string,
-.hljs-addition,
-.hljs-attribute,
-.hljs-template-variable,
-.hljs-type,
-.hljs-variable {
-    color: #98c379;
-}
-
-.hljs-title,
-.hljs-section,
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-name {
-    color: #61afef;
-}
-
-.hljs-built_in,
-.hljs-builtin-name,
-.hljs-class .hljs-title,
-.hljs-params {
-    color: #e5c07b;
-}
-
-.hljs-meta,
-.hljs-doctag,
-.hljs-tag {
-    color: #56b6c2;
-}
-
-.hljs-strong {
-    font-weight: 700;
-}
-
-.hljs-emphasis {
-    font-style: italic;
-}
-
-.hljs-deletion {
-    color: #e06c75;
-}
-
-.hljs-attr,
-.hljs-attribute {
-    color: #61afef;
-}
+/* NOTA: el ressaltat dels blocs de codi el fa pandoc (--highlight-style, amb
+   les regles `code span.*` que injecta la plantilla). Ja no hi ha highlight.js
+   ni classes .hljs-*, així que no cal cap paleta pròpia ací. */
 
 /* Eliminar qualsevol línia de títol duplicada generada per CSS
    (evita que els quadres de codi mostren 2 línies: una del ::before

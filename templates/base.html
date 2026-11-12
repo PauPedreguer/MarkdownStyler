@@ -10,6 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
+    <!-- CSS de ressaltat de codi generat per pandoc (--highlight-style).
+         Va ABANS del full d'estil perquè prova.css puga ajustar-lo. -->
+    $if(highlighting-css)$
+    <style>
+$highlighting-css$
+    </style>
+    $endif$
+
     $if(css)$
     <link rel="stylesheet" href="$css$">
     $endif$
@@ -125,12 +133,12 @@
     </aside>
 
     <main>
-        <!-- Índex per a PDF -->
+        <!-- Índex per a PDF/impressió: es clona per JS des del sumari de la
+             barra lateral, així els ids no es dupliquen al DOM (pandoc només
+             genera el sumari una vegada). -->
         <div class="pdf-toc no-screen">
             <h2>Índex</h2>
-            <div class="toc">
-                $toc$
-            </div>
+            <div class="toc"></div>
         </div>
 
         <div class="content">
@@ -149,7 +157,6 @@
 
 </div>
 
-<script src="highlight.min.js"></script>
 $if(js)$
 <script src="$js$"></script>
 $endif$
