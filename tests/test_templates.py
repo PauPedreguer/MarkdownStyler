@@ -36,6 +36,59 @@ class TestBaseTemplate(unittest.TestCase):
         """Ja no s'ha de carregar highlight.js (ho fa pandoc)."""
         self.assertNotIn("highlight.min.js", self.plantilla)
 
+    def test_publica_les_variables_doc(self):
+        """La plantilla ha de publicar les metadades com a variables --doc-*."""
+        for variable in (
+            "--doc-institut",
+            "--doc-departament",
+            "--doc-assignatura",
+            "--doc-curs",
+            "--doc-data",
+        ):
+            self.assertIn(variable, self.plantilla)
+
+
+class TestPrintStyles(unittest.TestCase):
+    """Comprova les regles d'impressió/PDF de styles/prova.css."""
+
+    def setUp(self):
+        self.css = from_project_root("styles", "prova.css").read_text(encoding="utf-8")
+
+    def test_portada_i_index_samaguen_nomes_en_pantalla(self):
+        """Les regles que amaguen portada/índex han de viure dins @media screen.
+
+        Si s'apliquen també en imprimir, la portada i l'índex no s'imprimeixen.
+        """
+        bloc = self.css[self.css.index("@media screen {"):self.css.index("@media print {")]
+        self.assertIn(".pdf-cover", bloc)
+        self.assertIn(".pdf-toc", bloc)
+
+    def test_capcalera_de_pantalla_oculta_en_imprimir(self):
+        """En imprimir, la capçalera gran de pantalla no s'ha de mostrar."""
+        bloc = self.css[self.css.index("@media print {"):]
+        self.assertIn("Capçalera de pantalla: FORA de la impressió", bloc)
+        seccio = bloc[bloc.index("Capçalera de pantalla"):][:400]
+        self.assertRegex(seccio, r"\.header,[\s\S]*?display:\s*none !important")
+
+    def test_capcaleres_i_peus_de_pagina(self):
+        """@page ha de portar capçaleres/peus amb les variables --doc-*."""
+        self.assertIn("@page {", self.css)
+        self.assertIn("content: var(--doc-institut)", self.css)
+        self.assertIn("content: var(--doc-departament)", self.css)
+        self.assertIn('counter(page) " de " counter(pages)', self.css)
+
+    def test_portada_sense_marges_ni_peus(self):
+        """@page:first (portada) no ha de portar marges ni capçaleres."""
+        bloc = self.css[self.css.index("@page:first"):]
+        self.assertIn("margin: 0", bloc)
+        self.assertIn("content: none", bloc)
+
+    def test_paginacio_evita_talls_dolents(self):
+        """Cal controlar vídues/òrfenes i repetir la capçalera de les taules."""
+        self.assertIn("orphans: 3", self.css)
+        self.assertIn("widows: 3", self.css)
+        self.assertIn("display: table-header-group", self.css)
+
 
 class TestScriptJs(unittest.TestCase):
     """Comprova scripts/script.js."""

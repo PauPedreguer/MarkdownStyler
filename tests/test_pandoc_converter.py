@@ -251,5 +251,40 @@ class TestPandocErrors(unittest.TestCase):
             pandoc_converter.convert_markdown(**self.kwargs)
 
 
+class TestCssMetadata(unittest.TestCase):
+    """Comprova l'escapat de metadades que es publiquen com a CSS."""
+
+    def test_escapa_cometes_barres_i_salts(self):
+        """Cometes, barres invertides i salts de línia s'han d'escapar."""
+        self.assertEqual(pandoc_converter._css_escape('a"b'), 'a\\"b')
+        self.assertEqual(pandoc_converter._css_escape("a\\b"), "a\\\\b")
+        self.assertEqual(pandoc_converter._css_escape("a\nb"), "a b")
+        self.assertEqual(pandoc_converter._css_escape("a\r\nb"), "a b")
+        self.assertEqual(pandoc_converter._css_escape(None), "")
+
+    def test_afegeix_les_claus_css_a_les_metadades(self):
+        """Les metadades --doc-* han d'arribar escapades a pandoc."""
+        metadata = {"institut_nom": 'IES "Prova"', "departament": "Informàtica"}
+        with mock.patch.object(pandoc_converter.subprocess, "run") as mock_run:
+            pandoc_converter.convert_markdown(**{**self.kwargs(), "metadata": metadata})
+
+        cmd = mock_run.call_args.args[0]
+        self.assertIn('--metadata=institut_nom_css:IES \\"Prova\\"', cmd)
+        self.assertIn("--metadata=departament_css:Informàtica", cmd)
+        # Les metadades originals no es toquen (van a l'HTML)
+        self.assertIn('--metadata=institut_nom:IES "Prova"', cmd)
+
+    @staticmethod
+    def kwargs():
+        return dict(
+            md_path="examen.md",
+            output_path="out/examen.html",
+            css_path="styles/prova.css",
+            template_path="templates/base.html",
+            js_path="scripts/script.js",
+            highlight_style="zenburn",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

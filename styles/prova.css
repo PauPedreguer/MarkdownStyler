@@ -645,12 +645,16 @@ p:has(> math[display="block"]) {
     height: 40px;
 }
 
-/* --- Elements de PDF/Impressió amagats per defecte en pantalla --- */
-.pdf-cover,
-.pdf-toc,
-.pdf-metadata,
-.no-screen {
-    display: none !important;
+/* --- Elements de PDF/Impressió amagats per defecte en pantalla ---
+   IMPORTANT: ha d'anar dins de @media screen. Si no, la regla s'aplica també
+   en imprimir i (pel seu !important i l'orde) amaga la portada i l'índex. */
+@media screen {
+    .pdf-cover,
+    .pdf-toc,
+    .pdf-metadata,
+    .no-screen {
+        display: none !important;
+    }
 }
 
 /* =========================
@@ -697,8 +701,10 @@ p:has(> math[display="block"]) {
         display: flex !important;
         flex-direction: column;
         justify-content: space-between;
-        height: 275mm; /* Altura A4 aproximada */
-        padding: 2cm;
+        /* La primera pàgina no té marges (@page:first), així que la portada
+           ocupa l'A4 sencer sense generar una pàgina en blanc. */
+        height: 297mm;
+        padding: 20mm;
         page-break-after: always;
         break-after: page;
         background: white;
@@ -783,56 +789,134 @@ p:has(> math[display="block"]) {
         font-weight: 500;
     }
 
-    /* --- Header de pàgina (re-estilitzat per a print) --- */
-    .header {
-        position: static !important;
-        background: white !important;
-        border-bottom: 1px solid #ddd !important;
-        padding: 5mm 0 !important;
-        margin-bottom: 10mm !important;
-        display: flex !important;
-        box-shadow: none !important;
-    }
-
+    /* --- Capçalera de pantalla: FORA de la impressió ---
+       Abans s'imprimia (display: flex !important) i eixia una capçalera enorme
+       a la primera pàgina. Les dades de l'institut van als marges d'@page. */
+    .header,
     .main-title {
-        font-size: 1.1rem !important;
-        color: black !important;
-        border: none !important;
-        padding: 0 !important;
+        display: none !important;
     }
 
-    .main-title::after { display: none !important; }
-
-    /* --- Configuració de Pàgina --- */
-    @page {
-        size: A4;
-        margin: 2cm;
+    /* --- Paginació del contingut --- */
+    p, li {
+        orphans: 3;
+        widows: 3;
     }
 
-    /* Evitar talls en elements importants */
-    pre, blockquote, table, img, figure {
-        page-break-inside: avoid;
-        break-inside: avoid;
-    }
-
-    h1, h2, h3 {
+    h1, h2, h3, h4 {
         page-break-after: avoid;
         break-after: avoid;
     }
 
-    /* Estils de codi per a impressió */
+    blockquote, table, figure, tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Les taules llargues continuen a la pàgina següent repetint la capçalera */
+    thead {
+        display: table-header-group;
+    }
+
+    /* Les imatges poden partir-se: abans evitaven el tall i deixaven pàgines
+       en blanc o imatges retallades. */
+    img {
+        max-width: 100% !important;
+        max-height: 180mm;
+        page-break-inside: auto;
+        break-inside: auto;
+    }
+
+    /* Estils de codi per a impressió: es manté el fons fosc de la pantalla
+       perquè els colors dels tokens (--highlight-style) s'hi continuen
+       llegint (l'estil per defecte, zenburn, té colors clars). */
     pre {
-        background: #f8fafc !important;
-        color: #1e293b !important;
-        border: 1px solid #e2e8f0 !important;
+        background: #1e293b !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #334155 !important;
         font-size: 9pt !important;
         white-space: pre-wrap !important;
+        overflow: visible !important;
+        page-break-inside: auto;
+        break-inside: auto;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    div.sourceCode {
+        overflow: visible !important;
+        box-shadow: none !important;
+        page-break-inside: auto;
+        break-inside: auto;
+    }
+
+    /* La barra del bloc de codi (llenguatge + copiar) no s'imprimeix: sobre
+       paper no serveix i estalvia tinta. */
+    .code-header {
+        display: none !important;
+    }
+
+    div.sourceCode,
+    div.sourceCode pre {
+        border-radius: var(--radius-sm) !important;
     }
 }
 
-/* --- Elements de PDF/Impressió amagats per defecte en pantalla --- */
-.pdf-cover,
-.pdf-toc,
-.no-screen {
-    display: none !important;
+/* =========================
+   PÀGINA IMPRESA (@page)
+   =========================
+   Es declara fora d'@media print perquè aquestes regles només s'apliquen en
+   mitjans paginats (impressió o PDF generat pel navegador). Les capçaleres i
+   els peus s'alimenten de les variables --doc-* que publica la plantilla
+   templates/base.html a partir de config/institut.json.
+*/
+@page {
+    size: A4;
+    margin: 24mm 18mm 20mm 18mm;
+
+    @top-left {
+        content: var(--doc-institut);
+        font-family: var(--font-principal);
+        font-size: 8.5pt;
+        color: #6b7280;
+        vertical-align: bottom;
+        padding-bottom: 1.5mm;
+    }
+
+    @top-right {
+        content: var(--doc-departament);
+        font-family: var(--font-principal);
+        font-size: 8.5pt;
+        color: #6b7280;
+        vertical-align: bottom;
+        padding-bottom: 1.5mm;
+    }
+
+    @bottom-left {
+        content: var(--doc-assignatura) " · " var(--doc-curs) " · " var(--doc-data);
+        font-family: var(--font-principal);
+        font-size: 8pt;
+        color: #6b7280;
+        vertical-align: top;
+        padding-top: 1.5mm;
+    }
+
+    @bottom-right {
+        content: "Pàgina " counter(page) " de " counter(pages);
+        font-family: var(--font-principal);
+        font-size: 8pt;
+        color: #6b7280;
+        vertical-align: top;
+        padding-top: 1.5mm;
+    }
+}
+
+/* La portada és una pàgina de coberta: sense marges ni capçaleres/peus. */
+@page:first {
+    margin: 0;
+
+    @top-left { content: none; }
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
 }

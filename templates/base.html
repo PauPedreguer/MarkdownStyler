@@ -23,13 +23,20 @@ $highlighting-css$
     $endif$
 
 
-    $if(primary_color)$
+    <!-- Variables de color i de metadades per al CSS. Les metadades _css
+         arriben escapades des de pandoc_converter: pandoc no escapa el CSS i
+         una cometa dins d'un títol trencaria aquest bloc. Les variables
+         --doc-* s'usen a les capçaleres i peus de pàgina de @page. -->
     <style>
         :root {
-            --color-primari: $primary_color$;
+            $if(primary_color)$--color-primari: $primary_color$;$endif$
+            --doc-institut: "$institut_nom_css$";
+            --doc-departament: "$departament_css$";
+            --doc-assignatura: "$assignatura_css$";
+            --doc-curs: "$curs_css$";
+            --doc-data: "$data_css$";
         }
     </style>
-    $endif$
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     $math$

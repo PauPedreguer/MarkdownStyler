@@ -42,6 +42,36 @@ def _text(value: Any) -> str:
     return ""
 
 
+# Metadades que la plantilla publica com a variables CSS (--doc-*) perquè les
+# puguen usar les capçaleres i peus de pàgina (@page) en imprimir.
+_CSS_METADATA_KEYS = ("institut_nom", "departament", "assignatura", "curs", "data")
+
+
+def _css_escape(value: Any) -> str:
+    """Escapa un text per a poder-lo posar dins d'una cadena CSS ("...").
+
+    Pandoc escapa l'HTML però no el CSS, i la plantilla publica algunes
+    metadades dins d'un bloc ``<style>`` (``--doc-*``). Una cometa doble o una
+    barra invertida en un títol trencaria el CSS.
+
+    Args:
+        value: Valor de la metadada (es converteix a text).
+
+    Returns:
+        El text amb barres invertides, cometes i salts de línia escapats.
+    """
+    if value is None:
+        return ""
+    text = str(value)
+    return (
+        text.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\r\n", " ")
+        .replace("\n", " ")
+        .replace("\r", " ")
+    )
+
+
 def _postprocess_mermaid(html_path: str) -> None:
     """Converteix els blocs de codi mermaid de l'HTML generat en <div class="mermaid">.
 
@@ -188,6 +218,12 @@ def convert_markdown(
                 temp_css.write("\n")
         temp_css.close()
         cmd.append(f"--css={temp_css.name}")
+
+    # Metadades escapades per al CSS de la plantilla (--doc-*). Es fa una
+    # còpia per clau perquè els valors originals han de quedar intactes per a
+    # l'HTML (títols, noms, etc.).
+    for key in _CSS_METADATA_KEYS:
+        metadata[f"{key}_css"] = _css_escape(metadata.get(key, ""))
 
     for key, value in metadata.items():
         if value:
