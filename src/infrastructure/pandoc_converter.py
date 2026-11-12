@@ -3,10 +3,43 @@ import html as html_module
 import subprocess
 import tempfile
 import os
+from pathlib import Path
 from typing import Dict, Any
 from src.infrastructure.project_paths import PROJECT_ROOT, from_project_root
 
 
+class PandocError(RuntimeError):
+    """Error en executar Pandoc.
+
+    Conserva el missatge d'error (stderr) que ha emès Pandoc perquè la
+    interfície el puga mostrar a l'usuari en lloc d'un error genèric.
+
+    Attributes:
+        stderr: Text complet de l'error emès per Pandoc (pot estar buit).
+    """
+
+    def __init__(self, message: str, stderr: str = "") -> None:
+        super().__init__(message)
+        self.stderr = stderr
+
+
+def _text(value: Any) -> str:
+    """Retorna el text d'un valor de subprocess de manera segura.
+
+    Els tests substitueixen ``subprocess.run`` per un mock, de manera que
+    ``stderr`` pot no ser una cadena. Aquest helper evita errors de tipus.
+
+    Args:
+        value: Valor a normalitzar (normalment ``CompletedProcess.stderr``).
+
+    Returns:
+        El text sense espais sobrants, o cadena buida si no és text.
+    """
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace").strip()
+    return ""
 
 
 def _postprocess_mermaid(html_path: str) -> None:
@@ -23,8 +56,13 @@ def _postprocess_mermaid(html_path: str) -> None:
     Args:
         html_path: Ruta del fitxer HTML generat per pandoc.
     """
-    with open(html_path, "r", encoding="utf-8") as f:
-        content = f.read()
+    path = Path(html_path)
+    # Guard defensiu: si pandoc no ha generat el fitxer (error silenciós,
+    # execució simulada als tests, etc.) no hi ha res a postprocessar.
+    if not path.is_file():
+        return
+
+    content = path.read_text(encoding="utf-8")
 
     # Patró robust per trobar blocs de codi mermaid generats per pandoc.
     # Pandoc pot generar estructures lleugerament diferents, per això busquem
@@ -63,8 +101,7 @@ def _postprocess_mermaid(html_path: str) -> None:
     )
 
     if new_content != content:
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(new_content)
+        path.write_text(new_content, encoding="utf-8")
 
 
 
@@ -159,11 +196,23 @@ def convert_markdown(
     # Log de la comanda per a debug
     print(f"Executant Pandoc: {' '.join(cmd)}")
     try:
-        subprocess.run(cmd, check=True)
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as exc:
+        stderr = _text(exc.stderr)
+        detall = f"\n{stderr}" if stderr else ""
+        raise PandocError(
+            f"Pandoc ha fallat amb el codi {exc.returncode}.{detall}", stderr
+        ) from exc
     finally:
         # Netejar el fitxer CSS temporal
         if temp_css is not None and os.path.exists(temp_css.name):
             os.remove(temp_css.name)
+
+    # Pandoc pot emetre avisos (per exemple, de WeasyPrint) tot i acabar bé:
+    # mostrar-los evita que l'usuari els perda.
+    avisos = _text(getattr(result, "stderr", None))
+    if avisos:
+        print(f"Pandoc avisa: {avisos}")
 
 
     # Postprocessar els blocs mermaid (només per a HTML, no per a PDF).
