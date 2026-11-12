@@ -213,6 +213,18 @@ class App(QMainWindow):
         if not output_dir:
             return
             
+        # Els widgets de Qt només es poden llegir al fil principal: construïm
+        # ací les opcions i el fil de treball només executa l'exportació.
+        options = ExportOptions(
+            md_path=self.md_path_input.text(),
+            output_dir=output_dir,
+            title=self.title_input.text(),
+            subtitol=self.subtitle_input.text(),
+            curs_academic=self.curs_input.text(),
+            primary_color=self.selected_color,
+            format=format,
+        )
+
         self.export_btn.setEnabled(False)
         self.export_pdf_btn.setEnabled(False)
         
@@ -222,38 +234,40 @@ class App(QMainWindow):
         else:
             self.export_pdf_btn.setText(btn_text)
         
-        threading.Thread(target=self._export_thread, args=(output_dir, format), daemon=True).start()
+        threading.Thread(target=self._export_thread, args=(options,), daemon=True).start()
 
-    def _export_thread(self, output_dir, format):
+    def _export_thread(self, options):
+        """Executa l'exportació fora del fil principal.
+
+        Només treballa amb ``options`` (construïdes al fil principal) i es
+        comunica amb la interfície per senyals: llegir widgets de Qt des d'un
+        fil de treball no és segur.
+        """
         try:
-            md = self.md_path_input.text()
-
-            options = ExportOptions(
-                md_path=md,
-                output_dir=output_dir,
-                title=self.title_input.text(),
-                subtitol=self.subtitle_input.text(),
-                curs_academic=self.curs_input.text(),
-                primary_color=self.selected_color,
-                format=format
-            )
-            output = execute_export(options)
-            self.signals.finished.emit(output)
+            self.signals.finished.emit(execute_export(options))
         except Exception as e:
             self.signals.error.emit(str(e))
             
-    def on_export_success(self, output):
+    def _reset_export_buttons(self):
+        """Restaura els botons d'exportació al seu estat inicial."""
         self.export_btn.setEnabled(True)
         self.export_pdf_btn.setEnabled(True)
         self.export_btn.setText("Exportar HTML")
         self.export_pdf_btn.setText("Exportar PDF ✨")
+
+    def on_export_success(self, output):
+        self._reset_export_buttons()
 
         dialog = SuccessDialog(output, self)
         dialog.exec()
         
     def on_export_error(self, error_msg):
-        self.export_btn.setEnabled(True)
-        self.export_pdf_btn.setEnabled(True)
-        self.export_btn.setText("Exportar HTML")
-        self.export_pdf_btn.setText("Exportar PDF ✨")
-        QMessageBox.critical(self, "Error", f"Error al convertir:\n{error_msg}")
+        self._reset_export_buttons()
+        # Text pla: el missatge de pandoc pot contenir `<...>` i, en mode
+        # enriquit, QMessageBox el prendria per HTML i es veuria tallat.
+        box = QMessageBox(self)
+        box.setIcon(QMessageBox.Icon.Critical)
+        box.setWindowTitle("Error")
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setText(f"Error al convertir:\n{error_msg}")
+        box.exec()

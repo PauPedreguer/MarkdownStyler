@@ -16,7 +16,8 @@ class TestExportOptions(unittest.TestCase):
             curs_academic="26-27",
         )
         self.assertEqual(opts.subtitol, "")
-        self.assertEqual(opts.departament, "Informàtica")
+        # Buit → s'usa el departament de config/institut.json
+        self.assertEqual(opts.departament, "")
         self.assertEqual(opts.primary_color, "#1d4ed8")
         self.assertEqual(opts.format, "html")
 

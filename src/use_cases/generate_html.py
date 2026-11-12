@@ -30,7 +30,9 @@ def execute_export(options: ExportOptions) -> str:
         "title": options.title,
         "subtitol": options.subtitol,
         "data": options.curs_academic,
-        "departament": options.departament,
+        # Si l'opció no porta departament, es respecta el de la configuració
+        # de l'institut (abans es trepitjava amb un valor fix "Informàtica").
+        "departament": options.departament or config.get("departament", ""),
         "primary_color": options.primary_color,
     }
 

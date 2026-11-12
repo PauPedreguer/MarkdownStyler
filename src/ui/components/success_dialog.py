@@ -1,9 +1,27 @@
 import webbrowser
+from pathlib import Path
+
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 )
 from PyQt6.QtCore import Qt
 from src.ui.components.buttons import PrimaryButton
+
+
+def url_fitxer(path) -> str:
+    """Converteix una ruta del sistema en una URL ``file://`` vàlida.
+
+    ``f"file://{path}"`` no funciona amb espais ni accents (el navegador no
+    troba el fitxer). ``Path.as_uri()`` els escapa correctament.
+
+    Args:
+        path: Ruta del fitxer (absoluta o relativa).
+
+    Returns:
+        La URL ``file://`` equivalent, amb els caràcters escapats.
+    """
+    return Path(path).resolve().as_uri()
+
 
 class SuccessDialog(QDialog):
     def __init__(self, output_path, parent=None):
@@ -47,5 +65,5 @@ class SuccessDialog(QDialog):
         layout.addLayout(btn_layout)
         
     def open_file(self):
-        webbrowser.open(f"file://{self.output_path}")
+        webbrowser.open(url_fitxer(self.output_path))
         self.accept()

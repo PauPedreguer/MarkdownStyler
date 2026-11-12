@@ -7,6 +7,34 @@ from src.infrastructure.config_repo import load_institut_config, save_institut_c
 from src.infrastructure.project_paths import from_project_root
 from src.ui.components.buttons import PrimaryButton
 
+# Fitxers de suport: s'utilitzen internament però no s'han d'oferir com a
+# recurs seleccionable. base.css es carrega sempre abans de l'estil triat,
+# pdf.css només té sentit per a l'exportació PDF i highlight.min.js és una
+# llibreria de tercers, no un script de la plantilla.
+CSS_NO_SELECCIONABLES = frozenset({"base.css", "pdf.css"})
+JS_NO_SELECCIONABLES = frozenset({"highlight.min.js"})
+
+
+def recursos_disponibles(directori: Path, extensio: str, exclusions: frozenset) -> list:
+    """Retorna els recursos seleccionables d'un directori, ordenats per nom.
+
+    Args:
+        directori: Directori a explorar (pot no existir).
+        extensio: Extensió a filtrar, per exemple ``".css"``.
+        exclusions: Noms de fitxer que no s'han d'incloure a la llista.
+
+    Returns:
+        La llista de noms de fitxer, ordenada alfabèticament.
+    """
+    if not directori.exists():
+        return []
+    return sorted(
+        fitxer.name
+        for fitxer in directori.glob(f"*{extensio}")
+        if fitxer.name not in exclusions
+    )
+
+
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -116,24 +144,25 @@ class SettingsDialog(QDialog):
 
     def load_styles(self):
         self.style_combo.clear()
-        styles_dir = from_project_root("styles")
-        if styles_dir.exists():
-            for f in sorted(styles_dir.glob("*.css")):
-                self.style_combo.addItem(f.name)
+        self.style_combo.addItems(
+            recursos_disponibles(
+                from_project_root("styles"), ".css", CSS_NO_SELECCIONABLES
+            )
+        )
 
     def load_templates(self):
         self.template_combo.clear()
-        templates_dir = from_project_root("templates")
-        if templates_dir.exists():
-            for f in sorted(templates_dir.glob("*.html")):
-                self.template_combo.addItem(f.name)
+        self.template_combo.addItems(
+            recursos_disponibles(from_project_root("templates"), ".html", frozenset())
+        )
 
     def load_scripts(self):
         self.script_combo.clear()
-        scripts_dir = from_project_root("scripts")
-        if scripts_dir.exists():
-            for f in sorted(scripts_dir.glob("*.js")):
-                self.script_combo.addItem(f.name)
+        self.script_combo.addItems(
+            recursos_disponibles(
+                from_project_root("scripts"), ".js", JS_NO_SELECCIONABLES
+            )
+        )
 
     def import_style(self):
         self.import_resource("styles", "*.css", "Estil CSS", self.load_styles, self.style_combo)

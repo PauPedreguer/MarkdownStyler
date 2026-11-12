@@ -104,6 +104,23 @@ class TestExecuteExport(unittest.TestCase):
         self.assertEqual(metadata["institut_nom"], "IES Test")
         self.assertEqual(metadata["highlight_style"], "zenburn")
 
+    def test_metadata_uses_config_departament_when_empty(self):
+        """Si no s'indica departament, s'ha de respectar el de la configuració."""
+        options = ExportOptions(
+            md_path=str(self.md_file),
+            output_dir=str(self.tmp_path),
+            title="Examen",
+            curs_academic="26-27",
+            format="html",
+        )
+        config = {**self.mock_config, "departament": "Matemàtiques"}
+        with mock.patch.object(generate_html, "load_institut_config", return_value=config), \
+             mock.patch.object(generate_html, "convert_markdown") as mock_convert:
+            generate_html.execute_export(options)
+
+        metadata = mock_convert.call_args.kwargs["metadata"]
+        self.assertEqual(metadata["departament"], "Matemàtiques")
+
 
 if __name__ == "__main__":
     unittest.main()
