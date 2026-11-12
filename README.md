@@ -40,10 +40,15 @@ MarkdownStyler/
 ├── styles/                    # Fulls d'estil CSS
 ├── scripts/                   # Scripts JS per als documents generats
 ├── assets/                    # Recursos estàtics (logos, imatges)
-├── examples/                  # Exemples de documents
+├── examples/                  # Documents de prova (només les fonts .md)
+├── run.sh                     # Llançador (usa el .venv local)
 ├── requirements.txt           # Dependències de Python
 └── pyproject.toml             # Configuració del projecte i pytest
 ```
+
+> **`examples/`** conté documents de prova (`demo.md`, `Examen Linux.md`) que
+> exerciten títols, llistes niuades, tasques, taules, blocs de codi i imatges.
+> Les eixides `.html`/`.pdf` **no es versionen**: es generen amb l'aplicació.
 
 ## 🚀 Instal·lació
 

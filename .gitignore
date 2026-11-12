@@ -20,12 +20,13 @@ env/
 *.swp
 *.swo
 
-# Fitxers generats
+# Eixides generades per l'aplicació (les fonts .md sí que es versionen)
 *.html
 *.pdf
 !templates/*.html
-!examples/*.html
-!examples/*.pdf
+
+# Fitxers de referència locals
+Guía de CSS.html
 
 # Tests
 .pytest_cache/
