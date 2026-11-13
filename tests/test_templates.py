@@ -324,6 +324,20 @@ class TestPresentacio(unittest.TestCase):
         self.assertIn("Array.from(contingut.childNodes)", self.script)
         self.assertIn("contingut.replaceChildren(...(originals || []))", self.script)
 
+    def test_eixir_lleva_les_marques_dels_titols(self):
+        """Fora de la presentació no hi pot quedar cap `slide-titol` posat.
+
+        La primera diapositiva de cada grup aprofita el títol original: si en
+        eixir no es lleva la classe, les regles de `.content .slide-titol`
+        (marge zero, text centrat, sense barra) seguïxen manant en la vista
+        normal i el document queda amb un altre espaiat per sempre.
+        """
+        self.assertIn("node.classList.remove('slide-titol')", self.script)
+        self.assertIn(
+            "contingut.querySelectorAll('.slide-titol').forEach(netejaTitol)",
+            self.script,
+        )
+
     def test_les_continuacions_no_dupliquen_identificadors(self):
         """Els títols de continuació es clonen sense id (HTML vàlid)."""
         self.assertIn("clon.removeAttribute('id')", self.script)
@@ -368,6 +382,18 @@ class TestPresentacio(unittest.TestCase):
         for glif in ("M", "T", "⛶", "◀", "▶", "✕"):
             self.assertNotIn("creaBoto('" + glif + "'", self.script)
         self.assertIn("presentacio-boto-icona", self.css)
+
+    def test_el_mode_scroll_no_enganxa_les_fletxes(self):
+        """En scroll no hi ha snap: el pas de ↓ ha de poder quedar on toque.
+
+        Amb ``y proximity`` el navegador arredonia el quart de pantalla fins a
+        l'inici de la secció següent i es podia saltar text sense voler.
+        """
+        inici = self.css.index("body.mode-presentacio .content.presentacio-scroll {")
+        bloc = self.css[inici : self.css.index("}", inici)]
+        self.assertIn("scroll-snap-type: none;", bloc)
+        # Les diapositives sí que encaixen (és el que fa el mode diapositives).
+        self.assertIn("scroll-snap-type: y mandatory;", self.css)
 
     def test_cap_encapcalament_no_queda_sol_en_tallar(self):
         """El tall d'una diapositiva mai no deixa un títol orfe al final."""

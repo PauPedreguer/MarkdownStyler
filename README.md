@@ -166,8 +166,11 @@ com en la resta del document.
   queda sol** al final d'una diapositiva. Mai talla una taula, un bloc de codi
   o una figura pel mig; si un bloc és més gran que la pantalla (o no hi ha cap
   tall net), la diapositiva fa scroll intern i mostra «↓ continua».
-- **Scroll**: les seccions no es fragmenten; es recorre el document sencer amb
-  una parada suau a cada secció.
+- **Scroll**: les seccions no es fragmenten ni es tanquen a una pantalla; es
+  recorre el document sencer sense parades, que és el que fa falta per a
+  llegir. Ací `↓` `↑` i `Re Pàg` `Av Pàg` mouen la pàgina poc a poc (un quart
+  o una pantalla) i mai no salten text, i `→` `Espai` `←` porten a l'inici de
+  la secció següent o anterior.
 
 El mode es pot canviar **en directe** amb la tecla `M` (no té botó al peu: el
 mode habitual es tria a la configuració), i el nivell de títol que obri cada
@@ -179,8 +182,10 @@ presentació el canvia també a la vista normal, i a l'inrevés.
 
 | Tecla | Acció |
 | --- | --- |
-| `→` `↓` `Espai` `Av Pàg` | Diapositiva o secció següent (si en queda, acaba de recórrer-la) |
-| `←` `↑` `Re Pàg` | Anterior |
+| `→` `Espai` `Av Pàg` | Diapositiva o secció següent (si en queda, acaba de recórrer-la) |
+| `←` `Re Pàg` | Anterior |
+| `↓` `↑` | En mode diapositives, com `→` `←`; en mode scroll, mouen la pàgina poc a poc |
+| `Re Pàg` `Av Pàg` | En mode scroll, una pantalla amunt o avall |
 | `Inici` / `Fi` | Primera / última |
 | `M` | Diapositives ↔ scroll |
 | `F` | Pantalla completa |

@@ -92,7 +92,13 @@ class TestPresentacioHtml(unittest.TestCase):
     def tearDownClass(cls):
         cls._tmp.cleanup()
 
-    def _dom(self, ruta: Path, hash_: str = "", mida: str = "1400,900") -> str:
+    def _dom(
+        self,
+        ruta: Path,
+        hash_: str = "",
+        mida: str = "1400,900",
+        args: tuple[str, ...] = (),
+    ) -> str:
         """Retorna el DOM que deixa el navegador després d'executar el JS."""
         resultat = subprocess.run(
             [
@@ -103,6 +109,7 @@ class TestPresentacioHtml(unittest.TestCase):
                 "--window-size=" + mida,
                 "--virtual-time-budget=6000",
                 "--dump-dom",
+                *args,
                 ruta.as_uri() + hash_,
             ],
             capture_output=True,
@@ -130,12 +137,17 @@ class TestPresentacioHtml(unittest.TestCase):
         fitxer: Path | None = None,
         hash_: str = "",
         mida: str = "1400,900",
+        args: tuple[str, ...] = (),
     ) -> str:
         """DOM després d'executar un script propi al final del document.
 
         `--dump-dom` només torna HTML, així que el script deixa el resultat en
         un atribut de <html> i el test el llig d'allí. Va amb l'esdeveniment
         `load` perquè els listeners de script.js ja estiguen enganxats.
+
+        `args` passa opcions extra al navegador: les proves de scroll forcen
+        `--force-prefers-reduced-motion` perquè els desplaçaments siguen
+        instantanis i la mesura no depenga de l'animació.
         """
         base = Path(fitxer) if fitxer else self.html
         cap, cua = base.read_text(encoding="utf-8").rsplit("</body>", 1)
@@ -143,7 +155,7 @@ class TestPresentacioHtml(unittest.TestCase):
         desti.write_text(
             cap + f"<script>{js}</script></body>" + cua, encoding="utf-8"
         )
-        return self._dom(desti, hash_, mida)
+        return self._dom(desti, hash_, mida, args)
 
     def _dades_del_dom(self, dom: str, atribut: str = "data-prova") -> dict:
         """Recupera el JSON que el script de mesura ha deixat a <html>."""
@@ -434,6 +446,185 @@ window.addEventListener('load', () => {
         self.assertTrue(
             any(dada["primer"] in titols for dada in continuacions), continuacions
         )
+
+    def test_en_eixir_els_titols_recuperen_l_espai_del_document(self):
+        """Entrar i eixir no deixa els títols amb l'estil de la presentació.
+
+        La primera diapositiva de cada grup aprofita el títol original, així
+        que en eixir s'hi ha de llevar `slide-titol`: si es queda, els marges
+        del document no tornen mai (marge zero, text centrat i sense barra).
+        """
+        dom = self._dom_amb_script(
+            """
+window.addEventListener('load', () => {
+    const portada = document.querySelector('.content h1');
+    const titol = document.querySelector('.content h2');
+    const mesura = (node) => {
+        const estil = getComputedStyle(node);
+        return {
+            classe: node.className,
+            margeDalt: estil.marginTop,
+            margeBaix: estil.marginBottom,
+            farcitDalt: estil.paddingTop,
+            alineacio: estil.textAlign,
+            barra: getComputedStyle(node, '::before').content
+        };
+    };
+    const abans = { h1: mesura(portada), h2: mesura(titol) };
+    document.getElementById('presentacio-toggle').click();
+    const durant = mesura(titol);
+    document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })
+    );
+    document.documentElement.setAttribute('data-prova', JSON.stringify({
+        abans: abans,
+        durant: durant,
+        despres: { h1: mesura(portada), h2: mesura(titol) },
+        marques: document.querySelectorAll(
+            '.content .slide-titol, .content .slide-cont'
+        ).length
+    }));
+});
+""",
+            "titols-restaurats",
+        )
+        dades = self._dades_del_dom(dom)
+        # Dins de la presentació el títol sí que va centrat i sense marge...
+        self.assertEqual(dades["durant"]["alineacio"], "center")
+        self.assertEqual(dades["durant"]["margeDalt"], "0px")
+        # ...i en eixir torna exactament a l'estat d'abans d'entrar.
+        self.assertEqual(dades["marques"], 0, dades["despres"])
+        self.assertEqual(dades["despres"]["h1"], dades["abans"]["h1"])
+        self.assertEqual(dades["despres"]["h2"], dades["abans"]["h2"])
+        self.assertNotIn("slide-titol", dades["despres"]["h2"]["classe"])
+        # La barra del h2 hi torna (base.css): no és només qüestió de marges.
+        self.assertNotEqual(dades["abans"]["h2"]["barra"], "none")
+
+    def test_en_mode_scroll_les_fletxes_mouen_la_pagina_poc_a_poc(self):
+        """En scroll, ↓/↑ i Re/Av Pàg desplacen la pàgina sense canviar de
+        secció (en diapositives sí que salten de diapositiva)."""
+        ruta = self._html_amb(modus="scroll")
+        dom = self._dom_amb_script(
+            """
+const espera = (ms) => new Promise((t) => setTimeout(t, ms));
+window.addEventListener('load', async () => {
+    const contingut = document.querySelector('.content');
+    const polsa = (key) => document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: key, bubbles: true })
+    );
+    document.getElementById('presentacio-toggle').click();
+    await espera(400);
+    const dades = { alt: contingut.clientHeight, passos: [] };
+    contingut.scrollTo({ top: 0, behavior: 'auto' });
+    await espera(150);
+    for (const tecla of ['ArrowDown', 'ArrowDown', 'PageDown', 'ArrowUp']) {
+        const abans = contingut.scrollTop;
+        polsa(tecla);
+        await espera(350);
+        dades.passos.push({
+            tecla: tecla,
+            pas: Math.round(contingut.scrollTop - abans)
+        });
+    }
+    dades.total = contingut.scrollHeight;
+    document.documentElement.setAttribute('data-prova', JSON.stringify(dades));
+});
+""",
+            "scroll-fi",
+            fitxer=ruta,
+            mida="1200,400",
+            args=("--force-prefers-reduced-motion",),
+        )
+        dades = self._dades_del_dom(dom)
+        alt = dades["alt"]
+        self.assertGreater(alt, 0)
+        self.assertGreater(dades["total"], alt * 2, dades)
+        quarts = dades["passos"][:2]
+        for pas in quarts:
+            self.assertTrue(
+                0.2 <= pas["pas"] / alt <= 0.3,
+                f"un quart de pantalla, no una secció: {dades}",
+            )
+        pagina = dades["passos"][2]
+        self.assertEqual(pagina["tecla"], "PageDown")
+        self.assertTrue(
+            0.8 <= pagina["pas"] / alt <= 0.9,
+            f"Av Pàg ha de fer prop d'una pantalla: {dades}",
+        )
+        enrere = dades["passos"][3]
+        self.assertEqual(enrere["tecla"], "ArrowUp")
+        self.assertTrue(
+            -0.3 <= enrere["pas"] / alt <= -0.2,
+            f"↑ ha de tornar arrere un quart: {dades}",
+        )
+
+    def test_en_mode_scroll_l_espai_salta_de_seccio(self):
+        """En scroll, Espai continua saltant a la secció següent."""
+        ruta = self._html_amb(modus="scroll")
+        dom = self._dom_amb_script(
+            """
+const espera = (ms) => new Promise((t) => setTimeout(t, ms));
+window.addEventListener('load', async () => {
+    const contingut = document.querySelector('.content');
+    document.getElementById('presentacio-toggle').click();
+    await espera(400);
+    contingut.scrollTo({ top: 0, behavior: 'auto' });
+    await espera(150);
+    const segona = document.querySelectorAll('.slide')[1].offsetTop;
+    document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: ' ', bubbles: true })
+    );
+    await espera(400);
+    document.documentElement.setAttribute('data-prova', JSON.stringify({
+        segona: segona,
+        posicio: contingut.scrollTop,
+        comptador: document.querySelector('.presentacio-comptador').textContent,
+        total: document.querySelectorAll('.slide').length
+    }));
+});
+""",
+            "scroll-espai",
+            fitxer=ruta,
+            mida="1200,400",
+            args=("--force-prefers-reduced-motion",),
+        )
+        dades = self._dades_del_dom(dom)
+        self.assertLessEqual(abs(dades["posicio"] - dades["segona"]), 2, dades)
+        self.assertEqual(dades["comptador"], f"2 / {dades['total']}")
+
+    def test_en_mode_diapositives_les_fletxes_canvien_de_diapositiva(self):
+        """Fora del mode scroll, ↓ continua passant de diapositiva."""
+        dom = self._dom_amb_script(
+            """
+const espera = (ms) => new Promise((t) => setTimeout(t, ms));
+window.addEventListener('load', async () => {
+    const contingut = document.querySelector('.content');
+    const comptador = () => document.querySelector(
+        '.presentacio-comptador'
+    ).textContent;
+    const polsa = (key) => document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: key, bubbles: true })
+    );
+    document.getElementById('presentacio-toggle').click();
+    await espera(400);
+    polsa('Home');
+    await espera(400);
+    const dades = { abans: comptador() };
+    polsa('ArrowDown');
+    await espera(400);
+    dades.despres = comptador();
+    dades.posicio = contingut.scrollTop;
+    dades.segona = document.querySelectorAll('.slide')[1].offsetTop;
+    document.documentElement.setAttribute('data-prova', JSON.stringify(dades));
+});
+""",
+            "diapos-fletxes",
+            args=("--force-prefers-reduced-motion",),
+        )
+        dades = self._dades_del_dom(dom)
+        self.assertTrue(dades["abans"].startswith("1 / "), dades)
+        self.assertTrue(dades["despres"].startswith("2 / "), dades)
+        self.assertLessEqual(abs(dades["posicio"] - dades["segona"]), 2, dades)
 
 
 if __name__ == "__main__":

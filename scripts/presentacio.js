@@ -41,6 +41,9 @@
     const CLAU_POSICIO = 'markdownstyler-presentacio:' + location.pathname;
     const SUAU = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const TEXT_AJUDES = '← → · F pantalla completa · T tema · ? ajuda';
+    // En scroll les fletxes mouen la pàgina poc a poc: el peu ho ha de dir.
+    const TEXT_AJUDES_SCROLL =
+        '↓ ↑ poc a poc · ← → secció · F pantalla · T tema · ? ajuda';
 
     // --- Estat ----------------------------------------------------------
     let actiu = false;
@@ -215,6 +218,22 @@
         const marca = clon.querySelector('.slide-cont');
         if (marca) marca.remove();
         return clon;
+    }
+
+    /**
+     * Lleva d'un títol les marques que hi ha posat la presentació.
+     *
+     * La primera diapositiva d'un grup aprofita el node original, i
+     * ``creaSlide`` li afegix la classe ``slide-titol`` (i, si és una
+     * continuació, un ``span`` amb «(cont.)»). Com que eixa classe té regles
+     * pròpies (marge zero, text centrat, sense barra), si es queda posada el
+     * títol seguïx eixint «com a la presentació» en la vista normal: fora del
+     * mode presentació no ha de quedar-ne cap rastre.
+     */
+    function netejaTitol(node) {
+        if (!node || !node.classList) return;
+        node.classList.remove('slide-titol');
+        node.querySelectorAll('.slide-cont').forEach((marca) => marca.remove());
     }
 
     /** Lleva del deck una diapositiva de prova que no ha servit. */
@@ -392,15 +411,74 @@
         vésA(index - 1);
     }
 
+    /**
+     * En mode scroll, mou la pàgina una fracció de la pantalla.
+     *
+     * Les fletxes i Re/Av Pàg han de servir per a llegir de seguida: moure
+     * un quart de pantalla manté el punt de lectura, mentre que saltar de
+     * secció el perd. Per això el mode scroll va sense snap
+     * (``scroll-snap-type: none`` a presentacio.css): si no, el navegador
+     * arredonix el pas fins a l'inici de la secció següent.
+     */
+    function mouPoc(fraccio) {
+        if (!actiu || !slides.length) return;
+        const desti = contingut.scrollTop + contingut.clientHeight * fraccio;
+        contingut.scrollBy({
+            top: contingut.clientHeight * fraccio,
+            behavior: SUAU ? 'smooth' : 'auto',
+        });
+        // Amb l'animació, el `scroll` arriba tard (o pot no arribar si el
+        // navegador decidix que no cal repintar): comptador i barra es
+        // refresquen amb el destí, no amb l'esdeveniment.
+        ficaIndex(desti);
+    }
+
+    /**
+     * ↓ / Av Pàg: en scroll, un pas curt (o una pantalla); en diapositives,
+     * la diapositiva següent (com → o Espai).
+     */
+    function avall(fraccio) {
+        if (mode === 'scroll') mouPoc(fraccio);
+        else seguent();
+    }
+
+    /** ↑ / Re Pàg, amb la mateixa lògica que ``avall``. */
+    function amunt(fraccio) {
+        if (mode === 'scroll') mouPoc(-fraccio);
+        else anterior();
+    }
+
     /** Actualitza comptador, barra i pista de continuació. */
     function actualitzaEstat() {
         if (!actiu || !slides.length || !comptador) return;
         const total = slides.length;
         comptador.textContent = index + 1 + ' / ' + total;
         progres.style.width = (((index + 1) / total) * 100).toFixed(2) + '%';
-        textAjuda.textContent = teScrollPendent(slides[index])
-            ? '↓ continua'
-            : TEXT_AJUDES;
+        if (teScrollPendent(slides[index])) {
+            textAjuda.textContent = '↓ continua';
+        } else {
+            textAjuda.textContent =
+                mode === 'scroll' ? TEXT_AJUDES_SCROLL : TEXT_AJUDES;
+        }
+    }
+
+    /** Índex de la diapositiva que hi ha a la meitat d'una posició de scroll. */
+    function indexEn(top) {
+        const mig = top + contingut.clientHeight / 2;
+        let trobat = 0;
+        for (let i = 0; i < slides.length; i += 1) {
+            if (slides[i].offsetTop <= mig) trobat = i;
+            else break;
+        }
+        return trobat;
+    }
+
+    /** Fixa l'índex a partir d'una posició i refresca comptador, barra i hash. */
+    function ficaIndex(top) {
+        index = indexEn(top);
+        actualitzaEstat();
+        guardaPosicio();
+        escriuHash('#presentar/' + (index + 1));
     }
 
     /** Seguix el scroll del deck per a mantindre índex, comptador i hash. */
@@ -408,16 +486,7 @@
         if (!actiu) return;
         clearTimeout(temporitzadorScroll);
         temporitzadorScroll = setTimeout(() => {
-            const mig = contingut.scrollTop + contingut.clientHeight / 2;
-            let nou = 0;
-            for (let i = 0; i < slides.length; i += 1) {
-                if (slides[i].offsetTop <= mig) nou = i;
-                else break;
-            }
-            index = nou;
-            actualitzaEstat();
-            guardaPosicio();
-            escriuHash('#presentar/' + (index + 1));
+            ficaIndex(contingut.scrollTop);
         }, 90);
     }
 
@@ -547,8 +616,10 @@
 
         const llista = document.createElement('dl');
         [
-            ['→ ↓ Espai', 'Diapositiva o secció següent'],
-            ['← ↑', 'Anterior'],
+            ['→ Espai', 'Diapositiva o secció següent'],
+            ['←', 'Anterior'],
+            ['↓ ↑', 'En scroll, poc a poc; en diapositives, com → ←'],
+            ['Re Pàg Av Pàg', 'En scroll, una pantalla amunt o avall'],
             ['Inici Fi', 'Primera o última'],
             ['M', 'Diapositives o scroll'],
             ['F', 'Pantalla completa'],
@@ -676,6 +747,10 @@
 
         body.classList.remove('mode-presentacio');
         contingut.classList.remove('presentacio-actiu', 'presentacio-scroll');
+        // La primera diapositiva de cada grup aprofita el títol original, així
+        // que els encapçalaments del document poden dur marques de la
+        // presentació: s'han de llevar abans de tornar-los a la vista normal.
+        contingut.querySelectorAll('.slide-titol').forEach(netejaTitol);
         contingut.replaceChildren(...(originals || []));
         originals = null;
         slides = [];
@@ -727,19 +802,34 @@
         if (enPeu && (event.key === ' ' || event.key === 'Enter')) return;
 
         switch (event.key) {
+            // En mode diapositives, ↓/Av Pàg (com → o Espai) passen de
+            // diapositiva. En mode scroll mouen la pàgina sense canviar de
+            // secció, que és el que fa el navegador en qualsevol pàgina.
             case 'ArrowRight':
-            case 'ArrowDown':
-            case 'PageDown':
             case ' ':
             case 'Spacebar':
                 event.preventDefault();
                 seguent();
                 break;
+            case 'ArrowDown':
+                event.preventDefault();
+                avall(0.25);
+                break;
+            case 'PageDown':
+                event.preventDefault();
+                avall(0.85);
+                break;
             case 'ArrowLeft':
-            case 'ArrowUp':
-            case 'PageUp':
                 event.preventDefault();
                 anterior();
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                amunt(0.25);
+                break;
+            case 'PageUp':
+                event.preventDefault();
+                amunt(0.85);
                 break;
             case 'Home':
                 event.preventDefault();

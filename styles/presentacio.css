@@ -139,9 +139,12 @@ body.mode-presentacio .content::-webkit-scrollbar {
     height: 0;
 }
 
-/* En mode scroll la parada és «suau»: no obliga a encaixar cada secció. */
+/* En el mode scroll no hi ha parada: ací les fletxes mouen la pàgina poc a
+   poc i, amb snap, el navegador arredonix eixe pas fins a l'inici de la
+   secció següent (saltant-se text sense voler). Els salts de secció (→,
+   Espai, Inici, Fi) continuen caient exactes perquè van amb scrollTo. */
 body.mode-presentacio .content.presentacio-scroll {
-    scroll-snap-type: y proximity;
+    scroll-snap-type: none;
 }
 
 /* =========================
@@ -173,7 +176,7 @@ body.mode-presentacio .content.presentacio-scroll {
 }
 
 /* En mode scroll les seccions no es tanquen a una pantalla: creixen i el
-   deck fa scroll normal (parada suau). */
+   deck fa scroll normal. */
 body.mode-presentacio .content.presentacio-scroll .slide {
     height: auto;
     min-height: 100%;
