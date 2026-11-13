@@ -4,6 +4,18 @@
     <meta charset="utf-8">
     <title>$title$</title>
 
+    <!-- Tema desat (☾ de la barra o tecla T). S'aplica ací, abans del primer
+         pintat, perquè no es veja el flaix clar→fosc; la paleta viu a
+         styles/base.css i val igual per a la vista normal i la presentació.
+         Si el navegador bloqueja localStorage es queda en clar. -->
+    <script>
+        try {
+            if (localStorage.getItem('markdownstyler-tema') === 'fosc') {
+                document.documentElement.classList.add('tema-fosc');
+            }
+        } catch (error) { /* sense persistència: tema clar */ }
+    </script>
+
     <!-- Google Fonts (carregades via <link> perquè pandoc amb --embed-resources
          no intenti descarregar-les des del CSS). No s'hi posen els enllaços de
          preconnexió: l'HTML es carrega des de file:// (finestra i PDF amb
@@ -42,7 +54,7 @@ $highlighting-css$
     $math$
 </head>
 
-<body>
+<body$if(presentacio_nivell)$ data-presentacio-nivell="$presentacio_nivell$"$endif$$if(presentacio_modus)$ data-presentacio-modus="$presentacio_modus$"$endif$$if(presentacio_tema)$ data-presentacio-tema="$presentacio_tema$"$endif$>
 
 <!-- Portada per a PDF/Impressió -->
 <div class="pdf-cover">
@@ -110,12 +122,22 @@ $highlighting-css$
     </div>
 </div>
 
-<button id="header-toggle" title="Amagar/Mostrar capçalera" class="no-print">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+<button id="presentacio-toggle" title="Mode presentació (P)" aria-label="Iniciar el mode presentació" class="no-print">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
 </button>
 
 <button id="fullscreen-toggle" title="Pantalla completa" class="no-print">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+</button>
+
+<!-- Tema clar/fosc (T). La icona i el títol els canvia script.js segons el
+     tema actiu: ☾ quan està clar i ☀ quan està fosc. -->
+<button id="tema-toggle" title="Tema fosc (T)" class="no-print">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+</button>
+
+<button id="header-toggle" title="Amagar/Mostrar capçalera" class="no-print">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </button>
 
 
@@ -177,6 +199,13 @@ $endif$
         });
     }
 </script>
+
+$if(presentacio_js)$
+<!-- Mode presentació: reutilitza este mateix document (ja generat). Va
+     després de mermaid perquè puga esperar que els diagrames estiguen
+     dibuixats abans de mesurar les diapositives. -->
+<script src="$presentacio_js$"></script>
+$endif$
 </body>
 </html>
 

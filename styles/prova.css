@@ -16,12 +16,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #d1d5db;
+    background: var(--color-bord);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
+    background: var(--color-secundari);
 }
 
 /* =========================
@@ -40,7 +40,7 @@ body {
 /* HEADER SUPERIOR */
 .header {
     min-height: var(--header-height);
-    background: #ffffff;
+    background: var(--color-superficie);
     border-bottom: 1px solid var(--color-bord);
     display: flex;
     flex-wrap: wrap;
@@ -66,7 +66,7 @@ body {
     z-index: 900;
     width: 40px;
     height: 40px;
-    background: #ffffff;
+    background: var(--color-superficie);
     border: 1px solid var(--color-bord);
     border-left: none;
     border-radius: 0 8px 8px 0;
@@ -80,7 +80,7 @@ body {
 }
 
 #sidebar-toggle:hover {
-    color: var(--color-primari);
+    color: var(--color-acent);
     padding-left: 5px;
 }
 
@@ -110,7 +110,7 @@ body {
 .institut-name {
     font-weight: 800;
     font-size: 0.9rem;
-    color: #4b5563;
+    color: var(--color-text-suau);
 }
 
 .header-subtitle {
@@ -127,14 +127,14 @@ body {
 }
 
 .separator {
-    color: #9ca3af;
+    color: var(--color-secundari);
     font-weight: bold;
 }
 
 .badget-curs {
     font-size: 0.7rem;
-    color: var(--color-primari);
-    background: color-mix(in srgb, var(--color-primari), white 90%);
+    color: var(--color-acent);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 90%);
     padding: 1px 10px;
     border-radius: 99px;
     font-weight: 700;
@@ -148,7 +148,7 @@ body {
 .main-title {
     font-size: 1.4rem;
     font-weight: 800;
-    color: var(--color-primari);
+    color: var(--color-acent);
     margin: 0;
     border: none;
     padding: 0;
@@ -170,68 +170,8 @@ body {
     gap: 6px;
 }
 
-/* BOTÓ PER AMAGAR/MOSTRAR LA CAPÇALERA */
-/* Pegat al borde inferior de la capçalera, a la dreta. */
-#header-toggle {
-    position: fixed;
-    top: var(--header-height);
-    right: 15px;
-    z-index: 1001;
-    width: 40px;
-    height: 40px;
-    background: #ffffff;
-    border: 1px solid var(--color-bord);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    color: var(--color-secundari);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    box-shadow: var(--shadow-sm);
-}
-
-#header-toggle:hover {
-    color: var(--color-primari);
-    border-color: var(--color-primari);
-}
-
-#header-toggle svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* BOTÓ DE PANTALLA COMPLETA */
-/* Situat just a sota del botó de la capçalera. */
-#fullscreen-toggle {
-    position: fixed;
-    top: calc(var(--header-height) + 40px);
-    right: 15px;
-    z-index: 1001;
-    width: 40px;
-    height: 40px;
-    background: #ffffff;
-    border: 1px solid var(--color-bord);
-    border-radius: 8px;
-    color: var(--color-secundari);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    box-shadow: var(--shadow-sm);
-}
-
-#fullscreen-toggle:hover {
-    color: var(--color-primari);
-    border-color: var(--color-primari);
-}
-
-#fullscreen-toggle svg {
-    width: 20px;
-    height: 20px;
-}
+/* Els botons flotants de la capçalera (⌃, ☾, ⛶, ▶) es definixen a base.css:
+   formen una sola fila i han de ser iguals amb qualsevol estil. */
 
 /* Quan la capçalera està amagada */
 body.header-collapsed {
@@ -258,7 +198,7 @@ body.header-collapsed .header {
     overflow-x: hidden;
     position: sticky;
     top: var(--header-height);
-    background: color-mix(in srgb, var(--color-primari), white 97%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 97%);
     border-right: 1px solid color-mix(in srgb, var(--color-primari), transparent 90%);
     padding: 0;
     display: flex;
@@ -285,7 +225,7 @@ body.sidebar-collapsed {
 .section-title {
     font-size: 0.7rem;
     font-weight: 800;
-    color: var(--color-primari);
+    color: var(--color-acent);
     letter-spacing: 0.1em;
     margin-bottom: 15px;
     opacity: 0.8;
@@ -323,7 +263,7 @@ body.sidebar-collapsed {
 }
 
 .toc-toggle:hover {
-    color: var(--color-primari);
+    color: var(--color-acent);
     background: color-mix(in srgb, var(--color-primari), transparent 92%);
     border-radius: 4px;
 }
@@ -344,8 +284,8 @@ body.sidebar-collapsed {
 }
 
 .toc a:hover {
-    background: color-mix(in srgb, var(--color-primari), white 90%);
-    color: var(--color-primari);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 90%);
+    color: var(--color-acent);
     padding-left: 16px;
 }
 
@@ -379,7 +319,7 @@ body.sidebar-collapsed {
 .print-btn {
     width: 100%;
     padding: 12px;
-    background: white;
+    background: var(--color-superficie);
     border: 1px solid var(--color-bord);
     border-radius: 10px;
     color: var(--color-text);
@@ -393,9 +333,9 @@ body.sidebar-collapsed {
 }
 
 .print-btn:hover {
-    background: #f8fafc;
+    background: var(--color-superficie-2);
     border-color: var(--color-primari);
-    color: var(--color-primari);
+    color: var(--color-acent);
 }
 
 /* MAIN CONTENT AREA */
@@ -503,7 +443,7 @@ pre[data-lang]::before {
    ========================= */
 
 .mermaid {
-    background: #ffffff;
+    background: var(--color-superficie-fixa);
     border: 1px solid var(--color-bord);
     border-radius: var(--radius-md);
     padding: 24px;
@@ -533,10 +473,10 @@ math {
 /* Contenidor inline: el <p> que conté <math display="inline"> */
 p math[display="inline"],
 math[display="inline"] {
-    background: color-mix(in srgb, #6366f1, white 91%);
+    background: color-mix(in srgb, #6366f1, var(--mescla-fons) 91%);
     padding: 2px 7px;
     border-radius: 5px;
-    border: 1px solid color-mix(in srgb, #6366f1, white 79%);
+    border: 1px solid color-mix(in srgb, #6366f1, var(--mescla-fons) 79%);
     display: inline-block;
     line-height: 1.5;
     vertical-align: middle;
@@ -558,8 +498,8 @@ p:has(> math[display="block"]) {
     text-align: center;
     padding: 18px 24px;
     margin: 24px 0;
-    background: color-mix(in srgb, #6366f1, white 94%);
-    border: 1px solid color-mix(in srgb, #6366f1, white 80%);
+    background: color-mix(in srgb, #6366f1, var(--mescla-fons) 94%);
+    border: 1px solid color-mix(in srgb, #6366f1, var(--mescla-fons) 80%);
     border-radius: var(--radius-md);
     overflow-x: auto;
 }
@@ -570,7 +510,7 @@ p:has(> math[display="block"]) {
 
 .doc-info {
     font-size: 0.85rem;
-    color: #374151;
+    color: var(--color-text-suau);
 }
 
 .actions button {
@@ -734,7 +674,7 @@ p:has(> math[display="block"]) {
     .cover-inst-name {
         font-size: 1.2rem;
         font-weight: 800;
-        color: #374151;
+        color: var(--color-text-suau);
     }
 
     .cover-main {
@@ -758,7 +698,7 @@ p:has(> math[display="block"]) {
     .cover-title::after { display: none !important; }
 
     .cover-footer {
-        border-top: 1px solid #e5e7eb;
+        border-top: 1px solid var(--color-bord);
         padding-top: 20px;
     }
 
@@ -909,7 +849,7 @@ p:has(> math[display="block"]) {
         content: var(--doc-institut);
         font-family: var(--font-principal);
         font-size: 8.5pt;
-        color: #6b7280;
+        color: var(--color-text-tenue);
         vertical-align: bottom;
         padding-bottom: 1.5mm;
     }
@@ -918,7 +858,7 @@ p:has(> math[display="block"]) {
         content: var(--doc-departament);
         font-family: var(--font-principal);
         font-size: 8.5pt;
-        color: #6b7280;
+        color: var(--color-text-tenue);
         vertical-align: bottom;
         padding-bottom: 1.5mm;
     }
@@ -927,7 +867,7 @@ p:has(> math[display="block"]) {
         content: var(--doc-assignatura) " · " var(--doc-curs) " · " var(--doc-data);
         font-family: var(--font-principal);
         font-size: 8pt;
-        color: #6b7280;
+        color: var(--color-text-tenue);
         vertical-align: top;
         padding-top: 1.5mm;
     }
@@ -936,7 +876,7 @@ p:has(> math[display="block"]) {
         content: "Pàgina " counter(page) " de " counter(pages);
         font-family: var(--font-principal);
         font-size: 8pt;
-        color: #6b7280;
+        color: var(--color-text-tenue);
         vertical-align: top;
         padding-top: 1.5mm;
     }

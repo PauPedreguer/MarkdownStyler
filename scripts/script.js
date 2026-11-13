@@ -84,6 +84,107 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // --- 0d. TEMA CLAR / FOSC (una sola paleta per a tot el document) ---
+    // La paleta viu a styles/base.css (html.tema-fosc) i el mode presentació
+    // la reutilitza: no té tema propi. La preferència es desa i s'aplica
+    // també abans del primer pintat des d'un script del <head>.
+    const CLAU_TEMA = 'markdownstyler-tema';
+    const ARREL = document.documentElement;
+    const botoTema = document.getElementById('tema-toggle');
+
+    const ICONA_LLUNA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+    const ICONA_SOL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+
+    function temaEsFosc() {
+        return ARREL.classList.contains('tema-fosc');
+    }
+
+    function actualitzaBotoTema() {
+        if (!botoTema) return;
+        const fosc = temaEsFosc();
+        botoTema.innerHTML = fosc ? ICONA_SOL : ICONA_LLUNA;
+        botoTema.title = fosc ? 'Tema clar (T)' : 'Tema fosc (T)';
+    }
+
+    /**
+     * API compartida amb scripts/presentacio.js (tecla T, botó del peu).
+     * Treballa sempre sobre <html> perquè el tema no depén del mode.
+     */
+    const MSTema = {
+        CLAU: CLAU_TEMA,
+
+        /** Tema que s'està veient ara: 'clar' o 'fosc'. */
+        actual() {
+            return temaEsFosc() ? 'fosc' : 'clar';
+        },
+
+        /** Preferència desada per l'usuari ('clar' si encara no n'hi ha). */
+        preferencia() {
+            try {
+                return localStorage.getItem(CLAU_TEMA) === 'fosc' ? 'fosc' : 'clar';
+            } catch (error) {
+                return 'clar';
+            }
+        },
+
+        /** Aplica un tema sense desar-lo. Retorna el tema aplicat. */
+        aplica(tema) {
+            const fosc = tema === 'fosc';
+            ARREL.classList.toggle('tema-fosc', fosc);
+            actualitzaBotoTema();
+            document.dispatchEvent(new CustomEvent('mstema-canvi', {
+                detail: { tema: fosc ? 'fosc' : 'clar' }
+            }));
+            return fosc ? 'fosc' : 'clar';
+        },
+
+        /** Aplica la preferència desada; si no n'hi ha, `perDefecte`. */
+        aplicaPreferencia(perDefecte = 'clar') {
+            let desat = null;
+            try {
+                desat = localStorage.getItem(CLAU_TEMA);
+            } catch (error) {
+                desat = null;
+            }
+            if (desat === 'clar' || desat === 'fosc') return MSTema.aplica(desat);
+            return MSTema.aplica(perDefecte === 'fosc' ? 'fosc' : 'clar');
+        },
+
+        /** Alterna el tema i el desa per a la pròxima vegada. */
+        alterna() {
+            const nou = temaEsFosc() ? 'clar' : 'fosc';
+            try {
+                localStorage.setItem(CLAU_TEMA, nou);
+            } catch (error) {
+                // Sense persistència (file:// privat, mode incògnit…): canvia igualment.
+            }
+            return MSTema.aplica(nou);
+        }
+    };
+    window.MSTema = MSTema;
+
+    // Arrancada: tema desat o, si és el primer colp, el que indique la
+    // configuració (data-presentacio-tema). Per defecte, clar.
+    MSTema.aplicaPreferencia(document.body.dataset.presentacioTema || 'clar');
+    actualitzaBotoTema();
+
+    if (botoTema) {
+        botoTema.addEventListener('click', () => MSTema.alterna());
+    }
+
+    // Tecla T també fora de la presentació. Dins, la captura presentacio.js
+    // (que crida a la mateixa API): així no es canvia dos voltes.
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 't' && event.key !== 'T') return;
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (document.body.classList.contains('mode-presentacio')) return;
+        const desti = event.target;
+        if (desti && (desti.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(desti.tagName))) return;
+        event.preventDefault();
+        MSTema.alterna();
+    });
+
+
     // --- 1. SIDEBAR TOGGLE LOGIC ---
 
     const sidebarToggle = document.getElementById('sidebar-toggle');

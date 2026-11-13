@@ -24,6 +24,10 @@ class TestExecuteExport(unittest.TestCase):
             "js_name": "script.js",
             "highlight_style": "zenburn",
             "institut_nom": "IES Test",
+            # Mode presentació (també arriba a la plantilla com a metadades).
+            "presentacio_nivell": 2,
+            "presentacio_modus": "diapositives",
+            "presentacio_tema": "fosc",
             # El primer color de la taula de Configuració és el document per
             # defecte: d'ahí ixen el curs i l'assignatura de la capçalera.
             "identitats": [
@@ -90,6 +94,23 @@ class TestExecuteExport(unittest.TestCase):
         metadata = call_kwargs["metadata"]
         self.assertEqual(metadata["institut_nom"], "IES Test")
         self.assertEqual(metadata["highlight_style"], "zenburn")
+
+    def test_metadata_includes_presentation_settings(self):
+        """El mode presentació es configura des de la finestra i arriba a l'HTML."""
+        options = ExportOptions(
+            md_path=str(self.md_file),
+            output_dir=str(self.tmp_path),
+            title="Examen",
+            curs_academic="26-27",
+        )
+        with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
+             mock.patch.object(generate_html, "convert_markdown") as mock_convert:
+            generate_html.execute_export(options)
+
+        metadata = mock_convert.call_args.kwargs["metadata"]
+        self.assertEqual(metadata["presentacio_nivell"], 2)
+        self.assertEqual(metadata["presentacio_modus"], "diapositives")
+        self.assertEqual(metadata["presentacio_tema"], "fosc")
 
     def test_metadata_uses_config_departament_when_empty(self):
         """Si no s'indica departament, s'ha de respectar el de la configuració."""

@@ -20,11 +20,157 @@
     --font-mono: 'Fira Code', 'Source Code Pro', monospace;
     --sidebar-width: 280px;
     --header-height: 65px;
+    /* Colors derivats. Es definixen com a variables perquè el tema fosc els
+       puga canviar d'una sola vegada: `--mescla-fons` és el color amb què es
+       mescla el primari per a fer tints de fons i `--mescla-text` el que es
+       mescla per a fer-ne tints de text. */
+    --color-superficie-2: #f8fafc;
+    --color-superficie-fixa: #ffffff;
+    --color-text-tenue: #6b7280;
+    --color-acent: var(--color-primari);
+    --color-vel: rgba(15, 23, 42, 0.35);
+    --mescla-fons: #ffffff;
+    --mescla-text: #1e293b;
+    /* Mida de cada botó flotant de la capçalera i separació amb el marge dret:
+       la fila sencera es calcula a partir d'estos dos valors. */
+    --toggle-mida: 40px;
+    --toggle-marge: 15px;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   TEMA FOSC (comú a la vista normal i a la presentació)
+   =========================
+   Hi ha una sola paleta: el document sencer canvia alhora amb el botó ☾ de
+   la barra o la tecla T. El mode presentació ja no té paleta pròpia, només
+   canvia la disposició (vegeu styles/presentacio.css).
+
+   La classe va a <html> i no a <body> perquè un script del <head>
+   (templates/base.html) la puga aplicar abans del primer pintat: així no hi
+   ha flaix clar→fosc quan l'usuari ja havia triat el tema fosc. */
+html.tema-fosc {
+    --color-fons: #0b1220;
+    --color-superficie: #111c33;
+    --color-text: #e8eef8;
+    --color-text-suau: #c6d2e3;
+    --color-secundari: #93a4bb;
+    --color-bord: #2b3a52;
+    --color-guia: #b9cdf2;
+    --color-superficie-2: #16233c;
+    --color-text-tenue: #a9b8cc;
+    --color-acent: color-mix(in srgb, var(--color-primari), #ffffff 42%);
+    --color-vel: rgba(3, 8, 18, 0.72);
+    --mescla-fons: #16233c;
+    --mescla-text: #e8eef8;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+}
+
+/* El tema fosc no ha d'arribar mai al paper: el PDF ix sempre en clar. */
+@media print {
+    html.tema-fosc {
+        --color-fons: #f4f6f9;
+        --color-superficie: #ffffff;
+        --color-text: #1f2937;
+        --color-text-suau: #374151;
+        --color-secundari: #64748b;
+        --color-bord: #e2e8f0;
+        --color-guia: #1e293b;
+        --color-superficie-2: #f8fafc;
+        --color-text-tenue: #6b7280;
+        --color-acent: var(--color-primari);
+        --color-vel: rgba(15, 23, 42, 0.35);
+        --mescla-fons: #ffffff;
+        --mescla-text: #1e293b;
+    }
+}
+
+/* =========================
+   BOTONS FLOTANTS DE LA CAPÇALERA
+   =========================
+   Els quatre botons (▶ presentació, ⛶ pantalla completa, ☾ tema, ⌃ capçalera)
+   formen una sola fila horitzontal enganxada davall de la capçalera. La
+   posició de cada un ix de --toggle-marge i --toggle-mida, així afegir-ne un
+   nou només és sumar una mida. --header-height la fixa script.js.
+
+   Viuen ací (i no a l'estil triat) perquè la fila ha de ser igual amb
+   qualsevol CSS i perquè els comparteixen la vista normal i la presentació. */
+#presentacio-toggle,
+#fullscreen-toggle,
+#tema-toggle,
+#header-toggle {
+    position: fixed;
+    top: var(--header-height);
+    z-index: 1001;
+    box-sizing: border-box;
+    width: var(--toggle-mida);
+    height: var(--toggle-mida);
+    margin: 0;
+    padding: 0;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-bord);
+    border-top: none;
+    border-right: none;
+    border-radius: 0;
+    color: var(--color-secundari);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: color 0.2s, background 0.2s;
+}
+
+#presentacio-toggle svg,
+#fullscreen-toggle svg,
+#tema-toggle svg,
+#header-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+#presentacio-toggle:hover,
+#fullscreen-toggle:hover,
+#tema-toggle:hover,
+#header-toggle:hover {
+    background: var(--color-superficie-2);
+    color: var(--color-acent);
+}
+
+/* Ordre visual (d'esquerra a dreta): ▶ ⛶ ☾ ⌃. El de més a la dreta és el
+   primer que es troba amb el marge; els altres s'hi van sumant. */
+#header-toggle {
+    right: var(--toggle-marge);
+    border-right: 1px solid var(--color-bord);
+    border-radius: 0 0 8px 0;
+}
+
+#tema-toggle {
+    right: calc(var(--toggle-marge) + var(--toggle-mida));
+}
+
+#fullscreen-toggle {
+    right: calc(var(--toggle-marge) + 2 * var(--toggle-mida));
+}
+
+#presentacio-toggle {
+    right: calc(var(--toggle-marge) + 3 * var(--toggle-mida));
+    border-radius: 0 0 0 8px;
+}
+
+/* En pantalles estretes l'estil triat amaga els botons de capçalera i
+   pantalla completa; el del tema es queda, però arrimat al marge. */
+@media (max-width: 900px) {
+    #tema-toggle {
+        right: var(--toggle-marge);
+        border-right: 1px solid var(--color-bord);
+        border-radius: 0 0 8px 8px;
+    }
 }
 
 /* RESET */
@@ -55,7 +201,7 @@ h1 {
     font-weight: 800;
     margin-bottom: 40px;
     padding-bottom: 25px;
-    color: var(--color-primari);
+    color: var(--color-acent);
     text-align: center;
     position: relative;
     letter-spacing: -0.02em;
@@ -145,7 +291,7 @@ h4::before {
     top: 6px;
     bottom: 6px;
     width: 3px;
-    background: color-mix(in srgb, var(--color-primari), white 40%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 40%);
     border-radius: 2px;
 }
 
@@ -198,7 +344,7 @@ del {
 }
 
 mark {
-    background: color-mix(in srgb, #fbbf24, white 55%);
+    background: color-mix(in srgb, #fbbf24, var(--mescla-fons) 55%);
     padding: 1px 4px;
     border-radius: 3px;
 }
@@ -233,7 +379,7 @@ sup {
     content: "•";
     position: absolute;
     left: 0;
-    color: var(--color-primari);
+    color: var(--color-acent);
     font-size: 1.15em;
     line-height: 1;
     top: 0.15em;
@@ -277,7 +423,7 @@ sup {
     content: counter(custom-counter) ".";
     position: absolute;
     left: 0;
-    color: var(--color-primari);
+    color: var(--color-acent);
     font-weight: 800;
     font-family: var(--font-principal);
     font-size: 0.95em;
@@ -325,7 +471,7 @@ sup {
     min-width: 18px;
     border: 2px solid var(--color-bord);
     border-radius: 4px;
-    background: white;
+    background: var(--color-superficie);
     cursor: default;
     position: relative;
     margin-top: 2px;
@@ -355,7 +501,7 @@ sup {
    ========================= */
 
 a {
-    color: var(--color-primari);
+    color: var(--color-acent);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s, opacity 0.15s;
@@ -391,14 +537,14 @@ a.footnote-back {
    s'heretava a tot el bloc i el codi eixia d'un sol color: abans ho tapava
    highlight.js amb `.hljs { color: #e2e8f0 }`, que ja no existeix. */
 :not(pre) > code {
-    background: color-mix(in srgb, var(--color-primari), white 92%);
-    color: color-mix(in srgb, var(--color-primari), #1e293b 30%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 92%);
+    color: color-mix(in srgb, var(--color-primari), var(--mescla-text) 30%);
     padding: 2px 7px;
     border-radius: var(--radius-sm);
     font-family: var(--font-mono);
     font-size: 0.88em;
     font-weight: 500;
-    border: 1px solid color-mix(in srgb, var(--color-primari), white 82%);
+    border: 1px solid color-mix(in srgb, var(--color-primari), var(--mescla-fons) 82%);
 }
 
 /* Blocs de codi (pandoc genera div.sourceCode > pre).
@@ -478,7 +624,7 @@ div.sourceCode pre > code > span {
 blockquote {
     position: relative;
     border-left: 4px solid var(--color-primari);
-    background: color-mix(in srgb, var(--color-primari), white 95%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 95%);
     padding: 18px 22px 18px 24px;
     margin: 24px 0;
     border-radius: 0 var(--radius-md) var(--radius-md) 0;
@@ -491,7 +637,7 @@ blockquote::before {
     top: -10px;
     left: 12px;
     font-size: 3.5rem;
-    color: var(--color-primari);
+    color: var(--color-acent);
     opacity: 0.18;
     font-family: Georgia, serif;
     line-height: 1;
@@ -500,7 +646,7 @@ blockquote::before {
 
 blockquote p {
     margin: 0.3rem 0;
-    color: color-mix(in srgb, var(--color-primari), #1e293b 40%);
+    color: color-mix(in srgb, var(--color-primari), var(--mescla-text) 40%);
     font-style: italic;
     line-height: 1.75;
     text-align: left;
@@ -512,8 +658,8 @@ blockquote p strong {
 }
 
 blockquote p code {
-    background: color-mix(in srgb, var(--color-primari), white 85%);
-    border-color: color-mix(in srgb, var(--color-primari), white 75%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 85%);
+    border-color: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 75%);
     font-style: normal;
 }
 
@@ -603,11 +749,11 @@ td {
 }
 
 tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--color-primari), white 97%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 97%);
 }
 
 tbody tr:hover td {
-    background: color-mix(in srgb, var(--color-primari), white 93%);
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 93%);
 }
 
 /* =========================
@@ -673,4 +819,18 @@ figcaption {
     font-size: 0.88rem;
     text-align: left;
     line-height: 1.65;
+}
+
+/* =========================
+   AJUSTOS DE CONTRAST DEL TEMA FOSC
+   =========================
+   Els tints derivats del primari (--mescla-text) funcionen bé sobre paper,
+   però en fosc deixarien el codi inline i les cites massa foscos. Estos dos
+   casos agafen directament els colors de text del tema. */
+html.tema-fosc :not(pre) > code {
+    color: var(--color-text);
+}
+
+html.tema-fosc blockquote p {
+    color: var(--color-text-suau);
 }

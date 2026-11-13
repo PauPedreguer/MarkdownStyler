@@ -22,9 +22,10 @@ from src.infrastructure.project_paths import from_project_root, icona_configurac
 from src.ui.components.buttons import PrimaryButton
 
 # Fitxers de suport: s'utilitzen internament però no s'han d'oferir com a
-# recurs seleccionable. base.css es carrega sempre abans de l'estil triat.
-CSS_NO_SELECCIONABLES = frozenset({"base.css"})
-JS_NO_SELECCIONABLES = frozenset({"highlight.min.js"})
+# recurs seleccionable. base.css es carrega sempre abans de l'estil triat i
+# presentacio.css després; cap dels dos no és un estil triable.
+CSS_NO_SELECCIONABLES = frozenset({"base.css", "presentacio.css"})
+JS_NO_SELECCIONABLES = frozenset({"highlight.min.js", "presentacio.js"})
 
 
 def recursos_disponibles(directori: Path, extensio: str, exclusions: frozenset) -> list:
@@ -288,6 +289,59 @@ class SettingsDialog(QDialog):
 
         # Estil de Codi (Highlight)
         layout.addRow(QLabel("Ressaltat de codi:"), self.highlight_combo)
+
+        # Mode presentació (el document es reutilitza tal qual: vegeu
+        # scripts/presentacio.js). Ací només es tria com comença.
+        self.presentacio_nivell_combo = QComboBox()
+        for etiqueta, nivell in (
+            ("Cada ## (recomanat)", 2),
+            ("Cada # (només títols)", 1),
+            ("Cada ### (més granular)", 3),
+        ):
+            self.presentacio_nivell_combo.addItem(etiqueta, nivell)
+        self.presentacio_nivell_combo.setToolTip(
+            "Encapçalament que obri cada diapositiva. Amb ##, cada secció del "
+            "document és una diapositiva; si no cap, es dividix tota sola."
+        )
+        idx_nivell = self.presentacio_nivell_combo.findData(
+            self.config.get("presentacio_nivell", 2)
+        )
+        if idx_nivell >= 0:
+            self.presentacio_nivell_combo.setCurrentIndex(idx_nivell)
+
+        self.presentacio_modus_combo = QComboBox()
+        self.presentacio_modus_combo.addItem(
+            "Diapositives (dividix les seccions llargues)", "diapositives"
+        )
+        self.presentacio_modus_combo.addItem(
+            "Scroll (seccions senceres, parada per secció)", "scroll"
+        )
+        self.presentacio_modus_combo.setToolTip(
+            "En presentar-se pot canviar en directe amb la tecla M."
+        )
+        idx_modus = self.presentacio_modus_combo.findData(
+            self.config.get("presentacio_modus", "diapositives")
+        )
+        if idx_modus >= 0:
+            self.presentacio_modus_combo.setCurrentIndex(idx_modus)
+
+        self.presentacio_tema_combo = QComboBox()
+        self.presentacio_tema_combo.addItem("Fosc", "fosc")
+        self.presentacio_tema_combo.addItem("Clar", "clar")
+        self.presentacio_tema_combo.setToolTip(
+            "Tema inicial del document (també a la presentació). Després es "
+            "canvia amb el botó ☾ o la tecla T, i el navegador recorda "
+            "l'elecció."
+        )
+        idx_tema = self.presentacio_tema_combo.findData(
+            self.config.get("presentacio_tema", "clar")
+        )
+        if idx_tema >= 0:
+            self.presentacio_tema_combo.setCurrentIndex(idx_tema)
+
+        layout.addRow(QLabel("Presentació:"), self.presentacio_nivell_combo)
+        layout.addRow(QLabel("Mode inicial:"), self.presentacio_modus_combo)
+        layout.addRow(QLabel("Tema inicial:"), self.presentacio_tema_combo)
 
     @staticmethod
     def _boto_afig(accio) -> QPushButton:
@@ -725,7 +779,11 @@ class SettingsDialog(QDialog):
             "css_name": self.style_combo.currentText(),
             "template_name": self.template_combo.currentText(),
             "js_name": self.script_combo.currentText(),
-            "highlight_style": self.highlight_combo.currentData()
+            "highlight_style": self.highlight_combo.currentData(),
+            # Mode presentació: comença així i després es pot canviar amb M/T.
+            "presentacio_nivell": self.presentacio_nivell_combo.currentData(),
+            "presentacio_modus": self.presentacio_modus_combo.currentData(),
+            "presentacio_tema": self.presentacio_tema_combo.currentData(),
         }
         save_institut_config(new_config)
         QMessageBox.information(self, "Guardat", "S'ha desat la configuració del projecte.")

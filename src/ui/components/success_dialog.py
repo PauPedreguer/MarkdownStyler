@@ -56,14 +56,31 @@ class SuccessDialog(QDialog):
         btn_ok.setProperty("class", "outline")
         btn_ok.clicked.connect(self.accept)
         
+        btn_present = QPushButton("▶ Presentar")
+        btn_present.setProperty("class", "outline")
+        btn_present.setToolTip(
+            "Obri el document directament en mode presentació (també amb P o F5)."
+        )
+        btn_present.clicked.connect(self.presentar)
+
         btn_open = PrimaryButton("Obrir Fitxer")
         btn_open.clicked.connect(self.open_file)
         
         btn_layout.addWidget(btn_ok)
+        btn_layout.addWidget(btn_present)
         btn_layout.addWidget(btn_open)
         
         layout.addLayout(btn_layout)
         
     def open_file(self):
         webbrowser.open(url_fitxer(self.output_path))
+        self.accept()
+
+    def presentar(self):
+        """Obri el document directament en mode presentació.
+
+        El script del document llig el hash ``#presentar`` en carregar, així
+        que no cal cap paràmetre més ni una pàgina a banda.
+        """
+        webbrowser.open(url_fitxer(self.output_path) + "#presentar")
         self.accept()

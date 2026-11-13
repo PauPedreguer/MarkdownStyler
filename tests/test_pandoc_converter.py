@@ -254,5 +254,49 @@ class TestCssMetadata(unittest.TestCase):
         )
 
 
+class TestRecursosDePresentacio(unittest.TestCase):
+    """Comprova que el CSS i el JS del mode presentació arriben a Pandoc."""
+
+    def _executa(self) -> dict:
+        """Executa la conversió amb Pandoc simulat i recull la comanda i el CSS."""
+        capturat: dict = {}
+
+        def _run(cmd, **_kwargs):
+            capturat["cmd"] = cmd
+            for argument in cmd:
+                if argument.startswith("--css="):
+                    capturat["css"] = Path(argument.split("=", 1)[1]).read_text(
+                        encoding="utf-8"
+                    )
+            return mock.MagicMock(stderr="")
+
+        with mock.patch.object(pandoc_converter.subprocess, "run", side_effect=_run):
+            pandoc_converter.convert_markdown(
+                md_path="examen.md",
+                output_path="out/examen.html",
+                css_path="styles/prova.css",
+                template_path="templates/base.html",
+                js_path="scripts/script.js",
+                highlight_style="zenburn",
+                metadata={"title": "Examen"},
+            )
+        return capturat
+
+    def test_el_css_de_presentacio_va_despres_de_l_estil_triat(self):
+        """Així pot sobreescriure'l sense tocar-lo (tot va sota un mode)."""
+        css = self._executa()["css"]
+        self.assertIn("MODE PRESENTACIÓ", css)
+        self.assertLess(
+            css.index("EDU DOCS STYLE"), css.index("MODE PRESENTACIÓ")
+        )
+
+    def test_el_script_de_presentacio_va_a_les_metadades(self):
+        """La plantilla necessita la ruta per a $if(presentacio_js)$."""
+        cmd = self._executa()["cmd"]
+        metadades = [arg for arg in cmd if arg.startswith("--metadata=presentacio_js:")]
+        self.assertEqual(len(metadades), 1)
+        self.assertTrue(metadades[0].endswith("presentacio.js"))
+
+
 if __name__ == "__main__":
     unittest.main()

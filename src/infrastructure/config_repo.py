@@ -11,6 +11,14 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "template_name": "base.html",
     "js_name": "script.js",
     "highlight_style": ESTIL_RESSALTAT_DEFECTE,
+    # Mode presentació (vegeu scripts/presentacio.js): el nivell de títol que
+    # obri cada diapositiva, el mode inicial i el tema inicial del document.
+    # El tema és únic per a la vista normal i la presentació: el botó ☾ (o la
+    # tecla T) el canvia i el desa al navegador; este valor només s'aplica la
+    # primera vegada, quan encara no hi ha preferència desada.
+    "presentacio_nivell": 2,
+    "presentacio_modus": "diapositives",
+    "presentacio_tema": "clar",
 }
 
 

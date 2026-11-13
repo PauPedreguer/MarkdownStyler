@@ -34,6 +34,10 @@ class TestConfigRepo(unittest.TestCase):
         self.assertEqual(config["template_name"], "base.html")
         self.assertEqual(config["js_name"], "script.js")
         self.assertEqual(config["highlight_style"], ESTIL_RESSALTAT_DEFECTE)
+        # Mode presentació: valors per defecte encara que el JSON no els tinga.
+        self.assertEqual(config["presentacio_nivell"], 2)
+        self.assertEqual(config["presentacio_modus"], "diapositives")
+        self.assertEqual(config["presentacio_tema"], "clar")
 
     def test_load_merges_with_defaults(self):
         """La configuració carregada es fusiona amb els valors per defecte."""

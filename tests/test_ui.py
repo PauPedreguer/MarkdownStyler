@@ -82,9 +82,9 @@ class TestRecursosDisponibles(unittest.TestCase):
     """Comprova que els combos d'ajustos no oferisquen fitxers de suport."""
 
     def test_exclou_els_css_de_suport(self):
-        """base.css no ha d'aparèixer com a estil seleccionable."""
+        """base.css i presentacio.css no han d'aparèixer com a estil."""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            for nom in ("base.css", "prova.css", "estil-examen.css"):
+            for nom in ("base.css", "presentacio.css", "prova.css", "estil-examen.css"):
                 (Path(tmp_dir) / nom).write_text("/* */", encoding="utf-8")
 
             noms = recursos_disponibles(Path(tmp_dir), ".css", CSS_NO_SELECCIONABLES)
@@ -92,9 +92,9 @@ class TestRecursosDisponibles(unittest.TestCase):
         self.assertEqual(noms, ["estil-examen.css", "prova.css"])
 
     def test_exclou_llibreries_js(self):
-        """highlight.min.js no s'ha d'oferir com a script de la plantilla."""
+        """highlight.min.js i presentacio.js no són scripts triables."""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            for nom in ("highlight.min.js", "script.js", "toc.js"):
+            for nom in ("highlight.min.js", "presentacio.js", "script.js", "toc.js"):
                 (Path(tmp_dir) / nom).write_text("//", encoding="utf-8")
 
             noms = recursos_disponibles(Path(tmp_dir), ".js", JS_NO_SELECCIONABLES)

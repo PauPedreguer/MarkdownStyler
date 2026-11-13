@@ -273,5 +273,149 @@ class TestScriptJs(unittest.TestCase):
         self.assertFalse(from_project_root("scripts", "highlight.min.js").exists())
 
 
+class TestPresentacio(unittest.TestCase):
+    """Comprova els ganxos del mode presentació (plantilla, CSS i JS)."""
+
+    def setUp(self):
+        self.plantilla = from_project_root("templates", "base.html").read_text(
+            encoding="utf-8"
+        )
+        self.script = from_project_root("scripts", "presentacio.js").read_text(
+            encoding="utf-8"
+        )
+        self.css = from_project_root("styles", "presentacio.css").read_text(
+            encoding="utf-8"
+        )
+
+    def test_la_plantilla_te_el_boto_i_el_script(self):
+        """El botó ▶ i el script s'inclouen només si el recurs hi és."""
+        self.assertIn('id="presentacio-toggle"', self.plantilla)
+        self.assertIn("$if(presentacio_js)$", self.plantilla)
+        self.assertIn('src="$presentacio_js$"', self.plantilla)
+
+    def test_el_script_va_despres_de_mermaid(self):
+        """El script espera els diagrames: mermaid s'ha de carregar abans."""
+        self.assertLess(
+            self.plantilla.index("mermaid.min.js"),
+            self.plantilla.index('src="$presentacio_js$"'),
+        )
+
+    def test_la_plantilla_publica_la_configuracio(self):
+        """El body ha de dur el nivell, el mode i el tema com a data-*."""
+        for clau in ("presentacio_nivell", "presentacio_modus", "presentacio_tema"):
+            atribut = clau.replace("_", "-")
+            self.assertIn(f'data-{atribut}="$' + clau + '$"', self.plantilla)
+
+    def test_el_css_nomes_actua_en_mode_presentacio(self):
+        """La vista normal i el PDF no han de canviar."""
+        self.assertIn("body.mode-presentacio {", self.css)
+        self.assertIn("body.mode-presentacio .content {", self.css)
+        # L'amagat de la interfície ha de véncer l'estil triat.
+        self.assertIn("display: none !important", self.css)
+
+    def test_el_css_samaga_en_imprimir(self):
+        """Si s'imprimeix sense desmuntar, la interfície no ha d'eixir al paper."""
+        bloc = self.css[self.css.index("@media print {"):]
+        for clase in ("presentacio-barra", "presentacio-peu", "presentacio-ajuda-panel"):
+            self.assertIn(clase, bloc)
+
+    def test_el_script_mou_els_nodes_i_els_restaura(self):
+        """No es clona el document: es mouen els nodes i es tornen a posar."""
+        self.assertIn("Array.from(contingut.childNodes)", self.script)
+        self.assertIn("contingut.replaceChildren(...(originals || []))", self.script)
+
+    def test_les_continuacions_no_dupliquen_identificadors(self):
+        """Els títols de continuació es clonen sense id (HTML vàlid)."""
+        self.assertIn("clon.removeAttribute('id')", self.script)
+        self.assertIn("querySelectorAll('[id]')", self.script)
+
+    def test_el_nivell_de_tall_ix_de_la_configuracio(self):
+        """El nivell (## per defecte) no s'ha de fixar al codi."""
+        self.assertIn("dataset.presentacioNivell", self.script)
+        self.assertIn("'h' + NIVELL", self.script)
+
+
+class TestTema(unittest.TestCase):
+    """Hi ha un sol tema (clar/fosc) per a tota la pàgina.
+
+    La paleta viu a base.css (``html.tema-fosc``) i la compartixen la vista
+    normal i la presentació: la presentació només canvia la disposició. La
+    preferència es desa al navegador i s'aplica abans del primer pintat.
+    """
+
+    def setUp(self):
+        self.plantilla = from_project_root("templates", "base.html").read_text(
+            encoding="utf-8"
+        )
+        self.base = from_project_root("styles", "base.css").read_text(encoding="utf-8")
+        self.presentacio_css = from_project_root(
+            "styles", "presentacio.css"
+        ).read_text(encoding="utf-8")
+        self.script = from_project_root("scripts", "script.js").read_text(
+            encoding="utf-8"
+        )
+        self.presentacio_js = from_project_root(
+            "scripts", "presentacio.js"
+        ).read_text(encoding="utf-8")
+
+    def test_la_paleta_fosca_es_unica(self):
+        """El fosc es definix una sola vegada, a <html>, i no a la presentació."""
+        self.assertIn("html.tema-fosc {", self.base)
+        self.assertIn("--color-fons: #0b1220;", self.base)
+        # La presentació no pot tindre paleta pròpia: només disposició.
+        self.assertNotIn("--color-fons:", self.presentacio_css)
+        self.assertNotIn("tema-clar", self.presentacio_css)
+
+    def test_la_preferencia_s_aplica_abans_de_pintar(self):
+        """L'script del <head> evita el flaix clar→fosc al recarregar."""
+        self.assertIn("markdownstyler-tema", self.plantilla)
+        self.assertIn(
+            "document.documentElement.classList.add('tema-fosc')", self.plantilla
+        )
+        self.assertLess(
+            self.plantilla.index("markdownstyler-tema"),
+            self.plantilla.index('href="$css$"'),
+        )
+
+    def test_el_boto_de_tema_es_de_la_barra(self):
+        """El botó ☾ forma part de la fila flotant i no ix ni en paper ni en
+        presentació (allí el tema es canvia amb la T del peu)."""
+        self.assertIn('id="tema-toggle"', self.plantilla)
+        self.assertIn("#tema-toggle", self.base)
+        self.assertIn("body.mode-presentacio #tema-toggle", self.presentacio_css)
+        bloc = self.presentacio_css[self.presentacio_css.index("@media print {"):]
+        self.assertIn("#tema-toggle", bloc)
+
+    def test_la_fila_de_botons_ix_de_les_mides(self):
+        """Afegir un botó nou només ha de ser sumar una --toggle-mida."""
+        self.assertIn("--toggle-mida: 40px;", self.base)
+        self.assertIn("--toggle-marge: 15px;", self.base)
+        self.assertIn(
+            "calc(var(--toggle-marge) + 3 * var(--toggle-mida))", self.base
+        )
+        # El ▶ és el quart per la dreta; el seu offset el fixa presentacio.css.
+        self.assertIn(
+            "calc(var(--toggle-marge) + 3 * var(--toggle-mida))",
+            self.presentacio_css,
+        )
+
+    def test_el_paper_surt_sempre_en_clar(self):
+        """En imprimir es recuperen els colors del paper encara que estiga fosc."""
+        bloc = self.base[self.base.index("@media print {"):]
+        self.assertIn("html.tema-fosc", bloc)
+        self.assertIn("--color-superficie: #ffffff;", bloc)
+
+    def test_el_script_compartix_l_api_del_tema(self):
+        """Un sol lloc decideix el tema: MSTema (script.js)."""
+        self.assertIn("window.MSTema", self.script)
+        self.assertIn("markdownstyler-tema", self.script)
+        for metode in ("actual()", "preferencia()", "aplica(", "aplicaPreferencia(", "alterna()"):
+            self.assertIn(metode, self.script)
+        # La presentació delega i no guarda tema propi.
+        self.assertIn("window.MSTema.alterna()", self.presentacio_js)
+        self.assertNotIn("TEMA_CONFIG", self.presentacio_js)
+        self.assertNotIn("tema-clar", self.presentacio_js)
+
+
 if __name__ == "__main__":
     unittest.main()

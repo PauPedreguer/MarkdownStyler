@@ -1,0 +1,476 @@
+/* =========================
+   MODE PRESENTACIÓ
+   =========================
+   Este full no genera res per si sol: l'activa scripts/presentacio.js, que
+   re-agrupa els fills de `.content` en seccions `.slide` i afig la barra de
+   progrés, el comptador i els botons.
+
+   Tot penja de `body.mode-presentacio` perquè la pantalla normal i el PDF
+   queden exactament igual. El tema (clar o fosc) NO es definix ací: hi ha una
+   sola paleta a base.css (`html.tema-fosc`) que val igual per a la vista
+   normal i per a la presentació. Ací només s'adapta la disposició i algun
+   tint propi de l'escenari.
+
+   Com que les diapositives viuen DINS del mateix `.content`, les regles de
+   base.css i de l'estil triat (`.content table`, `.content ul`…) continuen
+   valent sense duplicar-les.
+*/
+
+body.mode-presentacio {
+    overflow: hidden;
+    background: var(--color-fons);
+    color: var(--color-text);
+}
+
+/* Fora la interfície del document mentre es presenta. */
+body.mode-presentacio .header,
+body.mode-presentacio .sidebar,
+body.mode-presentacio .pdf-cover,
+body.mode-presentacio .pdf-toc,
+body.mode-presentacio #header-toggle,
+body.mode-presentacio #sidebar-toggle,
+body.mode-presentacio #fullscreen-toggle,
+body.mode-presentacio #tema-toggle,
+body.mode-presentacio #presentacio-toggle {
+    display: none !important;
+}
+
+/* El botó per a entrar en mode presentació és el primer de la fila de botons
+   flotants: la resta (mida, colors, fila) es definix a base.css. Ací només
+   l'offset, que és el quart lloc comptant per la dreta. */
+#presentacio-toggle {
+    right: calc(var(--toggle-marge) + 3 * var(--toggle-mida));
+    border-radius: 0 0 0 8px;
+}
+
+@media (max-width: 900px) {
+    #presentacio-toggle {
+        display: none;
+    }
+}
+
+body.mode-presentacio main {
+    display: block;
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* El .content passa a ocupar la pantalla sencera. El JS hi afig i lleva la
+   classe `presentacio-actiu`; el mode és una classe del body. El tema, en
+   canvi, és del <html> i no canvia en entrar ni eixir de la presentació. */
+body.mode-presentacio .content {
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    width: auto;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--color-fons);
+    box-shadow: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Reserva l'espai de la barra sempre: si no, en construir les
+       diapositives l'amplada canvia i les mesures no valen. */
+    scrollbar-gutter: stable;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+}
+
+/* En presentació no cal barra de scroll: ja hi ha la barra de progrés. */
+body.mode-presentacio .content::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/* En mode scroll la parada és «suau»: no obliga a encaixar cada secció. */
+body.mode-presentacio .content.presentacio-scroll {
+    scroll-snap-type: y proximity;
+}
+
+/* =========================
+   DIAPOSITIVA
+   ========================= */
+
+.content .slide {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(10px, 1.6vh, 26px);
+    height: 100%;
+    overflow: hidden;
+    padding: clamp(30px, 5vh, 62px) clamp(24px, 5.2vw, 104px) clamp(64px, 9vh, 96px);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+/* Un bloc massa gran per a una pantalla: s'alinea a dalt i fa scroll dins. */
+.content .slide.desborda {
+    justify-content: flex-start;
+    overflow-y: auto;
+}
+
+/* En mode scroll les seccions no es tanquen a una pantalla: creixen i el
+   deck fa scroll normal (parada suau). */
+body.mode-presentacio .content.presentacio-scroll .slide {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+}
+
+.content .slide-rotul {
+    margin: 0;
+    font-size: clamp(0.7rem, 0.25vw + 0.62rem, 0.9rem);
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-secundari);
+}
+
+/* El títol de la diapositiva és el propi h1/h2 del document, amb la classe
+   afegida pel JS: conserva la barra i la línia de base que ja definix
+   base.css, però sense el marge superior de l'escrit. */
+.content .slide-titol {
+    margin: 0;
+    padding-top: 0;
+    font-size: clamp(1.65rem, 1.15vw + 1.05rem, 2.7rem);
+    line-height: 1.15;
+    text-align: left;
+}
+
+.content .slide-titol h1,
+.content .slide-titol h2 {
+    margin: 0;
+}
+
+.content .slide-portada .slide-titol {
+    font-size: clamp(2.1rem, 2.4vw + 1.1rem, 4.2rem);
+    text-align: center;
+}
+
+.content .slide-portada .slide-titol::after {
+    left: 10%;
+    width: 80%;
+}
+
+.content .slide-portada .slide-rotul {
+    text-align: center;
+}
+
+
+/* =========================
+   TIPOGRAFIA DE PRESENTACIÓ
+   ========================= */
+
+.content .slide-cos :is(p, li, dd, dt, td, th) {
+    font-size: clamp(1.02rem, 0.55vw + 0.8rem, 1.5rem);
+    line-height: 1.55;
+}
+
+.content .slide-cos :is(p, ul, ol, blockquote, table, figure, pre, .mermaid) {
+    margin-top: clamp(10px, 1.5vh, 22px);
+    margin-bottom: clamp(10px, 1.5vh, 22px);
+}
+
+.content .slide-cos h3 {
+    margin-top: clamp(14px, 2.4vh, 30px);
+    font-size: clamp(1.25rem, 0.75vw + 1rem, 1.9rem);
+}
+
+.content .slide-cos h4 {
+    font-size: clamp(1.1rem, 0.5vw + 0.95rem, 1.5rem);
+}
+
+.content .slide-cos li {
+    margin-bottom: 0.35rem;
+}
+
+.content .slide-cos img {
+    max-height: 52vh;
+    object-fit: contain;
+}
+
+.content .slide-cos .mermaid svg {
+    max-height: 50vh;
+}
+
+/* =========================
+   ADAPTACIÓ A L'ESCENARI
+   =========================
+   Els colors no es repinten ací: venen dels tokens de base.css, que canvien
+   amb el tema. Només es reforcen els tints que han de destacar sobre la
+   diapositiva (taules i cites queden com una targeta damunt del fons). */
+
+body.mode-presentacio .content table {
+    background: var(--color-superficie);
+    border-color: var(--color-bord);
+}
+
+body.mode-presentacio .content tbody tr:nth-child(even) {
+    background: var(--color-superficie-2);
+}
+
+body.mode-presentacio .content tbody tr:hover td {
+    background: color-mix(in srgb, var(--color-superficie-2), var(--color-primari) 6%);
+}
+
+body.mode-presentacio .content td {
+    border-top-color: var(--color-bord);
+}
+
+body.mode-presentacio .content blockquote {
+    background: color-mix(in srgb, var(--color-primari), var(--mescla-fons) 88%);
+    box-shadow: none;
+}
+
+body.mode-presentacio .content div.sourceCode {
+    box-shadow: 0 0 0 1px var(--color-bord), 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+body.mode-presentacio .content pre > code.sourceCode {
+    font-size: clamp(0.82rem, 0.35vw + 0.72rem, 1.05rem);
+}
+
+body.mode-presentacio .content .mermaid {
+    background: var(--color-superficie-fixa);
+    box-shadow: none;
+}
+
+/* Marca de continuació quan una secció ocupa més d'una pantalla. */
+.content .slide-cont {
+    margin-left: 0.5em;
+    font-size: 0.62em;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--color-secundari);
+    white-space: nowrap;
+}
+
+.content .slide-cos {
+    display: block;
+}
+
+.content .slide-cos > :first-child {
+    margin-top: 0;
+}
+
+/* =========================
+   INTERFÍCIE: BARRA, PEU I AJUDA
+   ========================= */
+
+.presentacio-barra {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9996;
+    height: 4px;
+    background: color-mix(in srgb, var(--color-text), transparent 90%);
+    pointer-events: none;
+}
+
+.presentacio-barra > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--color-primari);
+    transition: width 0.25s ease;
+}
+
+.presentacio-peu {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9996;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 26px clamp(16px, 4vw, 48px) 10px;
+    font-size: 0.78rem;
+    color: var(--color-secundari);
+    background: linear-gradient(to top, var(--color-fons) 45%, transparent);
+}
+
+.presentacio-ajuda {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.presentacio-comptador {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--color-text-suau);
+}
+
+.presentacio-boto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 30px;
+    padding: 0 10px;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--color-text-suau);
+    background: color-mix(in srgb, var(--color-superficie), transparent 8%);
+    border: 1px solid var(--color-bord);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.presentacio-boto:hover {
+    color: var(--color-text);
+    border-color: var(--color-primari);
+}
+
+.presentacio-boto:focus-visible,
+.presentacio-ajuda-panel :focus-visible {
+    outline: 2px solid var(--color-primari);
+    outline-offset: 2px;
+}
+
+/* Ajuda emergent (tecla ?) */
+.presentacio-ajuda-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: var(--color-vel);
+}
+
+.presentacio-ajuda-panel[hidden] {
+    display: none;
+}
+
+.presentacio-ajuda-caixa {
+    width: min(520px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 22px 26px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-bord);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.presentacio-ajuda-caixa h2 {
+    margin: 0 0 4px;
+    padding: 0;
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+
+.presentacio-ajuda-caixa h2::before,
+.presentacio-ajuda-caixa h2::after {
+    content: none;
+    display: none;
+}
+
+.presentacio-ajuda-caixa p {
+    margin: 0 0 14px;
+    font-size: 0.85rem;
+    color: var(--color-secundari);
+}
+
+.presentacio-ajuda-caixa dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.presentacio-ajuda-caixa dt {
+    white-space: nowrap;
+}
+
+.presentacio-ajuda-caixa dd {
+    margin: 0;
+    color: var(--color-text-suau);
+}
+
+.presentacio-ajuda-caixa kbd {
+    display: inline-block;
+    min-width: 1.5em;
+    padding: 1px 6px;
+    font-family: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-text);
+    background: var(--color-superficie-2);
+    border: 1px solid var(--color-bord);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+}
+
+.presentacio-ajuda-caixa .presentacio-boto {
+    margin-top: 18px;
+}
+
+/* =========================
+   PANTALLES XICOTETES I IMPRESSIÓ
+   ========================= */
+
+@media (max-height: 620px) {
+    .content .slide {
+        gap: 8px;
+        padding-top: 26px;
+        padding-bottom: 58px;
+    }
+
+    .content .slide-cos :is(p, li, dd, dt, td, th) {
+        font-size: 1rem;
+        line-height: 1.45;
+    }
+}
+
+@media (max-width: 720px) {
+    .presentacio-ajuda-extra {
+        display: none;
+    }
+
+    .content .slide {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .presentacio-barra > span {
+        transition: none;
+    }
+}
+
+/* Salvaguarda: si algú imprimeix sense que el JS haja desmuntat el mode, la
+   interfície de presentació no ha d'eixir al paper. */
+@media print {
+    .presentacio-barra,
+    .presentacio-peu,
+    .presentacio-ajuda-panel,
+    #presentacio-toggle,
+    #tema-toggle,
+    #fullscreen-toggle,
+    #header-toggle {
+        display: none !important;
+    }
+}

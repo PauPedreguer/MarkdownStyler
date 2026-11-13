@@ -167,6 +167,12 @@ def convert_markdown(
     if js_path:
         metadata["js"] = str(from_project_root(js_path).resolve())
 
+    # El mode presentació reutilitza este mateix document: només cal el seu
+    # script (el CSS ja va concatenat més avall).
+    presentacio_js = from_project_root("scripts", "presentacio.js")
+    if presentacio_js.exists():
+        metadata["presentacio_js"] = str(presentacio_js.resolve())
+
     cmd = [
         "pandoc",
         md_path,
@@ -194,6 +200,12 @@ def convert_markdown(
     if css_path:
         abs_css = from_project_root(css_path).resolve()
         css_files.append(abs_css)
+
+    # El full del mode presentació va sempre al final: així pot sobreescriure
+    # qualsevol estil triat sense tocar-lo (tot va sota body.mode-presentacio).
+    presentacio_css = from_project_root("styles", "presentacio.css")
+    if presentacio_css.exists():
+        css_files.append(presentacio_css.resolve())
 
     temp_css = None
     if css_files:

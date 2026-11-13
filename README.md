@@ -42,12 +42,13 @@ MarkdownStyler/
 │   ├── test_highlight_styles.py # Temes de ressaltat: JSON, contrast i rutes
 │   ├── test_templates.py      # Invariants de plantilla/JS de l'HTML generat
 │   ├── test_pdf_script.py     # PDF de punta a punta (es salta sense Chromium)
+│   ├── test_presentacio_html.py # Mode presentació en un navegador real
 │   ├── test_ui.py             # Helpers d'UI (sense QApplication)
 │   └── test_identitats.py     # Colors d'identitat: neteja, presets i etiquetes
 ├── config/                    # Configuració de l'institut (JSON)
 ├── templates/                 # Plantilles HTML de Pandoc
-├── styles/                    # Fulls d'estil CSS
-├── scripts/                   # Scripts JS per als documents generats
+├── styles/                    # base.css, prova.css i presentacio.css
+├── scripts/                   # script.js i presentacio.js
 ├── themes/                    # Temes de ressaltat propi (JSON de pandoc)
 ├── assets/                    # Recursos estàtics (logos, icones, imatges)
 ├── examples/                  # Documents de prova (només les fonts .md)
@@ -112,6 +113,76 @@ python main.py --pdf practica.md --out ~/Documents --title "Pràctica 1"
 `google-chrome`, `google-chrome-stable`, `chrome`, `brave-browser` o
 `microsoft-edge`). El PDF resultant inclou portada, índex, capçalera amb les
 dades de l'institut i el peu «Pàgina X de Y» (llevat de la portada).
+
+## 🌗 Tema clar i fosc
+
+El tema és **un de sol per a tot el document**: el mateix que veus en pantalla
+és el que veuràs en entrar en mode presentació, i el canvi es recorda.
+
+- **Botó ☾** de la fila flotant de la dreta (canvia a ☀ quan està fosc) o la
+  tecla `T`. També funciona dins de la presentació.
+- La preferència es desa al navegador (`localStorage`), de manera que es
+  manté en tornar a obrir el fitxer. El primer colp s'aplica el tema inicial
+  de *Configuració → Presentació* (per defecte, clar).
+- El tema s'aplica **abans del primer pintat**, així que no hi ha flaix
+  clar→fosc en carregar.
+- El **PDF ix sempre en clar**: la paleta fosca viu només en pantalla
+  (`@media print` la desactiva), de manera que imprimir o desar a PDF no
+  canvia res.
+
+Els colors ixen de `styles/base.css` (`:root` per al clar i `html.tema-fosc`
+per al fosc). Els estils triables no han de definir colors propis: usen les
+variables (`--color-fons`, `--color-superficie`, `--color-text`,
+`--color-acent`, `--mescla-fons`…) i hereten el tema automàticament.
+
+## 🖥️ Mode presentació
+
+El **mateix HTML** que genera l'aplicació es pot projectar com una
+presentació, sense escriure cap marcador especial al Markdown: no calen
+`---` ni cap `#` de diapositiva.
+
+- **Des de l'aplicació**: el botó **▶ Presentar** del diàleg d'exportació
+  (obri el fitxer acabat de generar ja en mode presentació).
+- **Des del document**: el botó **▶** de la fila flotant de la dreta (davant de
+  ⛶ pantalla completa, ☾ tema i ⌃ capçalera) o les tecles `P` / `F5`.
+
+En activar-se, el document no es clona: es re-agrupa sobre la marxa i, en
+eixir, es restaura exactament com era. Els diagrames de mermaid, les fórmules
+de KaTeX, el codi amb el seu botó de còpia i els enllaços del sumari continuen
+funcionant.
+
+### Diapositives o scroll
+
+- **Diapositives** (per defecte): cada encapçalament `##` obri una
+  diapositiva. Si una secció no cap en una pantalla, es dividix tota sola:
+  talla per blocs sencers, preferint quedar davant d'un apartat `###`. Mai
+  talla una taula, un bloc de codi o una figura pel mig; si un bloc és més
+  gran que la pantalla, la diapositiva fa scroll intern i mostra «↓ continua».
+- **Scroll**: les seccions no es fragmenten; es recorre el document sencer amb
+  una parada suau a cada secció.
+
+El mode es pot canviar **en directe** amb `M`, i el nivell de títol que obri
+cada diapositiva es tria a *Configuració → Presentació* (`#`, `##` o `###`).
+El tema (`T`) és el mateix del document: canviar-lo dins de la presentació el
+canvia també a la vista normal, i a l'inrevés.
+
+### Tecles
+
+| Tecla | Acció |
+| --- | --- |
+| `→` `↓` `Espai` `Av Pàg` | Diapositiva o secció següent (si en queda, acaba de recórrer-la) |
+| `←` `↑` `Re Pàg` | Anterior |
+| `Inici` / `Fi` | Primera / última |
+| `M` | Diapositives ↔ scroll |
+| `F` | Pantalla completa |
+| `T` | Tema clar ↔ fosc |
+| `?` | Ajuda amb totes les tecles |
+| `Esc` | Eixir (o tancar l'ajuda o la pantalla completa) |
+
+La barra superior mostra el progrés, i el peu el comptador `n / total` i els
+botons. La posició es desa al navegador i l'enllaç `…html#presentar/3` obri
+directament la diapositiva 3. En imprimir (`Ctrl+P`) la presentació es
+desactiva sola, de manera que el PDF ix igual que sempre.
 
 ## 🧪 Tests
 
