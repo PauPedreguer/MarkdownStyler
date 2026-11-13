@@ -334,6 +334,47 @@ class TestPresentacio(unittest.TestCase):
         self.assertIn("dataset.presentacioNivell", self.script)
         self.assertIn("'h' + NIVELL", self.script)
 
+    def test_el_titol_de_la_diapositiva_va_centrat(self):
+        """El títol va centrat, sense la barra vertical del h2 del cos."""
+        bloc = self.css[
+            self.css.index(".content .slide-titol {") :
+            self.css.index(".content .slide-portada .slide-titol {")
+        ]
+        self.assertIn("text-align: center;", bloc)
+        self.assertIn("padding-left: 0;", bloc)
+        # La barra de h2::before només cau amb `content: none` (base.css usa
+        # `display: block !important`).
+        self.assertIn("content: none;", bloc)
+        # La línia de base és simètrica, com la de la portada.
+        self.assertRegex(bloc, r"left:\s*10%;\s*width:\s*80%;")
+        # El rètol de context també va centrat, i no calen excepcions per a
+        # la portada: era l'únic títol que ja anava centrat.
+        rotul = self.css[
+            self.css.index(".content .slide-rotul {") :
+            self.css.index(".content .slide-titol {")
+        ]
+        self.assertIn("text-align: center;", rotul)
+        self.assertNotIn(".slide-portada .slide-titol::after", self.css)
+        self.assertNotIn(".slide-portada .slide-rotul", self.css)
+
+    def test_el_peu_te_icones_en_compte_de_glifs(self):
+        """Els botons del peu són SVG; ni M ni T ni ⛶ es repetixen ahí."""
+        inici = self.script.index("const ICONES = {")
+        bloc = self.script[inici : self.script.index("};", inici)]
+        self.assertEqual(bloc.count("<svg"), 4)
+        for clau in ("anterior", "seguent", "ajuda", "eixir"):
+            self.assertIn(clau + ":", bloc)
+            self.assertIn("creaBoto('" + clau + "'", self.script)
+        for glif in ("M", "T", "⛶", "◀", "▶", "✕"):
+            self.assertNotIn("creaBoto('" + glif + "'", self.script)
+        self.assertIn("presentacio-boto-icona", self.css)
+
+    def test_cap_encapcalament_no_queda_sol_en_tallar(self):
+        """El tall d'una diapositiva mai no deixa un títol orfe al final."""
+        self.assertIn("SELECTOR_ENCAPCALAMENT", self.script)
+        self.assertIn("esEncapcalament(fills[tall - 1]) ? -1 : tall", self.script)
+        self.assertIn("if (tall < 1) break;", self.script)
+
 
 class TestTema(unittest.TestCase):
     """Hi ha un sol tema (clar/fosc) per a tota la pàgina.
@@ -378,8 +419,8 @@ class TestTema(unittest.TestCase):
         )
 
     def test_el_boto_de_tema_es_de_la_barra(self):
-        """El botó ☾ forma part de la fila flotant i no ix ni en paper ni en
-        presentació (allí el tema es canvia amb la T del peu)."""
+        """El botó ☾ forma part de la fila flotant i, en presentació, passa a
+        la cantonada (al peu no hi ha cap botó de tema) i no ix en paper."""
         self.assertIn('id="tema-toggle"', self.plantilla)
         self.assertIn("#tema-toggle", self.base)
         self.assertIn("body.mode-presentacio #tema-toggle", self.presentacio_css)

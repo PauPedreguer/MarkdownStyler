@@ -11,8 +11,9 @@
        identificadors es conserven tal qual, i els estils de l'estil triat
        continuen funcionant.
      · Si una secció no cap en una pantalla, es dividix per blocs sencers,
-       preferint tallar davant d'un `###`; si un bloc és gegant, es deixa amb
-       scroll intern.
+       preferint tallar davant d'un encapçalament (així el títol de l'apartat
+       i el seu contingut van junts); si no hi ha cap tall net, la diapositiva
+       es deixa amb scroll intern. Cap títol no es queda sol al final.
      · En eixir es restaura el document original, node a node.
 
    Activat amb P/F5 o amb el botó ▶ de la capçalera; vegeu la llista de tecles
@@ -34,10 +35,12 @@
         body.dataset.presentacioModus === 'scroll' ? 'scroll' : 'diapositives';
 
     const SELECTOR_TITOL = 'h' + NIVELL;
+    // Qualsevol encapçalament del cos (sempre de nivell més fondo que NIVELL):
+    // servix per a decidir on es pot tallar una diapositiva.
+    const SELECTOR_ENCAPCALAMENT = 'h1, h2, h3, h4, h5, h6';
     const CLAU_POSICIO = 'markdownstyler-presentacio:' + location.pathname;
     const SUAU = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const TEXT_AJUDES =
-        '← → navegar · M mode · F pantalla completa · T tema · ? ajuda';
+    const TEXT_AJUDES = '← → · F pantalla completa · T tema · ? ajuda';
 
     // --- Estat ----------------------------------------------------------
     let actiu = false;
@@ -52,8 +55,6 @@
     let comptador = null;
     let textAjuda = null;
     let panellAjuda = null;
-    let botoAnterior = null;
-    let botoSeguent = null;
     let temporitzadorMesura = 0;
     let temporitzadorScroll = 0;
     let temporitzadorGuardar = 0;
@@ -223,18 +224,32 @@
         slide.remove();
     }
 
+    /** Un encapçalament del cos (h1…h6). */
+    const esEncapcalament = (node) => node.matches(SELECTOR_ENCAPCALAMENT);
+
     /**
-     * Índex a partir del qual cal moure els fills a la següent diapositiva.
+     * Índex a partir del qual cal moure els fills a la següent diapositiva, o
+     * -1 si no hi ha cap tall net (llavors la diapositiva fa scroll).
      *
-     * Es preferix tallar davant d'un apartat ### (així no queden títols
-     * orfes al final), sempre que la diapositiva actual no es quede buida.
+     * Un tall és net si el que es queda no acaba amb un encapçalament: així
+     * cap títol no es queda sol al final d'una diapositiva. Entre els talls
+     * possibles es preferix el que comença en un encapçalament, de manera que
+     * el títol de l'apartat i el seu contingut passen junts a la següent.
      */
     function puntDeTall(cos) {
         const fills = Array.from(cos.children);
         for (let i = fills.length - 1; i >= 1; i -= 1) {
-            if (fills[i].matches('h3')) return i;
+            if (!esEncapcalament(fills[i])) continue;
+            // Una corrua d'encapçalaments (h3 seguit d'un h4 encara sense
+            // text) va sencera: el primer tampoc no pot quedar-se sol.
+            let tall = i;
+            while (tall > 1 && esEncapcalament(fills[tall - 1])) tall -= 1;
+            if (!esEncapcalament(fills[tall - 1])) return tall;
         }
-        return fills.length - 1;
+        // Sense encapçalaments on tallar: baixa el darrer bloc, però mai
+        // deixant un títol orfe al final de la diapositiva actual.
+        const tall = fills.length - 1;
+        return esEncapcalament(fills[tall - 1]) ? -1 : tall;
     }
 
     /** La portada: el h1 (si n'hi ha) i la resta de contingut inicial. */
@@ -274,9 +289,11 @@
         fills.forEach((node) => {
             cos.append(node);
             // Mentre no cap, es mou la cua a una diapositiva nova. El tall
-            // preferix quedar davant d'un ###; si no n'hi ha, baixa un bloc.
+            // preferix quedar davant d'un encapçalament; si no n'hi ha cap de
+            // net, es deixa així (farà scroll) i s'espera al bloc següent.
             while (desborda(slide) && cos.children.length > 1) {
                 const tall = puntDeTall(cos);
+                if (tall < 1) break;
                 const moguts = Array.from(cos.children).slice(tall);
                 ({ slide, cos } = creaSlide({
                     titol: clonaTitol(grup.titol),
@@ -456,14 +473,50 @@
 
     // --- Interfície (barra, peu i ajuda) -------------------------------
 
-    /** Botó menut de la barra inferior. */
+    /**
+     * Icones del peu, en SVG en línia com les de la fila flotant de la
+     * capçalera: el traç agafa el color del text (`currentColor`), així que
+     * hereten el tema sense cap regla més. Els glifs de text (◀ ▶ ✕…) es
+     * dibuixen distint en cada tipografia i quedaven desigualts.
+     */
+    const ICONES = {
+        anterior:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<polyline points="15 18 9 12 15 6"></polyline></svg>',
+        seguent:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<polyline points="9 18 15 12 9 6"></polyline></svg>',
+        ajuda:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<circle cx="12" cy="12" r="10"></circle>' +
+            '<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>' +
+            '<line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+        eixir:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<line x1="18" y1="6" x2="6" y2="18"></line>' +
+            '<line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+    };
+
+    /**
+     * Botó menut del peu. Si l'etiqueta és una clau d'ICONES el botó és només
+     * la icona (el title i l'aria-label diuen què fa); si no, duu text.
+     */
     function creaBoto(etiqueta, titol, accio) {
         const boto = document.createElement('button');
         boto.type = 'button';
         boto.className = 'presentacio-boto';
-        boto.textContent = etiqueta;
         boto.title = titol;
         boto.setAttribute('aria-label', titol);
+        if (ICONES[etiqueta]) {
+            boto.classList.add('presentacio-boto-icona');
+            boto.innerHTML = ICONES[etiqueta];
+        } else {
+            boto.textContent = etiqueta;
+        }
         boto.addEventListener('click', (event) => {
             event.preventDefault();
             accio();
@@ -544,18 +597,16 @@
         comptador.className = 'presentacio-comptador';
         comptador.setAttribute('aria-live', 'polite');
 
-        botoAnterior = creaBoto('◀', 'Diapositiva anterior (←)', anterior);
-        botoSeguent = creaBoto('▶', 'Diapositiva següent (→)', seguent);
-
+        // Peu: comptador i quatre botons d'icona. El tema (☾/☀) i la pantalla
+        // completa (⛶) no es repetixen ací: continuen a la cantonada superior
+        // dreta, com en la vista normal (vegeu styles/presentacio.css).
         peu.append(
             textAjuda,
             comptador,
-            botoAnterior,
-            botoSeguent,
-            creaBoto('M', 'Canviar entre diapositives i scroll (M)', canviaMode),
-            creaBoto('T', 'Canviar de tema clar o fosc (T)', canviaTema),
-            creaBoto('⛶', 'Pantalla completa (F)', pantallaCompleta),
-            creaBoto('✕', 'Eixir de la presentació (Esc)', desactiva)
+            creaBoto('anterior', 'Diapositiva anterior (←)', anterior),
+            creaBoto('seguent', 'Diapositiva següent (→)', seguent),
+            creaBoto('ajuda', 'Tecles de la presentació (?)', mostraAjuda),
+            creaBoto('eixir', 'Eixir de la presentació (Esc)', desactiva)
         );
 
         panellAjuda = creaPanellAjuda();
@@ -573,8 +624,6 @@
         comptador = null;
         textAjuda = null;
         panellAjuda = null;
-        botoAnterior = null;
-        botoSeguent = null;
     }
 
     function mostraAjuda() {

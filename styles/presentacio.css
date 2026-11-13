@@ -17,22 +17,71 @@
 */
 
 body.mode-presentacio {
+    /* Mida i separació dels dos botons flotants que queden en presentació
+       (tema i pantalla completa). */
+    --pres-toggle-mida: 38px;
+    --pres-toggle-marge: 16px;
+    --pres-toggle-sep: 8px;
+
     overflow: hidden;
     background: var(--color-fons);
     color: var(--color-text);
 }
 
-/* Fora la interfície del document mentre es presenta. */
+/* Fora la interfície del document mentre es presenta. El tema (☾) i la
+   pantalla completa (⛶) NO ixen: canvien de lloc més avall. */
 body.mode-presentacio .header,
 body.mode-presentacio .sidebar,
 body.mode-presentacio .pdf-cover,
 body.mode-presentacio .pdf-toc,
 body.mode-presentacio #header-toggle,
 body.mode-presentacio #sidebar-toggle,
-body.mode-presentacio #fullscreen-toggle,
-body.mode-presentacio #tema-toggle,
 body.mode-presentacio #presentacio-toggle {
     display: none !important;
+}
+
+/* En presentació no hi ha capçalera a què enganxar la fila flotant: el tema i
+   la pantalla completa es queden a la cantonada superior dreta, més discrets,
+   i el peu no els repetix. La icona del tema la canvia script.js (☾/☀). */
+body.mode-presentacio #tema-toggle,
+body.mode-presentacio #fullscreen-toggle {
+    display: flex !important;
+    /* Per damunt de `.content`, que en presentació és fix i ocupa tota la
+       pantalla (z-index 9990), i per davall del panell d'ajuda (9998). */
+    z-index: 9997;
+    top: var(--pres-toggle-marge);
+    width: var(--pres-toggle-mida);
+    height: var(--pres-toggle-mida);
+    border: 1px solid var(--color-bord);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-superficie), transparent 15%);
+    box-shadow: var(--shadow-sm);
+    opacity: 0.5;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+body.mode-presentacio #tema-toggle svg,
+body.mode-presentacio #fullscreen-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+body.mode-presentacio #fullscreen-toggle {
+    right: var(--pres-toggle-marge);
+}
+
+body.mode-presentacio #tema-toggle {
+    right: calc(
+        var(--pres-toggle-marge) + var(--pres-toggle-mida) + var(--pres-toggle-sep)
+    );
+}
+
+body.mode-presentacio #tema-toggle:hover,
+body.mode-presentacio #tema-toggle:focus-visible,
+body.mode-presentacio #fullscreen-toggle:hover,
+body.mode-presentacio #fullscreen-toggle:focus-visible {
+    color: var(--color-acent);
+    opacity: 1;
 }
 
 /* El botó per a entrar en mode presentació és el primer de la fila de botons
@@ -113,10 +162,14 @@ body.mode-presentacio .content.presentacio-scroll {
     scroll-snap-stop: always;
 }
 
-/* Un bloc massa gran per a una pantalla: s'alinea a dalt i fa scroll dins. */
+/* Un bloc massa gran per a una pantalla: s'alinea a dalt i fa scroll dins.
+   Deixa lloc als botons flotants de la cantonada (tema i pantalla completa). */
 .content .slide.desborda {
     justify-content: flex-start;
     overflow-y: auto;
+    padding-top: calc(
+        var(--pres-toggle-marge, 16px) + var(--pres-toggle-mida, 38px) + 10px
+    );
 }
 
 /* En mode scroll les seccions no es tanquen a una pantalla: creixen i el
@@ -133,18 +186,26 @@ body.mode-presentacio .content.presentacio-scroll .slide {
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+    text-align: center;
     color: var(--color-secundari);
 }
 
 /* El títol de la diapositiva és el propi h1/h2 del document, amb la classe
-   afegida pel JS: conserva la barra i la línia de base que ja definix
-   base.css, però sense el marge superior de l'escrit. */
+   afegida pel JS: conserva la línia de base que ja definix base.css, però
+   sense el marge superior de l'escrit.
+
+   Va centrat, com la portada, perquè així es llegix com la capçalera de la
+   diapositiva i no com un encapçalament més del cos: si darrere ve un h3
+   alineat a l'esquerra, ja no semblen dos títols germans. Per això es lleva
+   la barra vertical de h2::before (centrada no té cap sentit) i la línia de
+   base passa a ser simètrica, com la del h1. */
 .content .slide-titol {
     margin: 0;
     padding-top: 0;
+    padding-left: 0;
     font-size: clamp(1.65rem, 1.15vw + 1.05rem, 2.7rem);
     line-height: 1.15;
-    text-align: left;
+    text-align: center;
 }
 
 .content .slide-titol h1,
@@ -152,18 +213,26 @@ body.mode-presentacio .content.presentacio-scroll .slide {
     margin: 0;
 }
 
-.content .slide-portada .slide-titol {
-    font-size: clamp(2.1rem, 2.4vw + 1.1rem, 4.2rem);
-    text-align: center;
+/* base.css declara `display: block !important` a h2::before: només es pot
+   desactivar amb `content: none` (igual que al panell d'ajuda). */
+.content .slide-titol::before {
+    content: none;
+    display: none;
 }
 
-.content .slide-portada .slide-titol::after {
+.content .slide-titol::after {
     left: 10%;
     width: 80%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        var(--color-primari) 50%,
+        transparent 100%
+    );
 }
 
-.content .slide-portada .slide-rotul {
-    text-align: center;
+.content .slide-portada .slide-titol {
+    font-size: clamp(2.1rem, 2.4vw + 1.1rem, 4.2rem);
 }
 
 
@@ -199,8 +268,18 @@ body.mode-presentacio .content.presentacio-scroll .slide {
     object-fit: contain;
 }
 
-.content .slide-cos .mermaid svg {
-    max-height: 50vh;
+/* Un diagrama no es reduïx per a fer-lo cabre: el text s'hi torna il·legible.
+   Es dibuixa a mida natural, la targeta s'ajusta al dibuix i, si no hi cap,
+   la diapositiva fa scroll (classe .desborda, amb la pista «↓ continua»). */
+body.mode-presentacio .content .slide-cos .mermaid {
+    width: fit-content;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body.mode-presentacio .content .slide-cos .mermaid svg {
+    max-height: none;
 }
 
 /* =========================
@@ -257,6 +336,9 @@ body.mode-presentacio .content .mermaid {
 
 .content .slide-cos {
     display: block;
+    /* Un poc d'aire entre la capçalera centrada i el cos, perquè sovint el
+       cos comença per un h3 i sense este marge quedaven massa junts. */
+    margin-top: clamp(6px, 1.2vh, 18px);
 }
 
 .content .slide-cos > :first-child {
@@ -315,6 +397,7 @@ body.mode-presentacio .content .mermaid {
 .presentacio-comptador {
     font-variant-numeric: tabular-nums;
     font-weight: 700;
+    white-space: nowrap;
     color: var(--color-text-suau);
 }
 
@@ -338,6 +421,24 @@ body.mode-presentacio .content .mermaid {
 .presentacio-boto:hover {
     color: var(--color-text);
     border-color: var(--color-primari);
+}
+
+/* Botons d'icona del peu (◀ ▶ ? ✕): quadrats, perquè el traç del SVG no
+   depenga de la tipografia. El tema i la pantalla completa no són ací. */
+.presentacio-boto-icona {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0;
+}
+
+.presentacio-boto-icona svg {
+    width: 17px;
+    height: 17px;
+}
+
+.presentacio-boto-icona:hover {
+    background: color-mix(in srgb, var(--color-primari), transparent 88%);
 }
 
 .presentacio-boto:focus-visible,
@@ -445,8 +546,20 @@ body.mode-presentacio .content .mermaid {
 }
 
 @media (max-width: 720px) {
-    .presentacio-ajuda-extra {
+    /* En pantalles estretes el peu no cap: la pista de tecles es lleva (el
+       botó ? la mostra sencera) i el comptador passa a la dreta. */
+    .presentacio-ajuda {
         display: none;
+    }
+
+    .presentacio-comptador {
+        margin-left: auto;
+    }
+
+    body.mode-presentacio {
+        --pres-toggle-mida: 32px;
+        --pres-toggle-marge: 10px;
+        --pres-toggle-sep: 6px;
     }
 
     .content .slide {

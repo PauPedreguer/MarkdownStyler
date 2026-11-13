@@ -151,20 +151,29 @@ eixir, es restaura exactament com era. Els diagrames de mermaid, les fórmules
 de KaTeX, el codi amb el seu botó de còpia i els enllaços del sumari continuen
 funcionant.
 
+Al peu hi ha el comptador `n / total` i quatre botons d'icona: **◀ ▶**
+(navegar), **?** (ajuda) i **✕** (eixir). El **tema** (☾/☀) i la **pantalla
+completa** (⛶) no es repetixen ahí: continuen a la cantonada superior dreta,
+com en la resta del document.
+
 ### Diapositives o scroll
 
 - **Diapositives** (per defecte): cada encapçalament `##` obri una
-  diapositiva. Si una secció no cap en una pantalla, es dividix tota sola:
-  talla per blocs sencers, preferint quedar davant d'un apartat `###`. Mai
-  talla una taula, un bloc de codi o una figura pel mig; si un bloc és més
-  gran que la pantalla, la diapositiva fa scroll intern i mostra «↓ continua».
+  diapositiva. El títol va centrat, com una capçalera, perquè no es confonga
+  amb els apartats del cos. Si una secció no cap en una pantalla, es dividix
+  tota sola: talla per blocs sencers davant d'un encapçalament, de manera que
+  el títol de l'apartat i el seu contingut passen junts i **cap títol no es
+  queda sol** al final d'una diapositiva. Mai talla una taula, un bloc de codi
+  o una figura pel mig; si un bloc és més gran que la pantalla (o no hi ha cap
+  tall net), la diapositiva fa scroll intern i mostra «↓ continua».
 - **Scroll**: les seccions no es fragmenten; es recorre el document sencer amb
   una parada suau a cada secció.
 
-El mode es pot canviar **en directe** amb `M`, i el nivell de títol que obri
-cada diapositiva es tria a *Configuració → Presentació* (`#`, `##` o `###`).
-El tema (`T`) és el mateix del document: canviar-lo dins de la presentació el
-canvia també a la vista normal, i a l'inrevés.
+El mode es pot canviar **en directe** amb la tecla `M` (no té botó al peu: el
+mode habitual es tria a la configuració), i el nivell de títol que obri cada
+diapositiva es tria a *Configuració → Presentació* (`#`, `##` o `###`).
+El tema (`T` o el botó ☾) és el mateix del document: canviar-lo dins de la
+presentació el canvia també a la vista normal, i a l'inrevés.
 
 ### Tecles
 
