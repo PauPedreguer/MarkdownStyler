@@ -9,13 +9,14 @@ from pathlib import Path
 from unittest import mock
 
 import main
+from src.core.identitats import PRESETS
 from src.core.models import ExportOptions
 from src.infrastructure.highlight_styles import (
     ESTIL_RESSALTAT_DEFECTE,
     ESTILS_PROJECTE,
     ESTILS_RESSALTAT,
 )
-from src.infrastructure.project_paths import from_project_root
+from src.infrastructure.project_paths import from_project_root, icona_configuracio
 from src.ui.app import App
 from src.ui.components.settings_dialog import (
     CSS_NO_SELECCIONABLES,
@@ -179,6 +180,95 @@ class TestExportThread(unittest.TestCase):
             App._export_thread(self.fake_self, self.options)
 
         self.fake_self.signals.error.emit.assert_called_once_with("pandoc ha fallat")
+
+
+class TestColorsAmbEtiqueta(unittest.TestCase):
+    """Comprova el suport de la interfície per als colors amb etiqueta.
+
+    No es crea cap finestra (els tests han de córrer sense entorn gràfic): es
+    comprova que els recursos hi són i que el codi els fa servir, que és el que
+    es trencaria si es tornara a codificar la paleta a dins de la finestra.
+    """
+
+    def test_la_icona_de_configuracio_es_al_projecte(self):
+        """El botó duu una icona pròpia, no un emoji que depén del sistema."""
+        ruta = icona_configuracio()
+        self.assertTrue(ruta.is_file(), ruta)
+        self.assertEqual(ruta.suffix, ".svg")
+        # La variant blanca és la que es veu damunt del botó blau.
+        self.assertTrue(icona_configuracio(blanca=True).is_file())
+
+    def test_el_qss_estilitza_les_etiquetes_i_la_taula_de_colors(self):
+        qss = from_project_root("src", "ui", "style.qss").read_text(encoding="utf-8")
+        self.assertIn('QLabel[class="swatch-label"]', qss)
+        # La taula on s'editen els colors també ha de quedar integrada.
+        self.assertIn("QTableWidget", qss)
+        self.assertIn("QHeaderView::section", qss)
+        self.assertIn('QPushButton[class="swatch"]', qss)
+        # La tira de colors porta barra horitzontal fina (no vertical).
+        self.assertIn("QScrollBar:horizontal", qss)
+        self.assertNotIn("QLineEdit:read-only", qss)
+        # Els scrolls no han de pintar un rectangle gris propi.
+        self.assertIn("QWidget#contenidor_principal", qss)
+        self.assertIn("QScrollArea#tira_colors", qss)
+        self.assertIn("QWidget#peu_configuracio", qss)
+
+    def test_la_zona_d_arrossegar_pinta_la_vora_del_qss(self):
+        """DropZone és una subclasse de QWidget: necessita WA_StyledBackground."""
+        font = from_project_root(
+            "src", "ui", "components", "drop_zone.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("WA_StyledBackground", font)
+
+    def test_la_finestra_mostra_els_colors_en_una_sola_tira(self):
+        """Els colors van en una sola fila amb scroll, sense camps de text."""
+        font = from_project_root("src", "ui", "app.py").read_text(encoding="utf-8")
+        self.assertIn('setObjectName("tira_colors")', font)
+        self.assertIn("self.colors_layout.addStretch(1)", font)
+        self.assertIn("identitat_efectiva(", font)
+        # Ja no hi ha quadrícula ni camps de text per al curs i l'assignatura.
+        self.assertNotIn("QGridLayout", font)
+        self.assertNotIn("curs_grup_input", font)
+        self.assertNotIn("assig_input", font)
+        # Fora el peu explicatiu de com obtindre el PDF.
+        self.assertNotIn("Per al PDF", font)
+        self.assertNotIn("pdf_hint", font)
+
+    def test_la_finestra_llig_els_colors_de_la_configuracio(self):
+        """La paleta no s'ha de tornar a codificar dins de la finestra."""
+        font = from_project_root("src", "ui", "app.py").read_text(encoding="utf-8")
+        self.assertIn("load_institut_config()", font)
+        self.assertIn("etiqueta_identitat(", font)
+        # Cap color de la paleta no pot quedar escrit a la finestra.
+        for color, _ in PRESETS:
+            self.assertNotIn(color, font)
+
+    def test_el_dialeg_de_configuracio_edita_els_colors_en_una_taula(self):
+        """Els colors s'editen en una taula: color, curs i assignatura."""
+        font = from_project_root(
+            "src", "ui", "components", "settings_dialog.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("COLORS D'IDENTITAT", font)
+        # Una taula amb una fila per color (i no una llista tancada).
+        self.assertIn("QTableWidget(0, len(COLUMNES_COLORS_TAULA))", font)
+        self.assertIn("QColorDialog.getColor(", font)
+        # Curs i assignatura es poden escriure (a més de triar-los).
+        self.assertIn("setEditable(True)", font)
+        self.assertIn('"identitats": identitats', font)
+        # Els camps de curs i assignatura per defecte ja no hi són.
+        self.assertNotIn("Curs per defecte", font)
+        # Fora els textos explicatius llargs: només la taula i els botons.
+        self.assertNotIn("Noms de color", font)
+        self.assertNotIn("field-hint", font)
+        self.assertNotIn("Assignatura per defecte", font)
+        self.assertNotIn("QPlainTextEdit", font)
+        # El contingut s'arrissa i el botó de desar queda sempre a la vista.
+        self.assertIn('setObjectName("scroll_configuracio")', font)
+        self.assertIn("self.scroll.setWidget(contingut)", font)
+        for seccio in ("_seccio_institut", "_seccio_colors", "_seccio_documents"):
+            self.assertIn(f"def {seccio}(self, layout: QFormLayout)", font)
+        # Professor i departament són dades de l'institut, no de la taula.
+        self.assertLess(font.index("Professor:"), font.index("COLORS D'IDENTITAT"))
 
 
 if __name__ == "__main__":

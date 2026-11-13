@@ -1,9 +1,15 @@
 from pathlib import Path
 
+from src.core.identitats import identitat_efectiva
 from src.core.models import ExportOptions
 from src.infrastructure.config_repo import load_institut_config
 from src.infrastructure.pandoc_converter import convert_markdown
 from src.infrastructure.project_paths import from_project_root
+
+# Claus de la configuració que són només per a l'aplicació: si s'envien a pandoc
+# acaben a la línia d'ordres com un text amb claudàtors i cometes (les
+# plantilles no en poden traure res de bo).
+METADADES_INTERNES = frozenset({"identitats"})
 
 
 def execute_export(options: ExportOptions) -> str:
@@ -27,14 +33,27 @@ def execute_export(options: ExportOptions) -> str:
     template_path = str(from_project_root("templates", config["template_name"]))
     js_path = str(from_project_root("scripts", config["js_name"]))
 
+    # El color triat a la finestra pot no portar curs ni assignatura: en eixe
+    # cas manen els del document per defecte (la primera identitat).
+    identitat = identitat_efectiva(config["identitats"], options.primary_color)
+
     metadata = {
-        **config,
+        **{
+            clau: valor
+            for clau, valor in config.items()
+            if clau not in METADADES_INTERNES
+        },
         "title": options.title,
         "subtitol": options.subtitol,
         "data": options.curs_academic,
         # Si l'opció no porta departament, es respecta el de la configuració
         # de l'institut (abans es trepitjava amb un valor fix "Informàtica").
         "departament": options.departament or config.get("departament", ""),
+        # El curs i l'assignatura venen del color d'identitat triat a la
+        # finestra; si el color no en porta, manen els de la primera identitat
+        # de la configuració (el document per defecte).
+        "curs": options.curs or identitat["curs"],
+        "assignatura": options.assignatura or identitat["assignatura"],
         "primary_color": options.primary_color,
     }
 

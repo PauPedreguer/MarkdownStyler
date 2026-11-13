@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from typing import Dict, Any
+from src.core.identitats import normalitza_identitats, presets_per_defecte
 from src.infrastructure.highlight_styles import ESTIL_RESSALTAT_DEFECTE
 from src.infrastructure.project_paths import from_project_root
 
@@ -13,23 +14,48 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 }
 
 
+def _amb_identitats(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Assegura que la configuració porta la llista de colors d'identitat.
+
+    Les configuracions antigues no tenien la clau ``identitats`` (els colors
+    estaven codificats a la finestra). En eixe cas es generen els colors de
+    sempre; si la configuració encara duu el ``curs`` i l'``assignatura`` de
+    dalt (claus que ara viuen només a la taula de colors), s'assignen al primer
+    color, i així la finestra sempre té un color triat per defecte.
+
+    Args:
+        config: Configuració ja fusionada amb els valors per defecte.
+
+    Returns:
+        La mateixa configuració amb ``identitats`` sempre present i neta.
+    """
+    identitats = normalitza_identitats(config.get("identitats"))
+    if not identitats:
+        identitats = presets_per_defecte(
+            config.get("curs", ""), config.get("assignatura", "")
+        )
+    config["identitats"] = identitats
+    return config
+
+
 def load_institut_config() -> Dict[str, Any]:
     """Carrega la configuració de l'institut des del fitxer JSON.
 
     Si el fitxer no existeix o és invàlid, retorna la configuració per defecte.
-    Els valors carregats es fusionen amb els valors per defecte.
+    Els valors carregats es fusionen amb els valors per defecte. La llista de
+    colors d'identitat sempre arriba normalitzada i no buida.
     """
     try:
         if not CONFIG_PATH.parent.exists():
             CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
 
         if not CONFIG_PATH.exists():
-            return DEFAULT_CONFIG.copy()
+            return _amb_identitats(DEFAULT_CONFIG.copy())
 
         loaded = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-        return {**DEFAULT_CONFIG, **loaded}
+        return _amb_identitats({**DEFAULT_CONFIG, **loaded})
     except (FileNotFoundError, json.JSONDecodeError):
-        return DEFAULT_CONFIG.copy()
+        return _amb_identitats(DEFAULT_CONFIG.copy())
 
 
 def save_institut_config(config: Dict[str, Any]) -> None:

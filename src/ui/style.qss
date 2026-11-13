@@ -15,12 +15,16 @@ QLabel {
     font-size: 14px; 
 }
 QLineEdit, QComboBox { 
-    padding: 12px; 
+    padding: 6px 10px; 
     border: 1px solid #d1d5db; 
     border-radius: 6px; 
     background: #f9fafb; 
     color: #111827; 
     font-size: 13px;
+}
+QComboBox { 
+    /* Deixa espai a la dreta per a la fletxa desplegable */
+    padding-right: 24px;
 }
 QLineEdit:focus, QComboBox:focus { 
     border: 1px solid #2563eb; 
@@ -98,14 +102,85 @@ QWidget#drop_zone_widget QLabel {
     font-size: 15px;
     font-weight: 800;
     color: #1d4ed8;
-    padding-top: 15px;
-    padding-bottom: 5px;
+    padding-top: 10px;
+    padding-bottom: 2px;
+}
+
+/* Etiqueta davall de cada color d'identitat (finestra principal) */
+QLabel[class="swatch-label"] {
+    font-size: 10px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+/* Taula de colors d'identitat (Configuració): una fila per color */
+QTableWidget {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    gridline-color: #e5e7eb;
+    selection-background-color: #dbeafe;
+    selection-color: #111827;
+}
+QTableWidget::item {
+    padding: 4px 6px;
+    border-bottom: 1px solid #e5e7eb;
+}
+QTableWidget::item:selected {
+    background: #dbeafe;
+    color: #111827;
+}
+QHeaderView::section {
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px;
+    border: none;
+    border-bottom: 1px solid #d1d5db;
+}
+
+/* Els camps de dins de la taula són menuts: no duen el coixí dels grans */
+QTableWidget QLineEdit, QTableWidget QComboBox {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+/* Mostra de color de cada fila de la taula (obri el selector de color) */
+QPushButton[class="swatch"] {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0px;
+}
+QPushButton[class="swatch"]:hover {
+    border: 1px solid #2563eb;
 }
 
 /* Scrollbars & Selection polish */
 QComboBox QAbstractItemView {
     selection-background-color: #2563eb;
     selection-color: #ffffff;
+}
+
+/* Contingut de la finestra i del diàleg: blanc, com la finestra */
+QWidget#contenidor_principal, QWidget#contenidor_configuracio {
+    background: #ffffff;
+}
+
+/* Els scrolls no han de pintar un rectangle gris propi: el fons el posa el
+   contingut (blanc) o la pròpia tira de colors. */
+QScrollArea#tira_colors > QWidget,
+QScrollArea#tira_colors > QWidget > QWidget,
+QScrollArea#scroll_configuracio > QWidget,
+QScrollArea#scroll_configuracio > QWidget > QWidget {
+    background: transparent;
+}
+
+/* Base del diàleg de configuració: botó de desar sempre visible */
+QWidget#peu_configuracio {
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
 }
 
 /* QScrollArea */
@@ -131,4 +206,23 @@ QScrollBar::handle:vertical:hover {
 }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
+}
+
+/* Barra horitzontal fina (tira de colors de la finestra principal) */
+QScrollBar:horizontal {
+    border: none;
+    background: #f3f4f6;
+    height: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:horizontal {
+    background: #d1d5db;
+    min-width: 30px;
+    border-radius: 4px;
+}
+QScrollBar::handle:horizontal:hover {
+    background: #9ca3af;
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
 }

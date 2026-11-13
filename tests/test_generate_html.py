@@ -24,6 +24,12 @@ class TestExecuteExport(unittest.TestCase):
             "js_name": "script.js",
             "highlight_style": "zenburn",
             "institut_nom": "IES Test",
+            # El primer color de la taula de Configuració és el document per
+            # defecte: d'ahí ixen el curs i l'assignatura de la capçalera.
+            "identitats": [
+                {"color": "#1d4ed8", "curs": "1r DAW", "assignatura": "LMSGI"},
+                {"color": "#166534", "curs": "2n DAW", "assignatura": "DWEC"},
+            ],
         }
 
     def tearDown(self):
@@ -100,6 +106,72 @@ class TestExecuteExport(unittest.TestCase):
 
         metadata = mock_convert.call_args.kwargs["metadata"]
         self.assertEqual(metadata["departament"], "Matemàtiques")
+
+    def test_metadata_agafa_el_curs_i_l_assignatura_del_color(self):
+        """El curs i l'assignatura del color triat manen sobre el defecte."""
+        options = ExportOptions(
+            md_path=str(self.md_file),
+            output_dir=str(self.tmp_path),
+            title="Examen",
+            curs_academic="26-27",
+            curs="2n DAW",
+            assignatura="DWEC",
+        )
+        with mock.patch.object(generate_html, "load_institut_config", return_value=self.mock_config), \
+             mock.patch.object(generate_html, "convert_markdown") as mock_convert:
+            generate_html.execute_export(options)
+
+        metadata = mock_convert.call_args.kwargs["metadata"]
+        self.assertEqual(metadata["curs"], "2n DAW")
+        self.assertEqual(metadata["assignatura"], "DWEC")
+        # El curs acadèmic (26-27) no es toca: són dades distintes.
+        self.assertEqual(metadata["data"], "26-27")
+
+    def test_la_paleta_no_arriba_a_pandoc(self):
+        """Els colors d'identitat són dades de l'aplicació, no de la plantilla.
+
+        Si s'envien com a metadades, pandoc els posa a la línia d'ordres com un
+        text amb claudàtors i cometes que cap plantilla pot aprofitar.
+        """
+        options = ExportOptions(
+            md_path=str(self.md_file),
+            output_dir=str(self.tmp_path),
+            title="Examen",
+            curs_academic="26-27",
+        )
+        config = {
+            **self.mock_config,
+            "identitats": [{"color": "#166534", "curs": "1r DAW", "assignatura": "LMSGI"}],
+        }
+        with mock.patch.object(generate_html, "load_institut_config", return_value=config), \
+             mock.patch.object(generate_html, "convert_markdown") as mock_convert:
+            generate_html.execute_export(options)
+
+        metadata = mock_convert.call_args.kwargs["metadata"]
+        self.assertNotIn("identitats", metadata)
+        self.assertEqual(metadata["institut_nom"], config["institut_nom"])
+
+    def test_metadata_usa_el_curs_i_l_assignatura_de_la_config_si_van_buits(self):
+        """Un color sense identitat deixa manar el primer color de la taula."""
+        options = ExportOptions(
+            md_path=str(self.md_file),
+            output_dir=str(self.tmp_path),
+            title="Examen",
+            curs_academic="26-27",
+        )
+        config = {
+            **self.mock_config,
+            "identitats": [
+                {"color": "#1d4ed8", "curs": "1r DAW", "assignatura": "LMSGI"},
+            ],
+        }
+        with mock.patch.object(generate_html, "load_institut_config", return_value=config), \
+             mock.patch.object(generate_html, "convert_markdown") as mock_convert:
+            generate_html.execute_export(options)
+
+        metadata = mock_convert.call_args.kwargs["metadata"]
+        self.assertEqual(metadata["curs"], "1r DAW")
+        self.assertEqual(metadata["assignatura"], "LMSGI")
 
 
 if __name__ == "__main__":

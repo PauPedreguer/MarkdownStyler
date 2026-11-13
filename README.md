@@ -4,9 +4,9 @@ Aplicació d'escriptori (PyQt6) que genera documents HTML i PDF amb estil profes
 
 ## ✨ Característiques
 
-- 🎨 **Personalització de colors**: presets de color d'identitat configurables.
+- 🎨 **Colors d'identitat**: cada color de la finestra va lligat al seu curs i a la seua assignatura, i s'editen des de Configuració en una taula (`Color | Curs | Assignatura`).
 - 📄 **Documents HTML i PDF**: genera l'HTML amb portada, sumari i estil professional; el PDF s'obté imprimint-lo des del navegador (botó 🖨️ del document o `./pdf.sh`).
-- 🏫 **Configuració de l'institut**: nom, logo, curs, assignatura, professor i departament.
+- 🏫 **Configuració de l'institut**: nom, logo, professor i departament; el curs i l'assignatura viuen a la taula de colors.
 - 🎯 **Ressaltat de codi**: el genera Pandoc (`--highlight-style`) amb temes propis (`themes/one-dark.theme`, Material Ocean i GitHub Dark) afinats per al fons fosc del bloc i per als llenguatges de classe (kotlin, java, bash, html, css, javascript, c++, c#, php…). Sense llibreries externes.
 - 📥 **Arrossega i deixa anar**: suport per arrossegar fitxers `.md` directament a la finestra.
 - 🧩 **Plantilles i estils personalitzables**: importa els teus propis CSS, plantilles HTML i scripts JS.
@@ -19,6 +19,7 @@ MarkdownStyler/
 ├── src/                       # Codi font (arquitectura per capes)
 │   ├── core/                  # Models de domini
 │   │   ├── curs.py            # Càlcul del curs acadèmic
+│   │   ├── identitats.py      # Colors d'identitat (color + curs + assignatura)
 │   │   └── models.py          # ExportOptions (dataclass)
 │   ├── use_cases/             # Casos d'ús de l'aplicació
 │   │   └── generate_html.py   # Lògica d'exportació
@@ -30,7 +31,7 @@ MarkdownStyler/
 │   └── ui/                    # Interfície d'usuari (PyQt6)
 │       ├── app.py             # Finestra principal
 │       ├── style.qss          # Estils de la UI
-│       └── components/        # Components reutilitzables
+│       └── components/        # Components reutilitzables (Configuració, etc.)
 ├── tests/                     # Tests unitaris
 │   ├── test_models.py
 │   ├── test_curs.py
@@ -41,13 +42,14 @@ MarkdownStyler/
 │   ├── test_highlight_styles.py # Temes de ressaltat: JSON, contrast i rutes
 │   ├── test_templates.py      # Invariants de plantilla/JS de l'HTML generat
 │   ├── test_pdf_script.py     # PDF de punta a punta (es salta sense Chromium)
-│   └── test_ui.py             # Helpers d'UI (sense QApplication)
+│   ├── test_ui.py             # Helpers d'UI (sense QApplication)
+│   └── test_identitats.py     # Colors d'identitat: neteja, presets i etiquetes
 ├── config/                    # Configuració de l'institut (JSON)
 ├── templates/                 # Plantilles HTML de Pandoc
 ├── styles/                    # Fulls d'estil CSS
 ├── scripts/                   # Scripts JS per als documents generats
 ├── themes/                    # Temes de ressaltat propi (JSON de pandoc)
-├── assets/                    # Recursos estàtics (logos, imatges)
+├── assets/                    # Recursos estàtics (logos, icones, imatges)
 ├── examples/                  # Documents de prova (només les fonts .md)
 ├── run.sh                     # Llançador (usa el .venv local)
 ├── pdf.sh                     # Markdown -> PDF amb Chromium headless
@@ -226,10 +228,12 @@ La configuració de l'institut es desa a `config/institut.json`:
 {
   "institut_nom": "IES Pere Maria Orts i Bosch",
   "institut_logo": "assets/logoIESPereMariaOrtsiBosch.png",
-  "curs": "1º DAM/DAW",
-  "assignatura": "Sistemas Informáticos",
   "professor": "Pau Palacios Server",
   "departament": "Informàtica",
+  "identitats": [
+    {"color": "#1d4ed8", "curs": "1r DAW", "assignatura": "LMSGI"},
+    {"color": "#166534", "curs": "", "assignatura": ""}
+  ],
   "css_name": "prova.css",
   "template_name": "base.html",
   "js_name": "script.js",
@@ -241,4 +245,63 @@ La configuració de l'institut es desa a `config/institut.json`:
 `themes/material-ocean.theme`, `themes/github-dark.theme`) o el nom d'un tema
 fosc de Pandoc (`zenburn`, `espresso`, `breezedark`, `monochrome`).
 
-Pots modificar aquests valors des de la interfície (botó **⚙️ Ajustos**) o editant el fitxer directament.
+`identitats` és la llista de colors de la finestra principal: cada color va
+lligat al seu **curs** (el grup, p. ex. `1r DAW`) i a la seua **assignatura**
+(p. ex. `LMSGI`). En triar un color, el document n'hereta el color i la
+capçalera (i la portada del PDF) agafa eixes dades. El **primer color** de la
+llista és el document per defecte: ix triat en obrir la finestra i és el que
+s'usa si el color triat deixa el curs o l'assignatura buits.
+No confongues `curs` (el grup) amb el curs acadèmic (l'any, p. ex. `26-27`), que
+es tria a la finestra principal.
+
+A la finestra principal els colors van en **una sola fila**: cada color és una
+mostra rodona amb el seu curs i la seua assignatura davall. Si no hi caben,
+la fila s'arrissa amb la barra horitzontal. El curs i l'assignatura no
+s'editen ahí: ixen del color triat i es canvien a Configuració.
+
+Els colors també es poden escriure **pel nom** (`Taronja`, `Verd`, `Blau`,
+`Granat`, `Ocre`, `Lila`, `Teal`, `Groc`, `Roig`, `Rosa`, `Turquesa`, `Marró`,
+`Negre`) en compte del hexadecimal:
+
+```json
+"identitats": [
+  {"color": "Taronja", "curs": "1r DAW", "assignatura": "LMSGI"},
+  {"color": "Verd", "curs": "2n DAW", "assignatura": "DWEC"}
+]
+```
+
+Les dos formes (hexadecimal i nom) es poden combinar dins de la mateixa llista;
+en desar des de la interfície sempre es guarda la forma completa
+(`{"color": "#c2410c", "curs": "1r DAW", "assignatura": "LMSGI"}`).
+
+Pots modificar aquests valors des de la interfície (botó **⚙️ Configuració**),
+on els colors es poden afegir, editar i esborrar (sempre n'hi ha d'haver un), o
+editant el fitxer directament.
+
+### 🎨 Colors d'identitat des de Configuració
+
+El diàleg de Configuració s'organitza en tres seccions —**INSTITUT** (nom,
+logo, professor i departament), **COLORS D'IDENTITAT** i **CONFIGURACIÓ DE
+DOCUMENTS**— dins d'una àrea amb scroll, amb el botó **Desar configuració**
+sempre visible. La taula creix amb les files fins a sis; a partir d'ahí
+s'arrissa, de manera que el diàleg no es fa més alt que la pantalla.
+
+La secció **COLORS D'IDENTITAT** de Configuració té una taula amb una fila per
+color i tres columnes: **Color**, **Curs** i **Assignatura**.
+
+- **Color**: s'escriu el nom (`Taronja`) o un hexadecimal (`#c2410c`) i, si el
+  nom és conegut, es queda escrit el nom. El quadret de la dreta obri el
+  selector de color del sistema.
+- **Curs** i **Assignatura**: quadres editables, amb una entrada buida i, com a
+  suggeriment, els valors que ja hi ha a la taula; també se'n poden escriure de
+  nous. Els dos camps són opcionals.
+- **La primera fila** és el document per defecte: és el color que ix triat en
+  obrir la finestra. Per a canviar-lo, mou la fila amb **Pujar**/**Baixar**.
+- **Afegir**, **Esborrar**, **Pujar** i **Baixar** editen les files;
+  **Colors per defecte** torna a omplir la taula amb la paleta de sempre.
+
+En desar, la taula es convertix en la llista `identitats` del JSON. Si alguna
+fila té un color que no es reconeix, o curs/assignatura sense color, no es desa
+res i s'assenyalen les files perquè les corregisques (`fila 3: «verd clar» no és
+un color conegut`); sempre ha de quedar almenys un color.
+

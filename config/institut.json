@@ -1,10 +1,50 @@
 {
   "institut_nom": "IES Pere Maria Orts i Bosch",
   "institut_logo": "assets/logoIESPereMariaOrtsiBosch.png",
-  "curs": "1r DAW",
-  "assignatura": "LMSGI",
   "professor": "Pau Palacios Server",
   "departament": "Informàtica",
+  "identitats": [
+    {
+      "color": "#1d4ed8",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#166534",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#334155",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#dc2626",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#c2410c",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#6b21a8",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#0891b2",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#d4ac00",
+      "curs": "",
+      "assignatura": ""
+    }
+  ],
   "css_name": "prova.css",
   "template_name": "base.html",
   "js_name": "script.js",

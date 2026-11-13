@@ -9,8 +9,11 @@ class DropZone(QWidget):
         super().__init__(parent)
         self.setAcceptDrops(True)
         self.setObjectName("drop_zone_widget")
-        self.setMinimumHeight(120)
-        
+        # DropZone és una subclasse de QWidget: sense estes marques, Qt no
+        # pinta la vora discontínua ni el fons que defineix el QSS.
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setMinimumHeight(92)
+
         layout = QVBoxLayout(self)
         self.label = QLabel("📥 Arrossega aquí el teu fitxer .md")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -27,7 +30,7 @@ class DropZone(QWidget):
             event.acceptProposedAction()
         else:
             event.ignore()
-            
+
     def dropEvent(self, event: QDropEvent):
         if not event.mimeData().hasUrls():
             return
