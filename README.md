@@ -2,6 +2,16 @@
 
 Aplicació d'escriptori (PyQt6) que genera documents HTML i PDF amb estil professional a partir de fitxers Markdown, utilitzant **Pandoc** com a motor de conversió.
 
+## ☕ Suporta el projecte
+
+Markdown Styler és gratuït, no recull cap dada i el codi és obert
+(GPL-3.0-or-later). Si t'ha estalviat temps i vols convidar-me a un cafè:
+
+[![Convida'm a un cafè](https://img.shields.io/badge/%E2%98%95-Convida%27m%20a%20un%20caf%C3%A8-1d4ed8)](https://buymeacoffee.com/paupedreguer)
+
+Les donacions són voluntàries: no donen dret a suport prioritari ni a cap
+funcionalitat extra.
+
 ## ✨ Característiques
 
 - 🎨 **Colors d'identitat**: cada color de la finestra va lligat al seu curs i a la seua assignatura, i s'editen des de Configuració en una taula (`Color | Curs | Assignatura`).
