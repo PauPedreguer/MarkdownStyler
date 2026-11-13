@@ -6,13 +6,13 @@
   "identitats": [
     {
       "color": "#1d4ed8",
-      "curs": "",
-      "assignatura": ""
+      "curs": "1r DAW",
+      "assignatura": "LMSGI"
     },
     {
       "color": "#166534",
-      "curs": "",
-      "assignatura": ""
+      "curs": "2n DAW",
+      "assignatura": "Sostenibilidad"
     },
     {
       "color": "#334155",
@@ -26,18 +26,18 @@
     },
     {
       "color": "#c2410c",
-      "curs": "",
-      "assignatura": ""
+      "curs": "2n DAM",
+      "assignatura": "PMDM"
     },
     {
       "color": "#6b21a8",
-      "curs": "",
-      "assignatura": ""
+      "curs": "2n DAW",
+      "assignatura": "Desplegament"
     },
     {
       "color": "#0891b2",
-      "curs": "",
-      "assignatura": ""
+      "curs": "1r DAM/DAW",
+      "assignatura": "LMSGI"
     },
     {
       "color": "#d4ac00",
@@ -48,5 +48,8 @@
   "css_name": "prova.css",
   "template_name": "base.html",
   "js_name": "script.js",
-  "highlight_style": "themes/material-ocean.theme"
+  "highlight_style": "themes/material-ocean.theme",
+  "presentacio_nivell": 2,
+  "presentacio_modus": "diapositives",
+  "presentacio_tema": "clar"
 }
