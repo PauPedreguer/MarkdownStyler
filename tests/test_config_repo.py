@@ -14,6 +14,65 @@ from src.infrastructure.highlight_styles import (
 from src.infrastructure.project_paths import from_project_root
 
 
+class TestPreparaDades(unittest.TestCase):
+    """Comprova la sembra de la configuració al directori de dades.
+
+    Els paquets són de només lectura, així que la configuració es crea a
+    DATA_ROOT la primera vegada que arranca l'aplicació.
+    """
+
+    def setUp(self):
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.tmp_path = Path(self.tmp_dir.name)
+        self.desti = self.tmp_path / "dades" / "config" / "institut.json"
+        self.exemple = self.tmp_path / "institut.exemple.json"
+        self.antiga = self.tmp_path / "institut.json"
+        self.exemple.write_text(
+            json.dumps({"institut_nom": "IES Exemple"}), encoding="utf-8"
+        )
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
+
+    def _prepara(self):
+        with mock.patch.object(config_repo, "CONFIG_PATH", self.desti), \
+             mock.patch.object(config_repo, "CONFIG_EXEMPLE", self.exemple), \
+             mock.patch.object(config_repo, "CONFIG_ANTIGA", self.antiga):
+            config_repo.prepara_dades()
+
+    def test_sembra_l_exemple_si_no_hi_ha_res(self):
+        """Sense configuració prèvia, es copia l'exemple al directori d'usuari."""
+        self._prepara()
+        self.assertTrue(self.desti.is_file())
+        self.assertEqual(
+            json.loads(self.desti.read_text(encoding="utf-8"))["institut_nom"],
+            "IES Exemple",
+        )
+
+    def test_migra_la_configuracio_antiga(self):
+        """La configuració de l'arbre de treball té prioritat sobre l'exemple."""
+        self.antiga.write_text(
+            json.dumps({"institut_nom": "IES de Veritat"}), encoding="utf-8"
+        )
+        self._prepara()
+        self.assertEqual(
+            json.loads(self.desti.read_text(encoding="utf-8"))["institut_nom"],
+            "IES de Veritat",
+        )
+
+    def test_no_trepitja_una_configuracio_existent(self):
+        """Si l'usuari ja té configuració, no se li canvia res."""
+        self.desti.parent.mkdir(parents=True)
+        self.desti.write_text(
+            json.dumps({"institut_nom": "El Meu Centre"}), encoding="utf-8"
+        )
+        self._prepara()
+        self.assertEqual(
+            json.loads(self.desti.read_text(encoding="utf-8"))["institut_nom"],
+            "El Meu Centre",
+        )
+
+
 class TestConfigRepo(unittest.TestCase):
     """Comprova la càrrega i desat de la configuració."""
 
@@ -90,7 +149,7 @@ class TestEstilRessaltatDelProjecte(unittest.TestCase):
 
     def test_la_config_del_projecte_es_un_tema_del_projecte(self):
         config = json.loads(
-            from_project_root("config", "institut.json").read_text(encoding="utf-8")
+            from_project_root("config", "institut.exemple.json").read_text(encoding="utf-8")
         )
         self.assertIn(config["highlight_style"], [ruta for ruta, _ in ESTILS_PROJECTE])
         self.assertTrue(from_project_root(config["highlight_style"]).is_file())
@@ -194,7 +253,7 @@ class TestColorsDIdentitat(unittest.TestCase):
     def test_la_config_del_projecte_porta_colors_amb_identitat(self):
         """El fitxer del projecte ha de dur la clau ja omplerta."""
         config = json.loads(
-            from_project_root("config", "institut.json").read_text(encoding="utf-8")
+            from_project_root("config", "institut.exemple.json").read_text(encoding="utf-8")
         )
         identitats = config["identitats"]
 
@@ -208,7 +267,7 @@ class TestColorsDIdentitat(unittest.TestCase):
     def test_la_config_del_projecte_no_du_curs_ni_assignatura_a_dalt(self):
         """El curs i l'assignatura viuen només a la taula de colors."""
         config = json.loads(
-            from_project_root("config", "institut.json").read_text(encoding="utf-8")
+            from_project_root("config", "institut.exemple.json").read_text(encoding="utf-8")
         )
         self.assertNotIn("curs", config)
         self.assertNotIn("assignatura", config)

@@ -1,0 +1,35 @@
+{
+  "institut_nom": "IES Exemple",
+  "institut_logo": "",
+  "professor": "Nom i cognoms",
+  "departament": "Departament",
+  "identitats": [
+    {
+      "color": "#1d4ed8",
+      "curs": "1r",
+      "assignatura": "Assignatura"
+    },
+    {
+      "color": "#166534",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#334155",
+      "curs": "",
+      "assignatura": ""
+    },
+    {
+      "color": "#dc2626",
+      "curs": "",
+      "assignatura": ""
+    }
+  ],
+  "css_name": "prova.css",
+  "template_name": "base.html",
+  "js_name": "script.js",
+  "highlight_style": "themes/one-dark.theme",
+  "presentacio_nivell": 2,
+  "presentacio_modus": "diapositives",
+  "presentacio_tema": "clar"
+}

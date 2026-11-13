@@ -12,7 +12,7 @@ c++, c# i php. Els temes de pandoc de fons clar (``pygments``, ``tango``,
 ``kate``, ``haddock``) no s'oferixen: sobre el fons fosc deixen els tokens
 quasi negres i el codi sembla d'un sol color.
 """
-from src.infrastructure.project_paths import from_project_root
+from src.infrastructure.project_paths import recurs
 
 # Temes incorporats a pandoc que es llegixen bé sobre el fons fosc.
 ESTILS_PANDOC = ("zenburn", "espresso", "breezedark", "monochrome")
@@ -60,8 +60,8 @@ def ruta_estil_ressaltat(valor: str) -> str:
     if valor and "/" not in valor and not valor.endswith(".theme"):
         return valor
 
-    defecte = from_project_root(ESTIL_RESSALTAT_DEFECTE)
-    ruta = from_project_root(valor) if valor else defecte
+    defecte = recurs(ESTIL_RESSALTAT_DEFECTE)
+    ruta = recurs(valor) if valor else defecte
     if ruta.is_file():
         return str(ruta.resolve())
 

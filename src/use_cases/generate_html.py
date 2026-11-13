@@ -4,7 +4,7 @@ from src.core.identitats import identitat_efectiva
 from src.core.models import ExportOptions
 from src.infrastructure.config_repo import load_institut_config
 from src.infrastructure.pandoc_converter import convert_markdown
-from src.infrastructure.project_paths import from_project_root
+from src.infrastructure.project_paths import recurs
 
 # Claus de la configuració que són només per a l'aplicació: si s'envien a pandoc
 # acaben a la línia d'ordres com un text amb claudàtors i cometes (les
@@ -29,9 +29,9 @@ def execute_export(options: ExportOptions) -> str:
 
     output_path = str(Path(options.output_dir) / f"{Path(options.md_path).stem}.html")
 
-    css_path = str(from_project_root("styles", config["css_name"]))
-    template_path = str(from_project_root("templates", config["template_name"]))
-    js_path = str(from_project_root("scripts", config["js_name"]))
+    css_path = str(recurs("styles", config["css_name"]))
+    template_path = str(recurs("templates", config["template_name"]))
+    js_path = str(recurs("scripts", config["js_name"]))
 
     # El color triat a la finestra pot no portar curs ni assignatura: en eixe
     # cas manen els del document per defecte (la primera identitat).

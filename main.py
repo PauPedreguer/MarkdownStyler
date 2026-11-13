@@ -14,7 +14,9 @@ import sys
 from pathlib import Path
 
 from src.core.curs import calcular_curs_academic
+from src.infrastructure.config_repo import prepara_dades
 from src.infrastructure.project_paths import from_project_root
+from src.version import LLICENCIA, NOM, __version__
 
 # Navegadors basats en Chromium que saben imprimir a PDF des de la línia d'ordres.
 NAVEGADORS = (
@@ -137,6 +139,7 @@ def _obri_interficie() -> int:
         El codi d'eixida de Qt.
     """
     from PyQt6.QtCore import Qt
+    from PyQt6.QtGui import QIcon
     from PyQt6.QtWidgets import QApplication
 
     from src.ui.app import App
@@ -146,7 +149,18 @@ def _obri_interficie() -> int:
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
     app_qt = QApplication(sys.argv)
+    # Nom i fitxer .desktop: determinen el WM_CLASS (X11) i l'App-ID (Wayland)
+    # amb què el GNOME o el KDE agrupen la finestra amb la icona del menú. Amb
+    # «python main.py» seria «main.py»; amb el paquet ja seria «markdown-styler»,
+    # però fixar-ho sempre fa que la icona isca bé en tots els casos.
+    app_qt.setApplicationName("markdown-styler")
+    app_qt.setDesktopFileName("markdown-styler")
     aplica_tema(app_qt)
+
+    # Icona de l'aplicació (la mateixa que la del .desktop i la de l'AppImage).
+    icona = from_project_root("assets", "markdown-styler.svg")
+    if icona.is_file():
+        app_qt.setWindowIcon(QIcon(str(icona)))
 
     window = App()
     window.show()
@@ -165,6 +179,12 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="markdown-styler",
         description="Genera documents amb estil a partir de Markdown.",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"{NOM} {__version__} ({LLICENCIA})",
+        help="mostra la versió i la llicència",
     )
     parser.add_argument("markdown", nargs="?", help="fitxer .md (només amb --pdf)")
     parser.add_argument(
@@ -185,6 +205,13 @@ def main(argv=None) -> int:
         help="curs acadèmic, p. ex. 26-27 (per defecte, el calculat)",
     )
     args = parser.parse_args(argv)
+
+    # El paquet instal·lat és de només lectura: la configuració i els recursos
+    # importats viuen a DATA_ROOT (~/.local/share/MarkdownStyler o
+    # %APPDATA%\MarkdownStyler). Ací es crea eixe directori i, si cal, se
+    # sembra la configuració, tant si s'obri la finestra com si es genera un
+    # PDF des de la línia d'ordres.
+    prepara_dades()
 
     if not args.pdf:
         return _obri_interficie()

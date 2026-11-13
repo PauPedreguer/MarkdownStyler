@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,9 +8,30 @@ version = "1.0.0"
 description = "Aplicació que genera HTML/PDF amb estil a partir de Markdown mitjançant Pandoc"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 dependencies = [
     "PyQt6>=6.6.0",
 ]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: Education",
+    "Natural Language :: Catalan",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+
+[project.urls]
+Homepage = "https://github.com/PauPedreguer/MarkdownStyler"
+Repository = "https://github.com/PauPedreguer/MarkdownStyler"
+Issues = "https://github.com/PauPedreguer/MarkdownStyler/issues"
+Releases = "https://github.com/PauPedreguer/MarkdownStyler/releases"
+
+[project.scripts]
+markdown-styler = "main:main"
 
 [project.optional-dependencies]
 dev = [

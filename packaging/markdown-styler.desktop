@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Markdown Styler
+GenericName=Generador de documents
+Comment=Genera documents HTML i PDF amb estil a partir de fitxers Markdown
+Exec=markdown-styler
+TryExec=markdown-styler
+Icon=markdown-styler
+Terminal=false
+Categories=Office;
+Keywords=markdown;pandoc;pdf;html;documents;educació;
+StartupNotify=true
+StartupWMClass=markdown-styler

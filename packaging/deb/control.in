@@ -1,0 +1,21 @@
+Package: markdown-styler
+Version: @VERSIO@
+Section: editors
+Priority: optional
+Architecture: @ARQUITECTURA@
+Maintainer: Pau Palacios Server <pau@users.noreply.github.com>
+Installed-Size: @MIDA_INSTALADA@
+Depends: libc6 (>= 2.35), libstdc++6, libglib2.0-0t64 | libglib2.0-0, libgl1, libegl1, libdbus-1-3, libfontconfig1, libfreetype6, libharfbuzz0b, libgraphite2-3, libpng16-16t64 | libpng16-16, libpcre2-8-0, libsystemd0, libxau6t64 | libxau6, libx11-6, libxext6, libxkbcommon0, libxkbcommon-x11-0, libxcb1, libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render0, libxcb-render-util0, libxcb-shape0, libxcb-shm0, libxcb-sync1, libxcb-util1, libxcb-xfixes0, libxcb-xkb1, libxcomposite1, libxdamage1, libxfixes3, libxi6, libxrandr2, libxrender1, libsm6, libxtst6, libxml2, zlib1g, libzstd1, liblzma5
+Recommends: chromium | chromium-browser | google-chrome-stable
+Suggests: fonts-noto-core
+Homepage: https://github.com/PauPedreguer/MarkdownStyler
+Description: generador de documents HTML i PDF amb estil a partir de Markdown
+ Markdown Styler convertix fitxers Markdown en documents HTML i PDF amb
+ portada, índex i estil professional, pensats per a material de classe.
+ .
+ Els colors d'identitat lliguen cada color amb el seu curs i assignatura, i el
+ document n'hereta la capçalera. També inclou mode presentació, temes de
+ ressaltat de codi propis i plantilles i estils personalitzables.
+ .
+ La conversió la fa Pandoc (inclòs al paquet) i el PDF s'obté imprimint el
+ document amb un navegador basat en Chromium (recomanat: chromium).

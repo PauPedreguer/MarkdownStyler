@@ -11,6 +11,33 @@ Aplicació d'escriptori (PyQt6) que genera documents HTML i PDF amb estil profes
 - 📥 **Arrossega i deixa anar**: suport per arrossegar fitxers `.md` directament a la finestra.
 - 🧩 **Plantilles i estils personalitzables**: importa els teus propis CSS, plantilles HTML i scripts JS.
 
+## 📥 Descarrega
+
+Els paquets preparats es publiquen a
+[**Releases**](https://github.com/PauPedreguer/MarkdownStyler/releases). Porten
+**tot inclòs** (Python, PyQt6 i Pandoc): no cal instal·lar res més.
+
+| Sistema | Fitxer | Instal·lació |
+|---------|--------|--------------|
+| Debian, Ubuntu, Linux Mint | `markdown-styler_1.0.0_amd64.deb` | `sudo apt install ./markdown-styler_1.0.0_amd64.deb` |
+| Fedora, openSUSE | `markdown-styler-1.0.0-1.x86_64.rpm` | `sudo dnf install ./markdown-styler-1.0.0-1.x86_64.rpm` |
+| Qualsevol Linux, sense instal·lar | `MarkdownStyler-1.0.0-x86_64.AppImage` | `chmod +x` i doble clic |
+| Windows 10/11 | `MarkdownStyler-1.0.0-setup.exe` | Executa l'instal·lador |
+
+> Per a generar PDF cal un navegador basat en Chromium: a Linux, `chromium` (els
+> paquets `.deb`/`.rpm` el recomanen); a Windows n'hi ha prou amb Microsoft
+> Edge, que ja ve instal·lat.
+
+Cada versió publica també un fitxer `SHA256SUMS` per a comprovar que la
+descàrrega no s'ha fet malbé:
+
+```bash
+sha256sum -c SHA256SUMS
+```
+
+La guia completa (dependències de cada distribució, FUSE, desinstal·lació i
+problemes freqüents) és a **[docs/INSTAL·LACIO.md](docs/INSTAL·LACIO.md)**.
+
 ## 📁 Estructura del projecte
 
 ```
@@ -27,7 +54,8 @@ MarkdownStyler/
 │   │   ├── config_repo.py     # Càrrega/desat de configuració
 │   │   ├── highlight_styles.py# Temes de ressaltat (--highlight-style)
 │   │   ├── pandoc_converter.py# Invocació de Pandoc
-│   │   └── project_paths.py   # Resolució de rutes del projecte
+│   │   └── project_paths.py   # Recursos del paquet i dades de l'usuari
+│   ├── version.py             # Versió i llicència (main.py --version)
 │   └── ui/                    # Interfície d'usuari (PyQt6)
 │       ├── app.py             # Finestra principal
 │       ├── style.qss          # Estils de la UI
@@ -45,16 +73,21 @@ MarkdownStyler/
 │   ├── test_presentacio_html.py # Mode presentació en un navegador real
 │   ├── test_ui.py             # Helpers d'UI (sense QApplication)
 │   └── test_identitats.py     # Colors d'identitat: neteja, presets i etiquetes
-├── config/                    # Configuració de l'institut (JSON)
+├── config/                    # institut.exemple.json (la configuració real viu a les dades de l'usuari)
 ├── templates/                 # Plantilles HTML de Pandoc
 ├── styles/                    # base.css, prova.css i presentacio.css
 ├── scripts/                   # script.js i presentacio.js
 ├── themes/                    # Temes de ressaltat propi (JSON de pandoc)
 ├── assets/                    # Recursos estàtics (logos, icones, imatges)
 ├── examples/                  # Documents de prova (només les fonts .md)
+├── packaging/                 # Empaquetat: .deb, .rpm, AppImage i instal·lador .exe
+├── docs/                      # Guia d'instal·lació per a usuaris
 ├── run.sh                     # Llançador (usa el .venv local)
 ├── pdf.sh                     # Markdown -> PDF amb Chromium headless
+├── build.sh                   # Paquets (deb|rpm|appimage|all) i icona d'escriptori
 ├── requirements.txt           # Dependències de Python
+├── LICENSE                    # GPL-3.0-or-later (text complet)
+├── THIRD-PARTY.md             # Llicències dels components de tercers
 └── pyproject.toml             # Configuració del projecte i pytest
 ```
 
@@ -62,12 +95,16 @@ MarkdownStyler/
 > exerciten títols, llistes niuades, tasques, taules, blocs de codi i imatges.
 > Les eixides `.html`/`.pdf` **no es versionen**: es generen amb l'aplicació.
 
-## 🚀 Instal·lació
+## 🚀 Instal·lació des del codi font
+
+> Si només vols l'aplicació, ves a [Descarrega](#-descarrega): els paquets ja
+> porten Python, PyQt6 i Pandoc.
 
 ### Requisits previs
 
 - **Python 3.10+**
-- **Pandoc** instal·lat i disponible al PATH
+- **Pandoc** instal·lat i disponible al PATH (si el projecte té `bin/pandoc`,
+  s'usa eixe abans que el del sistema)
 - **Chromium o Google Chrome** (només per a generar PDF amb `pdf.sh`)
 
 ### Instal·lació de dependències
@@ -87,6 +124,22 @@ pip install -e ".[dev]"
 ```bash
 python main.py        # o ./run.sh: obri la interfície gràfica
 ```
+
+### 🖱️ Icona al menú o a l'escriptori
+
+Si executes des del codi font (o amb l'AppImage) i vols obrir l'aplicació
+fent clic a una icona, instal·la el llançador per a l'usuari actual:
+
+```bash
+./build.sh escriptori               # icona al menú que executa ./run.sh
+./build.sh escriptori --escriptori  # a més, un access directe a l'escriptori
+./build.sh escriptori --appimage    # la icona executa l'AppImage de packaging/dist
+./build.sh escriptori --elimina     # lleva la icona
+```
+
+No cal `sudo`: escriu a `~/.local/share/applications/markdown-styler.desktop` i
+copia la icona a `~/.local/share/icons/hicolor/`. Els paquets `.deb`, `.rpm` i
+el `.exe` ja creen la icona en instal·lar-se.
 
 L'aplicació genera **HTML**. El **PDF** s'obté imprimint eixe HTML, de manera
 que la maquetació (portada, índex, capçaleres, número de pàgina) ve de les
@@ -307,16 +360,38 @@ i declara'l a `ESTILS_PROJECTE` de `src/infrastructure/highlight_styles.py`.
 
 ## 📝 Configuració
 
-La configuració de l'institut es desa a `config/institut.json`:
+La configuració de l'institut es desa a:
+
+- **Linux**: `~/.local/share/MarkdownStyler/config/institut.json` (o dins de
+  `$XDG_DATA_HOME/MarkdownStyler/config/institut.json` si tens eixa variable);
+- **Windows**: `%APPDATA%\MarkdownStyler\config\institut.json`.
+
+El paquet instal·lat és de **només lectura** (AppImage, `/usr/lib`, `Program
+Files`), i per això les dades viuen al directori de l'usuari. La primera vegada
+es copia `config/institut.exemple.json` —el fitxer d'exemple que viatja amb
+l'aplicació— i ja es pot editar des de Configuració o a mà. La variable
+d'entorn `MARKDOWN_STYLER_DATA` canvia el directori sencer (mode portable).
+Els CSS, les plantilles i els scripts que importes des de Configuració també
+es desen ahí, no dins del paquet:
+
+```
+~/.local/share/MarkdownStyler/
+├── config/institut.json
+├── styles/meu-estil.css
+├── templates/meua-plantilla.html
+└── scripts/meu-script.js
+```
+
+L'estructura del JSON és esta:
 
 ```json
 {
-  "institut_nom": "IES Pere Maria Orts i Bosch",
-  "institut_logo": "assets/logoIESPereMariaOrtsiBosch.png",
-  "professor": "Pau Palacios Server",
-  "departament": "Informàtica",
+  "institut_nom": "IES Exemple",
+  "institut_logo": "",
+  "professor": "Nom i cognoms",
+  "departament": "Departament",
   "identitats": [
-    {"color": "#1d4ed8", "curs": "1r DAW", "assignatura": "LMSGI"},
+    {"color": "#1d4ed8", "curs": "1r", "assignatura": "Assignatura"},
     {"color": "#166534", "curs": "", "assignatura": ""}
   ],
   "css_name": "prova.css",
@@ -325,6 +400,9 @@ La configuració de l'institut es desa a `config/institut.json`:
   "highlight_style": "themes/one-dark.theme"
 }
 ```
+
+`institut_logo` pot quedar buit (`""`): aleshores la portada i la capçalera no
+pinten cap imatge (no queda un `<img>` trencat).
 
 `highlight_style` pot ser un tema propi (`themes/one-dark.theme`,
 `themes/material-ocean.theme`, `themes/github-dark.theme`) o el nom d'un tema
@@ -390,3 +468,27 @@ fila té un color que no es reconeix, o curs/assignatura sense color, no es desa
 res i s'assenyalen les files perquè les corregisques (`fila 3: «verd clar» no és
 un color conegut`); sempre ha de quedar almenys un color.
 
+## ☕ Suporta el projecte
+
+Markdown Styler és gratuït, no recull cap dada i el codi és obert
+(GPL-3.0-or-later). Si t'ha estalviat temps i vols convidar-me a un cafè:
+
+[![Convida'm a un cafè](https://img.shields.io/badge/%E2%98%95-Convida%27m%20a%20un%20caf%C3%A8-1d4ed8)](https://buymeacoffee.com/paupedreguer)
+
+Les donacions són voluntàries: no donen dret a suport prioritari ni a cap
+funcionalitat extra.
+
+## 📜 Llicència
+
+Markdown Styler es distribuïx sota la **GNU General Public License, versió 3 o
+posterior** (GPL-3.0-or-later). El text complet és a [LICENSE](LICENSE) i les
+llicències dels components que viatgen amb els binaris (PyQt6, Qt, Pandoc,
+Python i PyInstaller) consten a [THIRD-PARTY.md](THIRD-PARTY.md).
+
+La GPL obliga a oferir el codi font corresponent a qui rep un binari. Per això
+cada versió publicada té el seu codi al repositori, amb l'etiqueta de la
+versió (per exemple `v1.0.0`):
+
+<https://github.com/PauPedreguer/MarkdownStyler>
+
+Copyright © 2026 Pau Palacios Server

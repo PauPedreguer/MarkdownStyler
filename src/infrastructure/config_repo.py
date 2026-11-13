@@ -1,12 +1,25 @@
 import json
-from pathlib import Path
+import shutil
 from typing import Dict, Any
 from src.core.identitats import normalitza_identitats, presets_per_defecte
 from src.infrastructure.highlight_styles import ESTIL_RESSALTAT_DEFECTE
-from src.infrastructure.project_paths import from_project_root
+from src.infrastructure.project_paths import from_data_root, from_project_root
 
-CONFIG_PATH = from_project_root("config", "institut.json")
+# La configuració és dada de l'usuari: viu a DATA_ROOT, mai dins del paquet
+# (els paquets són de només lectura i, a l'AppImage, dins d'una imatge muntada
+# en només lectura).
+CONFIG_PATH = from_data_root("config", "institut.json")
+
+# Configuració d'exemple que viatja amb l'aplicació, amb valors neutres.
+CONFIG_EXEMPLE = from_project_root("config", "institut.exemple.json")
+
+# Ubicació antiga de la configuració, quan encara vivia a l'arrel del
+# projecte. Només existix en un arbre de treball, i servix per a no perdre les
+# dades de qui ja treballava així.
+CONFIG_ANTIGA = from_project_root("config", "institut.json")
+
 DEFAULT_CONFIG: Dict[str, Any] = {
+
     "css_name": "prova.css",
     "template_name": "base.html",
     "js_name": "script.js",
@@ -73,4 +86,30 @@ def save_institut_config(config: Dict[str, Any]) -> None:
     CONFIG_PATH.write_text(
         json.dumps(config, indent=2, ensure_ascii=False), encoding="utf-8"
     )
+
+
+def prepara_dades() -> None:
+    """Prepara el directori de dades de l'usuari abans d'arrancar.
+
+    Crea ``DATA_ROOT/config`` i, si encara no hi ha configuració, en sembra una
+    còpia. L'orde de preferència és:
+
+    1. la configuració antiga de l'arbre de treball (``config/institut.json``
+       al costat del codi), per a no perdre les dades de qui ja treballava
+       així;
+    2. la configuració d'exemple que viatja amb l'aplicació, amb valors
+       neutres.
+
+    No es crida des de :func:`load_institut_config` a posta: així eixa funció
+    continua retornant els valors per defecte quan el fitxer no existix, que és
+    el que esperen els tests.
+    """
+    CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if CONFIG_PATH.exists():
+        return
+
+    for origen in (CONFIG_ANTIGA, CONFIG_EXEMPLE):
+        if origen.is_file() and origen.resolve() != CONFIG_PATH.resolve():
+            shutil.copy2(origen, CONFIG_PATH)
+            return
 

@@ -34,3 +34,14 @@ htmlcov/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Dades locals: la configuració real del centre no es publica (els paquets
+# porten config/institut.exemple.json amb valors d'exemple) i el logo del
+# centre tampoc no viatja amb el codi.
+config/institut.json
+assets/logoIESPereMariaOrtsiBosch.png
+
+# Eixides dels paquets (.deb, .rpm, .AppImage, .exe)
+packaging/build/
+packaging/dist/
+*.AppImage

@@ -1,0 +1,134 @@
+name: Publica una versió
+
+# S'executa en pujar una etiqueta v* (per exemple v1.0.0) i també a mà:
+#
+#   - etiqueta (push): compila, publica la Release amb els quatre paquets i
+#     genera SHA256SUMS;
+#   - «Run workflow»: compila igualment, però NO publica res. Els artefactes
+#     queden a la pàgina del run, cosa que servix per a comprovar que la
+#     compilació de Windows funciona abans d'etiquetar.
+#
+# Genera:
+#   - markdown-styler_<versió>_amd64.deb      (Debian, Ubuntu, Mint)
+#   - markdown-styler-<versió>-1.x86_64.rpm   (Fedora, openSUSE)
+#   - MarkdownStyler-<versió>-x86_64.AppImage (qualsevol Linux)
+#   - MarkdownStyler-<versió>-setup.exe       (Windows 10/11)
+#   - SHA256SUMS
+#
+# GPL-3.0: el codi font corresponent és l'etiqueta que ha disparat la
+# compilació, dins d'este mateix repositori.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  linux:
+    name: Paquets de Linux
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Eines del sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            dpkg-dev rpm pandoc desktop-file-utils
+
+      - name: Tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest PyQt6
+          python -m pytest -q
+
+      - name: Construeix .deb, .rpm i AppImage
+        run: ./build.sh all
+
+      - name: Comprova els paquets
+        run: |
+          set -eu
+          dpkg-deb -I packaging/dist/*.deb
+          dpkg-deb -c packaging/dist/*.deb | grep -E 'usr/bin/markdown-styler|desktop|hicolor/256' | head
+          rpm -qpR packaging/dist/*.rpm | sort -u | head -40
+          rpm -qpl packaging/dist/*.rpm | grep -E 'usr/bin/markdown-styler|desktop' | head
+          appstreamcli validate --no-net packaging/com.github.PauPedreguer.MarkdownStyler.appdata.xml
+          chmod +x packaging/dist/*.AppImage
+          ./packaging/dist/*.AppImage --version
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            packaging/dist/*.deb
+            packaging/dist/*.rpm
+            packaging/dist/*.AppImage
+          if-no-files-found: error
+
+  windows:
+    name: Instal·lador de Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Construeix el bundle (PyInstaller)
+        shell: bash
+        env:
+          PYTHON: python
+        run: |
+          python -m pip install --upgrade pip
+          ./build.sh dir
+
+      - name: Instal·la Inno Setup
+        run: choco install innosetup --yes --no-progress
+
+      - name: Compila l'instal·lador
+        shell: cmd
+        run: '"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging\windows\markdown-styler.iss'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: packaging/dist/*.exe
+          if-no-files-found: error
+
+  publica:
+    name: Publica a Releases
+    needs: [linux, windows]
+    # Només per a etiquetes: «Run workflow» compila sense publicar res.
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artefactes
+          merge-multiple: true
+
+      - name: Genera SHA256SUMS
+        run: |
+          cd artefactes
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artefactes/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true

@@ -18,7 +18,11 @@ from src.infrastructure.highlight_styles import (
     ESTIL_RESSALTAT_DEFECTE,
     ESTILS_RESSALTAT,
 )
-from src.infrastructure.project_paths import from_project_root, icona_configuracio
+from src.infrastructure.project_paths import (
+    directoris_de_recurs,
+    from_data_root,
+    icona_configuracio,
+)
 from src.ui.components.buttons import PrimaryButton
 
 # Fitxers de suport: s'utilitzen internament però no s'han d'oferir com a
@@ -28,24 +32,30 @@ CSS_NO_SELECCIONABLES = frozenset({"base.css", "presentacio.css"})
 JS_NO_SELECCIONABLES = frozenset({"highlight.min.js", "presentacio.js"})
 
 
-def recursos_disponibles(directori: Path, extensio: str, exclusions: frozenset) -> list:
+def recursos_disponibles(directori, extensio: str, exclusions: frozenset) -> list:
     """Retorna els recursos seleccionables d'un directori, ordenats per nom.
 
     Args:
-        directori: Directori a explorar (pot no existir).
+        directori: Directori a explorar (pot no existir) o una tupla de
+            directoris, per exemple els de :func:`directoris_de_recurs`
+            (primer el de l'usuari i després el del paquet).
         extensio: Extensió a filtrar, per exemple ``".css"``.
         exclusions: Noms de fitxer que no s'han d'incloure a la llista.
 
     Returns:
-        La llista de noms de fitxer, ordenada alfabèticament.
+        La llista de noms de fitxer, sense repetits i ordenada alfabèticament.
     """
-    if not directori.exists():
-        return []
-    return sorted(
-        fitxer.name
-        for fitxer in directori.glob(f"*{extensio}")
-        if fitxer.name not in exclusions
-    )
+    directoris = directori if isinstance(directori, (tuple, list)) else (directori,)
+    noms = set()
+    for directori_actual in directoris:
+        if not directori_actual.exists():
+            continue
+        noms.update(
+            fitxer.name
+            for fitxer in directori_actual.glob(f"*{extensio}")
+            if fitxer.name not in exclusions
+        )
+    return sorted(noms)
 
 
 # Columnes de la taula de colors d'identitat (Configuració).
@@ -694,21 +704,23 @@ class SettingsDialog(QDialog):
         self.style_combo.clear()
         self.style_combo.addItems(
             recursos_disponibles(
-                from_project_root("styles"), ".css", CSS_NO_SELECCIONABLES
+                directoris_de_recurs("styles"), ".css", CSS_NO_SELECCIONABLES
             )
         )
 
     def load_templates(self):
         self.template_combo.clear()
         self.template_combo.addItems(
-            recursos_disponibles(from_project_root("templates"), ".html", frozenset())
+            recursos_disponibles(
+                directoris_de_recurs("templates"), ".html", frozenset()
+            )
         )
 
     def load_scripts(self):
         self.script_combo.clear()
         self.script_combo.addItems(
             recursos_disponibles(
-                from_project_root("scripts"), ".js", JS_NO_SELECCIONABLES
+                directoris_de_recurs("scripts"), ".js", JS_NO_SELECCIONABLES
             )
         )
 
@@ -725,8 +737,10 @@ class SettingsDialog(QDialog):
         file, _ = QFileDialog.getOpenFileName(self, f"Importar {resource_name}", "", f"{resource_name} ({file_filter})")
         if not file: return
 
-        dest_dir = from_project_root(target_dir)
-        dest_dir.mkdir(exist_ok=True)
+        # Els recursos importats són dades de l'usuari: van a DATA_ROOT, perquè
+        # el paquet pot ser de només lectura (AppImage, /usr/lib).
+        dest_dir = from_data_root(target_dir)
+        dest_dir.mkdir(parents=True, exist_ok=True)
         dest_path = dest_dir / Path(file).name
 
         if dest_path.exists():

@@ -1,0 +1,33 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Markdown Styler
+Upstream-Contact: Pau Palacios Server <pau@users.noreply.github.com>
+Source: https://github.com/PauPedreguer/MarkdownStyler
+
+Files: *
+Copyright: 2026 Pau Palacios Server
+License: GPL-3.0-or-later
+ This program is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation, either version 3 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ .
+ On Debian systems the full text of the GNU General Public License version 3
+ can be found in /usr/share/common-licenses/GPL-3.
+
+Files: python/*
+Copyright: Python Software Foundation
+License: PSF-2.0
+
+Files: _internal/PyQt6/*
+Copyright: Riverbank Computing Limited, The Qt Company
+License: GPL-3.0-only
+ Qt 6 s'inclou sota la LGPL-3.0-only; vegeu /usr/share/doc/markdown-styler/THIRD-PARTY.md.
+
+Files: _internal/bin/pandoc
+Copyright: John MacFarlane
+License: GPL-2.0-or-later

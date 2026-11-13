@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Metadades per als catàlegs de programari (GNOME Software, KDE Discover) i
+  per a l'AppImage. L'id coincidix amb el nom del fitxer .desktop.
+-->
+<component type="desktop-application">
+  <id>com.github.PauPedreguer.MarkdownStyler</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Markdown Styler</name>
+  <summary>Genera documents HTML i PDF amb estil a partir de Markdown</summary>
+  <description>
+    <p>
+      Markdown Styler convertix fitxers Markdown en documents HTML i PDF amb
+      portada, índex i estil professional, pensats per a material de classe.
+    </p>
+    <p>
+      Els colors d'identitat lliguen cada color amb el seu curs i assignatura,
+      i el document n'hereta la capçalera. També inclou mode presentació, temes
+      de ressaltat de codi propis i plantilles i estils personalitzables.
+    </p>
+    <p>
+      La conversió la fa Pandoc i el PDF s'obté imprimint el document amb un
+      navegador basat en Chromium.
+    </p>
+  </description>
+  <launchable type="desktop-id">markdown-styler.desktop</launchable>
+  <url type="homepage">https://github.com/PauPedreguer/MarkdownStyler</url>
+  <url type="bugtracker">https://github.com/PauPedreguer/MarkdownStyler/issues</url>
+  <developer id="com.github.paupedreguer">
+    <name>Pau Palacios Server</name>
+  </developer>
+  <categories>
+    <category>Office</category>
+    <category>Education</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.0.0" date="2026-11-13"/>
+  </releases>
+</component>

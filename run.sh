@@ -18,4 +18,4 @@ else
     exit 1
 fi
 
-exec "$PYTHON" main.py
+exec "$PYTHON" main.py "$@"

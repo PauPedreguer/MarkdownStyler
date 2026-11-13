@@ -6,7 +6,46 @@ import os
 from pathlib import Path
 from typing import Dict, Any
 from src.infrastructure.highlight_styles import ruta_estil_ressaltat
-from src.infrastructure.project_paths import PROJECT_ROOT, from_project_root
+from src.infrastructure.project_paths import DATA_ROOT, RESOURCE_ROOT, recurs
+
+
+def pandoc_executable() -> str:
+    """Retorna l'executable de pandoc que cal invocar.
+
+    Els paquets (AppImage, .deb, .rpm, .exe) porten el seu propi pandoc a
+    ``bin/pandoc`` perquè l'usuari no haja d'instal·lar-lo ni dependre de la
+    versió que tinga al PATH. Si no existix (execució des del codi font), s'usa
+    el ``pandoc`` del PATH, que és el comportament de sempre.
+
+    Returns:
+        La ruta absoluta del pandoc empaquetat o, si no n'hi ha, ``"pandoc"``.
+    """
+    for nom in ("pandoc.exe", "pandoc"):
+        candidat = recurs("bin", nom)
+        if candidat.is_file():
+            # En desempaquetar un .tar.gz o un .zip es poden perdre els permisos
+            # d'execució: es tornen a posar abans d'invocar-lo.
+            if os.name != "nt":
+                try:
+                    candidat.chmod(candidat.stat().st_mode | 0o111)
+                except OSError:
+                    pass
+            return str(candidat.resolve())
+    return "pandoc"
+
+
+def _directoris_de_recursos() -> str:
+    """Llista de directoris on pandoc ha de buscar imatges i recursos.
+
+    S'inclouen els dos arbres (el de l'usuari i el del paquet) perquè un
+    document pot referenciar tant els recursos que viatgen amb l'aplicació com
+    els que l'usuari ha importat. El separador és el del sistema (``:`` a
+    Linux, ``;`` a Windows), que és el que espera pandoc.
+    """
+    directoris = [str(RESOURCE_ROOT), str(DATA_ROOT)]
+    for parts in (("templates",), ("scripts",), ("styles",)):
+        directoris.append(str(recurs(*parts)))
+    return os.pathsep.join(directoris)
 
 
 class PandocError(RuntimeError):
@@ -165,16 +204,16 @@ def convert_markdown(
     """
     # Afegir el JS a la metadata per a la plantilla
     if js_path:
-        metadata["js"] = str(from_project_root(js_path).resolve())
+        metadata["js"] = str(recurs(js_path).resolve())
 
     # El mode presentació reutilitza este mateix document: només cal el seu
     # script (el CSS ja va concatenat més avall).
-    presentacio_js = from_project_root("scripts", "presentacio.js")
+    presentacio_js = recurs("scripts", "presentacio.js")
     if presentacio_js.exists():
         metadata["presentacio_js"] = str(presentacio_js.resolve())
 
     cmd = [
-        "pandoc",
+        pandoc_executable(),
         md_path,
         "-o", output_path,
         "-t", "html5",
@@ -183,8 +222,8 @@ def convert_markdown(
         "--toc",
         "--toc-depth=3",
         f"--highlight-style={ruta_estil_ressaltat(highlight_style)}",
-        f"--template={from_project_root(template_path).resolve()}",
-        f"--resource-path=.:{PROJECT_ROOT}:{from_project_root('templates')}:{from_project_root('scripts')}:{from_project_root('styles')}",
+        f"--template={recurs(template_path).resolve()}",
+        f"--resource-path=.:{_directoris_de_recursos()}",
         "--katex",
     ]
 
@@ -194,16 +233,16 @@ def convert_markdown(
     # específic es carrega DESPRÉS del base, de manera que pot sobreescriure
     # els seus valors.
     css_files = []
-    base_css = from_project_root("styles", "base.css")
+    base_css = recurs("styles", "base.css")
     if base_css.exists():
         css_files.append(base_css.resolve())
     if css_path:
-        abs_css = from_project_root(css_path).resolve()
+        abs_css = recurs(css_path).resolve()
         css_files.append(abs_css)
 
     # El full del mode presentació va sempre al final: així pot sobreescriure
     # qualsevol estil triat sense tocar-lo (tot va sota body.mode-presentacio).
-    presentacio_css = from_project_root("styles", "presentacio.css")
+    presentacio_css = recurs("styles", "presentacio.css")
     if presentacio_css.exists():
         css_files.append(presentacio_css.resolve())
 

@@ -59,7 +59,7 @@ $highlighting-css$
 <!-- Portada per a PDF/Impressió -->
 <div class="pdf-cover">
     <div class="cover-header">
-        <img src="$institut_logo$" class="cover-logo">
+        $if(institut_logo)$<img src="$institut_logo$" class="cover-logo">$endif$
         <div class="cover-inst-info">
             <div class="cover-inst-name">$institut_nom$</div>
             <div class="cover-inst-dept">$departament$</div>
@@ -96,7 +96,7 @@ $highlighting-css$
 <div class="header">
     <div class="header-left">
         <div class="logo-container">
-            <img src="$institut_logo$" class="logo-img">
+            $if(institut_logo)$<img src="$institut_logo$" class="logo-img">$endif$
             <div class="institut-info">
                 <span class="institut-name">🏫 $institut_nom$</span>
                 <div class="header-subtitle">

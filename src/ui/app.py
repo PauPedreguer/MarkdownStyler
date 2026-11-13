@@ -17,9 +17,13 @@ from src.core.identitats import (
 )
 from src.core.models import ExportOptions
 from src.infrastructure.config_repo import load_institut_config
-from src.infrastructure.project_paths import icona_configuracio
+from src.infrastructure.project_paths import (
+    from_project_root,
+    icona_configuracio,
+)
 from src.use_cases.generate_html import execute_export
 from src.ui.components import DropZone, SettingsDialog, SuccessDialog, PrimaryButton
+from src.version import NOM
 
 # Tira de colors de la finestra: tots en una sola fila, amb scroll horitzontal
 # si no hi caben. La mostra és rodona i porta l'etiqueta davall.
@@ -37,7 +41,7 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setAcceptDrops(True)
-        self.setWindowTitle("Markdown Styler Premium")
+        self.setWindowTitle(NOM)
         self.setMinimumSize(480, 640)
         self.resize(620, 760)
 
@@ -45,7 +49,10 @@ class App(QMainWindow):
         # configuració: des d'ací no s'editen, només es trien.
         self.config = load_institut_config()
 
-        icona = QIcon(str(icona_configuracio()))
+        icona = QIcon(str(from_project_root("assets", "markdown-styler.svg")))
+        if icona.isNull():
+            # Sense icona pròpia, almenys la de configuració (un engranatge).
+            icona = QIcon(str(icona_configuracio()))
         if not icona.isNull():
             self.setWindowIcon(icona)
         # La variant blanca és la que es veu damunt del botó blau.

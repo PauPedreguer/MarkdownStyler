@@ -1,0 +1,11 @@
+#!/bin/sh
+# Llançador de l'AppImage.
+#
+# L'AppImage es munta en un directori temporal i executa este fitxer. Com que
+# les dades de l'usuari (configuració i recursos importats) van a
+# ~/.local/share/MarkdownStyler, el muntatge pot ser de només lectura: no cal
+# fer-hi res.
+set -eu
+
+HERE=$(dirname "$(readlink -f "$0")")
+exec "$HERE/usr/lib/markdown-styler/markdown-styler" "$@"

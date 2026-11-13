@@ -1,0 +1,11 @@
+# Botó «Sponsor» de la capçalera del repositori.
+#
+# GitHub té una clau pròpia per a Buy Me a Coffee (`buy_me_a_coffee`), que
+# mostra la plataforma amb el seu nom i la seua icona; si no hi fóra, es pot
+# usar `custom` amb l'adreça sencera (fins a quatre). Només es llig de la
+# branca per defecte.
+#
+# Quan t'aproven l'alta de GitHub Sponsors, afig també la clau `github`:
+#
+#   github: [PauPedreguer]
+buy_me_a_coffee: paupedreguer

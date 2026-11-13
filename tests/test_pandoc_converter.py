@@ -8,6 +8,27 @@ from unittest import mock
 from src.infrastructure import pandoc_converter
 
 
+class TestPandocExecutable(unittest.TestCase):
+    """Comprova quin pandoc s'invoca: el del paquet o el del PATH."""
+
+    def test_si_hi_ha_pandoc_empaquetat_s_usa_eixe(self):
+        """Els paquets porten bin/pandoc i no han de dependre del PATH."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            binari = Path(tmp_dir) / "bin" / "pandoc"
+            binari.parent.mkdir()
+            binari.write_text("#!/bin/sh\n", encoding="utf-8")
+
+            with mock.patch.object(pandoc_converter, "recurs", return_value=binari):
+                self.assertEqual(pandoc_converter.pandoc_executable(), str(binari.resolve()))
+
+    def test_sense_pandoc_empaquetat_s_usa_el_del_path(self):
+        """Des del codi font, s'usa el pandoc instal·lat al sistema."""
+        with mock.patch.object(
+            pandoc_converter, "recurs", return_value=Path("/no/existeix/pandoc")
+        ):
+            self.assertEqual(pandoc_converter.pandoc_executable(), "pandoc")
+
+
 class TestPandocConverter(unittest.TestCase):
     """Comprova la construcció de la comanda de Pandoc."""
 
@@ -111,7 +132,7 @@ class TestPandocConverter(unittest.TestCase):
                     captured["content"] = Path(temp_path).read_text(encoding="utf-8")
 
             with mock.patch.object(pandoc_converter.subprocess, "run", side_effect=fake_run), \
-                 mock.patch.object(pandoc_converter, "from_project_root", side_effect=fake_root):
+                 mock.patch.object(pandoc_converter, "recurs", side_effect=fake_root):
                 pandoc_converter.convert_markdown(
                     md_path=self.md_path,
                     output_path=self.output_path,
