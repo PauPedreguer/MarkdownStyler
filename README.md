@@ -478,16 +478,6 @@ fila té un color que no es reconeix, o curs/assignatura sense color, no es desa
 res i s'assenyalen les files perquè les corregisques (`fila 3: «verd clar» no és
 un color conegut`); sempre ha de quedar almenys un color.
 
-## ☕ Suporta el projecte
-
-Markdown Styler és gratuït, no recull cap dada i el codi és obert
-(GPL-3.0-or-later). Si t'ha estalviat temps i vols convidar-me a un cafè:
-
-[![Convida'm a un cafè](https://img.shields.io/badge/%E2%98%95-Convida%27m%20a%20un%20caf%C3%A8-1d4ed8)](https://buymeacoffee.com/paupedreguer)
-
-Les donacions són voluntàries: no donen dret a suport prioritari ni a cap
-funcionalitat extra.
-
 ## 📜 Llicència
 
 Markdown Styler es distribuïx sota la **GNU General Public License, versió 3 o
