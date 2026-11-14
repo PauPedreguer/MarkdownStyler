@@ -42,23 +42,40 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Eines del sistema
+        # PyQt6 necessita estes biblioteques (libQt6Gui les declara com a
+        # NEEDED) i la imatge ubuntu-24.04 no porta libegl1 ni libgl1: sense
+        # elles, importar PyQt6 falla i pytest ni recull els tests (exit 2).
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            dpkg-dev rpm pandoc desktop-file-utils
+            dpkg-dev rpm pandoc desktop-file-utils appstream \
+            libegl1 libgl1 libxkbcommon0 libdbus-1-3 libfontconfig1 libglib2.0-0t64
+
+      - name: Dependències de Python
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest PyQt6
+
+      - name: Comprova PyQt6
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -VV
+          python -c "from PyQt6.QtWidgets import QApplication; app = QApplication([]); print('Qt', QApplication.platformName(), '- importació correcta')"
 
       - name: Tests
         env:
           QT_QPA_PLATFORM: offscreen
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest PyQt6
-          python -m pytest -q
+        run: python -m pytest -q
 
       - name: Construeix .deb, .rpm i AppImage
         run: ./build.sh all
 
       - name: Comprova els paquets
+        # APPIMAGE_EXTRACT_AND_RUN evita dependre de libfuse2: els runners
+        # ubuntu-24.04 no la porten i l'AppImage no arrancaria.
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
         run: |
           set -eu
           dpkg-deb -I packaging/dist/*.deb
@@ -66,6 +83,7 @@ jobs:
           rpm -qpR packaging/dist/*.rpm | sort -u | head -40
           rpm -qpl packaging/dist/*.rpm | grep -E 'usr/bin/markdown-styler|desktop' | head
           appstreamcli validate --no-net packaging/com.github.PauPedreguer.MarkdownStyler.appdata.xml
+          desktop-file-validate packaging/markdown-styler.desktop
           chmod +x packaging/dist/*.AppImage
           ./packaging/dist/*.AppImage --version
 
