@@ -151,6 +151,18 @@ class TestCssCodi(unittest.TestCase):
         self.assertIn("@media screen and (max-width", self.prova)
 
 
+class TestCssImatges(unittest.TestCase):
+    """Comprova les regles d'imatges de styles/base.css."""
+
+    def setUp(self):
+        self.base = from_project_root("styles", "base.css").read_text(encoding="utf-8")
+
+    def test_les_imatges_del_cos_es_centren(self):
+        """Un <img> sense peu queda centrat, com les que sí que en tenen."""
+        self.assertRegex(self.base, r"\.content img \{[^}]*margin-left: auto")
+        self.assertRegex(self.base, r"\.content img \{[^}]*margin-right: auto")
+
+
 class TestScriptJs(unittest.TestCase):
     """Comprova scripts/script.js."""
 

@@ -768,6 +768,15 @@ img {
     display: block;
 }
 
+/* Pandoc només embolcalla en <figure> les imatges amb títol; les que no en
+   porten queden com un <img> solt i, sense esta regla, s'alineen a
+   l'esquerra. Es limita a .content per a no descol·locar els logotips
+   (.cover-logo i .logo-img), que viuen fora del cos del document. */
+.content img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 figure {
     margin: 28px 0;
     text-align: center;
